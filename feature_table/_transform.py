@@ -6,10 +6,14 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from ._normalize import rarefy
-from ._transform import (presence_absence, relative_frequency)
+
+def presence_absence(table):
+    """ Convert feature table to presence/absence data
+    """
+    return table.pa(inplace=False)
 
 
-__version__ = '0.0.0-dev'
-
-__all__ = ['rarefy', 'presence_absence', 'relative_frequency']
+def relative_frequency(table, axis='sample'):
+    """ Convert feature table from frequencies to relative frequencies
+    """
+    return table.norm(axis=axis, inplace=False)
