@@ -15,7 +15,7 @@ setup(
     version=__version__,
     packages=find_packages(),
     install_requires=['biom-format >= 2.1.5, < 2.2.0', 'scipy', 'IPython',
-                      'ipywidgets', 'seaborn', 'scipy'],
+                      'ipywidgets', 'seaborn', 'scipy', 'qiime >= 2.0.0'],
     author="Greg Caporaso",
     author_email="gregcaporaso@gmail.com",
     description="Functionality for working with sample x feature tables.",
