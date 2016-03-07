@@ -3,7 +3,7 @@
 #
 # Distributed under the terms of the Modified BSD License.
 #
-# The full license is in the file LICENSE, distributed with this software.
+# The full license is in the file COPYING.txt, distributed with this software.
 # ----------------------------------------------------------------------------
 
 from unittest import TestCase, main
@@ -12,7 +12,7 @@ import numpy as np
 import numpy.testing as npt
 from biom.table import Table
 
-from feature_table import rarefy
+from normalize.rarefaction import rarefy
 
 
 class RarefyTests(TestCase):

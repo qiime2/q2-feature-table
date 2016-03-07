@@ -1,3 +1,2 @@
-# feature table
-Official QIIME 2 plugin supporting basic operations on sample x feature
-tables. 
+# normalize
+Official QIIME 2 plugin supporting normalization of sample by feature tables. 
