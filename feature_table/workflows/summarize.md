@@ -32,8 +32,6 @@ This workflow allows you to explore the data in your FeatureTable.
 >>> num_features, num_samples = table.shape
 >>> print("Number of samples: %d" % num_samples)
 >>> print("Number of features: %d" % num_features)
-Number of samples: 104
-Number of features: 658
 ```
 
 ### Metadata summarization
