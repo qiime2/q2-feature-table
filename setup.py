@@ -13,8 +13,8 @@ setup(
     # TODO stop duplicating version string
     version='0.0.0-dev',
     packages=find_packages(),
-    install_requires=['biom-format >= 2.1.5, < 2.2.0', 'scipy', 'IPython',
-                      'ipywidgets', 'seaborn', 'qiime >= 2.0.0'],
+    install_requires=['biom-format >= 2.1.5, < 2.2.0', 'scipy',
+                      'qiime >= 2.0.0'],
     package_data={'feature_table': ['workflows/*md']},
     author="Greg Caporaso",
     author_email="gregcaporaso@gmail.com",
