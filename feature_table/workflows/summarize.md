@@ -35,7 +35,7 @@ This workflow allows you to explore the data in your FeatureTable.
 ```
 
 ```python
->>> sample_count_summary
+>>> print(sample_count_summary)
 ```
 
 ### Feature count summary
@@ -45,7 +45,7 @@ This workflow allows you to explore the data in your FeatureTable.
 ```
 
 ```python
->>> feature_count_summary
+>>> print(feature_count_summary)
 ```
 
 ### Explore possible even sampling depths
