@@ -45,5 +45,3 @@ plugin.register_function(
     name='Convert to relative frequencies',
     doc="Let's convert to relative frequencies!"
 )
-
-plugin.register_workflow('workflows/summarize.md')
