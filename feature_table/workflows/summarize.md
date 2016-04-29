@@ -38,15 +38,6 @@ This workflow allows you to explore the data in your FeatureTable.
 >>> sample_count_summary
 ```
 
-```python
->>> import seaborn as sns
->>> %matplotlib inline
->>> ax = sns.distplot(sample_counts)
->>> ax.set_xlabel("Number of sequences per sample")
->>> ax.set_ylabel("Frequency")
->>> ax
-```
-
 ### Feature count summary
 
 ```python
@@ -55,14 +46,6 @@ This workflow allows you to explore the data in your FeatureTable.
 
 ```python
 >>> feature_count_summary
-```
-
-```python
->>> ax = sns.distplot(feature_counts, hist=False)
->>> ax.set_xlabel("Number of sequences per feature")
->>> ax.set_ylabel("Frequency")
->>> ax.set_xscale('log')
->>> ax
 ```
 
 ### Explore possible even sampling depths
