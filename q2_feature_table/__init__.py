@@ -14,4 +14,6 @@ from ._summarize import (metadata_summary, count_summary,
 
 __version__ = '0.0.0-dev'
 
-__all__ = ['rarefy', 'presence_absence', 'relative_frequency']
+__all__ = ['rarefy', 'presence_absence', 'relative_frequency',
+           'metadata_summary', 'count_summary',
+           'max_count_even_sampling_depth']
