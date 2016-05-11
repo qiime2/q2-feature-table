@@ -12,7 +12,7 @@ import numpy as np
 import numpy.testing as npt
 from biom.table import Table
 
-from feature_table import relative_frequency, presence_absence
+from q2_feature_table import relative_frequency, presence_absence
 
 
 class RelativeFrequencyTests(TestCase):

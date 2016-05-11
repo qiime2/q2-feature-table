@@ -12,7 +12,7 @@ from qiime.plugin import Type
 import biom
 import pandas as pd
 
-from feature_table import __version__
+from q2_feature_table import __version__
 
 
 class FeatureTable(Type, variant_of=(Type.Artifact, Type.Metadata),
