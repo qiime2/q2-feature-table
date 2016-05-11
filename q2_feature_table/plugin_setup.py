@@ -9,7 +9,7 @@
 from qiime.plugin import Plugin, Int
 
 import q2_feature_table
-from q2_feature_table.artifact_types import (
+from q2_types import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence)
 
 plugin = Plugin(
