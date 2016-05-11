@@ -8,21 +8,21 @@
 
 from qiime.plugin import Plugin, Int
 
-import feature_table
-from feature_table.artifact_types import (
+import q2_feature_table
+from q2_types import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence)
 
 plugin = Plugin(
     name='feature-table',
-    version=feature_table.__version__,
-    website='https://github.com/qiime2-plugins/feature-table',
-    package='feature_table'
+    version=q2_feature_table.__version__,
+    website='https://github.com/qiime2-plugins/q2-feature-table',
+    package='q2_feature_table'
 )
 
 # TODO create decorator for promoting functions to workflows. This info would
 # be moved to the decorator calls.
 plugin.register_function(
-    function=feature_table.rarefy,
+    function=q2_feature_table.rarefy,
     # TODO use more restrictive primitive type for `depth`
     inputs={'table': FeatureTable[Frequency], 'depth': Int},
     outputs=[('rarefied_table', FeatureTable[Frequency])],
@@ -31,7 +31,7 @@ plugin.register_function(
 )
 
 plugin.register_function(
-    function=feature_table.presence_absence,
+    function=q2_feature_table.presence_absence,
     inputs={'table': FeatureTable[~PresenceAbsence]},
     outputs=[('presence_absence_table', FeatureTable[PresenceAbsence])],
     name='Convert to presence/absence',
@@ -39,7 +39,7 @@ plugin.register_function(
 )
 
 plugin.register_function(
-    function=feature_table.relative_frequency,
+    function=q2_feature_table.relative_frequency,
     inputs={'table': FeatureTable[Frequency]},
     outputs=[('relative_frequency_table', FeatureTable[RelativeFrequency])],
     name='Convert to relative frequencies',
