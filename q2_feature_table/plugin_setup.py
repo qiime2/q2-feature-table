@@ -24,7 +24,8 @@ plugin = Plugin(
 plugin.register_function(
     function=q2_feature_table.rarefy,
     # TODO use more restrictive primitive type for `depth`
-    inputs={'table': FeatureTable[Frequency], 'depth': Int},
+    inputs={'table': FeatureTable[Frequency]},
+    parameters={'depth': Int},
     outputs=[('rarefied_table', FeatureTable[Frequency])],
     name='Rarefaction',
     doc="Let's rarefy!"
@@ -32,7 +33,8 @@ plugin.register_function(
 
 plugin.register_function(
     function=q2_feature_table.presence_absence,
-    inputs={'table': FeatureTable[~PresenceAbsence]},
+    inputs={'table': FeatureTable[Frequency | RelativeFrequency]},
+    parameters={},
     outputs=[('presence_absence_table', FeatureTable[PresenceAbsence])],
     name='Convert to presence/absence',
     doc="Let's convert to presence/absence!"
@@ -41,6 +43,7 @@ plugin.register_function(
 plugin.register_function(
     function=q2_feature_table.relative_frequency,
     inputs={'table': FeatureTable[Frequency]},
+    parameters={},
     outputs=[('relative_frequency_table', FeatureTable[RelativeFrequency])],
     name='Convert to relative frequencies',
     doc="Let's convert to relative frequencies!"
