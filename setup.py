@@ -14,7 +14,7 @@ setup(
     version='0.0.0-dev',
     packages=find_packages(),
     install_requires=['biom-format >= 2.1.5, < 2.2.0', 'scipy',
-                      'qiime >= 2.0.0', 'q2-types'],
+                      'qiime >= 2.0.0', 'q2-types', 'seaborn'],
     package_data={'q2_feature_table': ['workflows/*md']},
     author="Greg Caporaso",
     author_email="gregcaporaso@gmail.com",
