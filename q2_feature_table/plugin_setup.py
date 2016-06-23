@@ -48,3 +48,12 @@ plugin.register_function(
     name='Convert to relative frequencies',
     doc="Let's convert to relative frequencies!"
 )
+
+plugin.register_visualization(
+    function=q2_feature_table.summarize,
+    inputs={'table': FeatureTable[Frequency | RelativeFrequency |
+                                  PresenceAbsence]},
+    parameters={},
+    name='Summarize feature table',
+    doc='Generate visual and tabular summaries of a feature table.'
+)
