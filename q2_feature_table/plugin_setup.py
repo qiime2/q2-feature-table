@@ -19,41 +19,41 @@ plugin = Plugin(
     package='q2_feature_table'
 )
 
-# TODO create decorator for promoting functions to workflows. This info would
+# TODO create decorator for promoting functions to methods. This info would
 # be moved to the decorator calls.
-plugin.register_function(
+plugin.methods.register_function(
     function=q2_feature_table.rarefy,
     # TODO use more restrictive primitive type for `depth`
     inputs={'table': FeatureTable[Frequency]},
     parameters={'depth': Int},
     outputs=[('rarefied_table', FeatureTable[Frequency])],
     name='Rarefaction',
-    doc="Let's rarefy!"
+    description="Let's rarefy!"
 )
 
-plugin.register_function(
+plugin.methods.register_function(
     function=q2_feature_table.presence_absence,
     inputs={'table': FeatureTable[Frequency | RelativeFrequency]},
     parameters={},
     outputs=[('presence_absence_table', FeatureTable[PresenceAbsence])],
     name='Convert to presence/absence',
-    doc="Let's convert to presence/absence!"
+    description="Let's convert to presence/absence!"
 )
 
-plugin.register_function(
+plugin.methods.register_function(
     function=q2_feature_table.relative_frequency,
     inputs={'table': FeatureTable[Frequency]},
     parameters={},
     outputs=[('relative_frequency_table', FeatureTable[RelativeFrequency])],
     name='Convert to relative frequencies',
-    doc="Let's convert to relative frequencies!"
+    description="Let's convert to relative frequencies!"
 )
 
-plugin.register_visualization(
+plugin.visualizers.register_function(
     function=q2_feature_table.summarize,
     inputs={'table': FeatureTable[Frequency | RelativeFrequency |
                                   PresenceAbsence]},
     parameters={},
     name='Summarize feature table',
-    doc='Generate visual and tabular summaries of a feature table.'
+    description='Generate visual and tabular summaries of a feature table.'
 )
