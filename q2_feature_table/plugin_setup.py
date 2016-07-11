@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime.plugin import Plugin, Int
+from qiime.plugin import Plugin, Int, Properties
 
 import q2_feature_table
 from q2_types import (
@@ -19,16 +19,18 @@ plugin = Plugin(
     package='q2_feature_table'
 )
 
-# TODO create decorator for promoting functions to methods. This info would
-# be moved to the decorator calls.
 plugin.methods.register_function(
     function=q2_feature_table.rarefy,
     # TODO use more restrictive primitive type for `depth`
     inputs={'table': FeatureTable[Frequency]},
-    parameters={'depth': Int},
-    outputs=[('rarefied_table', FeatureTable[Frequency])],
-    name='Rarefaction',
-    description="Let's rarefy!"
+    parameters={'counts_per_sample': Int},
+    outputs=[('rarefied_table',
+              FeatureTable[Frequency] % Properties('uniform-sampling'))],
+    name='Rarefy table',
+    description="Subsample counts from all samples without replacement so "
+                "that the sum of counts in each sample is equal. Samples "
+                "where the sum of counts is less than the requested counts "
+                "per sample will be not be included in the resulting table."
 )
 
 plugin.methods.register_function(
@@ -36,17 +38,21 @@ plugin.methods.register_function(
     inputs={'table': FeatureTable[Frequency | RelativeFrequency]},
     parameters={},
     outputs=[('presence_absence_table', FeatureTable[PresenceAbsence])],
-    name='Convert to presence/absence',
-    description="Let's convert to presence/absence!"
+    name="Convert to presence/absence",
+    description="Convert frequencies to binary values indicating presence or "
+                "absence of a feature in a sample."
 )
 
 plugin.methods.register_function(
     function=q2_feature_table.relative_frequency,
     inputs={'table': FeatureTable[Frequency]},
     parameters={},
-    outputs=[('relative_frequency_table', FeatureTable[RelativeFrequency])],
-    name='Convert to relative frequencies',
-    description="Let's convert to relative frequencies!"
+    outputs=[
+        ('relative_frequency_table',
+         FeatureTable[RelativeFrequency] % Properties('uniform-sampling'))],
+    name="Convert to relative frequencies",
+    description="Convert frequencies to relative frequencies by dividing each "
+                "count in a sample by the sum of counts in that sample."
 )
 
 plugin.visualizers.register_function(
@@ -54,6 +60,6 @@ plugin.visualizers.register_function(
     inputs={'table': FeatureTable[Frequency | RelativeFrequency |
                                   PresenceAbsence]},
     parameters={},
-    name='Summarize feature table',
-    description='Generate visual and tabular summaries of a feature table.'
+    name="Summarize table",
+    description="Generate visual and tabular summaries of a feature table."
 )

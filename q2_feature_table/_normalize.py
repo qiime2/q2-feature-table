@@ -9,5 +9,5 @@
 import biom
 
 
-def rarefy(table: biom.Table, depth: int) -> biom.Table:
-    return table.subsample(depth, axis='sample', by_id=False)
+def rarefy(table: biom.Table, counts_per_sample: int) -> biom.Table:
+    return table.subsample(counts_per_sample, axis='sample', by_id=False)
