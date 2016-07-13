@@ -22,7 +22,7 @@ setup(
     license="BSD",
     url="http://www.qiime.org",
     entry_points={
-        'qiime.plugin':
+        'qiime.plugins':
         ['q2-feature-table=q2_feature_table.plugin_setup:plugin']
     }
 )
