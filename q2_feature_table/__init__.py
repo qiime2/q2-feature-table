@@ -11,6 +11,6 @@ from ._transform import (presence_absence, relative_frequency)
 from ._summarize import summarize
 
 
-__version__ = '0.0.0-dev'
+__version__ = '0.0.1'
 
 __all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'summarize']

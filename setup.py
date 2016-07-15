@@ -11,7 +11,7 @@ from setuptools import setup, find_packages
 setup(
     name="q2-feature-table",
     # TODO stop duplicating version string
-    version='0.0.0-dev',
+    version='0.0.1',
     packages=find_packages(),
     install_requires=['biom-format >= 2.1.5, < 2.2.0', 'scipy',
                       'qiime >= 2.0.0', 'q2-types', 'seaborn'],
