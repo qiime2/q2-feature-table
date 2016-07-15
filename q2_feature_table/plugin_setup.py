@@ -15,7 +15,7 @@ from q2_types import (
 plugin = Plugin(
     name='feature-table',
     version=q2_feature_table.__version__,
-    website='https://github.com/qiime2-plugins/q2-feature-table',
+    website='https://github.com/qiime2/q2-feature-table',
     package='q2_feature_table'
 )
 
