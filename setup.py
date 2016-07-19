@@ -19,7 +19,7 @@ setup(
     author="Greg Caporaso",
     author_email="gregcaporaso@gmail.com",
     description="Functionality for working with sample x feature tables.",
-    license="BSD",
+    license='BSD-3-Clause',
     url="http://www.qiime.org",
     entry_points={
         'qiime.plugins':
