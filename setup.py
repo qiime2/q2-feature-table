@@ -11,7 +11,7 @@ from setuptools import setup, find_packages
 setup(
     name="q2-feature-table",
     # TODO stop duplicating version string
-    version='0.0.0-dev',
+    version='0.0.1',
     packages=find_packages(),
     install_requires=['biom-format >= 2.1.5, < 2.2.0', 'scipy',
                       'qiime >= 2.0.0', 'q2-types', 'seaborn',
@@ -20,7 +20,7 @@ setup(
     author="Greg Caporaso",
     author_email="gregcaporaso@gmail.com",
     description="Functionality for working with sample by feature tables.",
-    license="BSD",
+    license='BSD-3-Clause',
     url="http://www.qiime.org",
     entry_points={
         'qiime.plugins':
