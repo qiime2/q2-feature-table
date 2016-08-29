@@ -9,8 +9,10 @@
 from ._normalize import rarefy
 from ._transform import (presence_absence, relative_frequency)
 from ._summarize import summarize
+from ._filter import filter
 
 
 __version__ = '0.0.1'
 
-__all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'summarize']
+__all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'summarize',
+           'filter']

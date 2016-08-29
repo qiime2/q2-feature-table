@@ -10,7 +10,8 @@ from qiime.plugin import Plugin, Int, Properties
 
 import q2_feature_table
 from q2_types import (
-    FeatureTable, Frequency, RelativeFrequency, PresenceAbsence)
+    FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Phylogeny,
+    Rooted, Unrooted)
 
 plugin = Plugin(
     name='feature-table',
@@ -62,4 +63,18 @@ plugin.visualizers.register_function(
     parameters={},
     name="Summarize table",
     description="Generate visual and tabular summaries of a feature table."
+)
+
+plugin.methods.register_function(
+    function=q2_feature_table.filter,
+    inputs={'table': FeatureTable[Frequency],
+            'tree': Phylogeny[Rooted | Unrooted]},
+    parameters={},
+    outputs=[('filtered_table', FeatureTable[Frequency])],
+    name="Remove features from table if they're not present in tree.",
+    description=("This method is a placeholder and will be generalized to "
+                 "support different types of filtering, including obtaining "
+                 "ids from different data types and filtering on both axes. "
+                 "See https://github.com/qiime2/q2-feature-table/issues/14 to "
+                 "track progress on this.")
 )
