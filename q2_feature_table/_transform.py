@@ -10,12 +10,14 @@ import biom
 
 
 def presence_absence(table: biom.Table) -> biom.Table:
-    """ Convert feature table to presence/absence data
+    """ Convert feature table in-place to presence/absence data
     """
-    return table.pa(inplace=False)
+    table.pa(inplace=True)
+    return table
 
 
 def relative_frequency(table: biom.Table, axis: str='sample') -> biom.Table:
-    """ Convert feature table from frequencies to relative frequencies
+    """ Convert feature table in-place from frequencies to relative frequencies
     """
-    return table.norm(axis=axis, inplace=False)
+    table.norm(axis=axis, inplace=True)
+    return table
