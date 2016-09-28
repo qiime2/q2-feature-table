@@ -56,6 +56,18 @@ plugin.methods.register_function(
                 "count in a sample by the sum of counts in that sample."
 )
 
+plugin.methods.register_function(
+    function=q2_feature_table.merge_tables,
+    inputs={'table1': FeatureTable[Frequency],
+            'table2': FeatureTable[Frequency]},
+    parameters={},
+    outputs=[
+        ('merged_table', FeatureTable[Frequency])],
+    name="Combine two tables",
+    description="Combines a pair of feature tables which contain different "
+                "samples, and which may or may not contain the same features."
+)
+
 plugin.visualizers.register_function(
     function=q2_feature_table.summarize,
     inputs={'table': FeatureTable[Frequency | RelativeFrequency |
