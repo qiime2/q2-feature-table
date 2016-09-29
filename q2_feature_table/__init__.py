@@ -10,10 +10,12 @@ from ._normalize import rarefy
 from ._transform import (presence_absence, relative_frequency)
 from ._summarize import summarize
 from ._filter import filter
-from ._merge import merge_tables
+from ._merge import (merge, merge_seq_data,
+                     merge_taxa_data)
 
 
 __version__ = '0.0.1'
 
 __all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'summarize',
-           'filter', 'merge_tables']
+           'filter', 'merge', 'merge_seq_data',
+           'merge_taxa_data']

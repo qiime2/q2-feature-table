@@ -9,9 +9,10 @@
 from qiime.plugin import Plugin, Int, Properties
 
 import q2_feature_table
-from q2_types import (
-    FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Phylogeny,
-    Rooted, Unrooted)
+from q2_types.feature_table import (
+    FeatureTable, Frequency, RelativeFrequency, PresenceAbsence)
+from q2_types.tree import Phylogeny, Rooted, Unrooted
+from q2_types.feature_data import FeatureData, Sequence, Taxonomy
 
 plugin = Plugin(
     name='feature-table',
@@ -57,7 +58,7 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
-    function=q2_feature_table.merge_tables,
+    function=q2_feature_table.merge,
     inputs={'table1': FeatureTable[Frequency],
             'table2': FeatureTable[Frequency]},
     parameters={},
@@ -66,6 +67,38 @@ plugin.methods.register_function(
     name="Combine two tables",
     description="Combines a pair of feature tables which contain different "
                 "samples, and which may or may not contain the same features."
+)
+
+
+plugin.methods.register_function(
+    function=q2_feature_table.merge_seq_data,
+    inputs={'data1': FeatureData[Sequence],
+            'data2': FeatureData[Sequence]},
+    parameters={},
+    outputs=[
+        ('merged_data', FeatureData[Sequence])],
+    name="Combine two collections of feature sequences",
+    description="Combines a pair of feature data objects which may or may not "
+                "contain data for the same features. If different feature "
+                "data is present for the same feature id in the two inputs, "
+                "the data from the first (data1) will be propagated to the "
+                "result."
+)
+
+
+plugin.methods.register_function(
+    function=q2_feature_table.merge_taxa_data,
+    inputs={'data1': FeatureData[Taxonomy],
+            'data2': FeatureData[Taxonomy]},
+    parameters={},
+    outputs=[
+        ('merged_data', FeatureData[Taxonomy])],
+    name="Combine two collections of feature taxonomies",
+    description="Combines a pair of feature data objects which may or may not "
+                "contain data for the same features. If different feature "
+                "data is present for the same feature id in the two inputs, "
+                "the data from the first (data1) will be propagated to the "
+                "result."
 )
 
 plugin.visualizers.register_function(
