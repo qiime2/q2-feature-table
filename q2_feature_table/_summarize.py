@@ -90,7 +90,6 @@ def summarize(output_dir: str, table: biom.Table) -> None:
         fh.write('Image source (<a href="./feature-counts.png">png</a> | '
                  '<a href="./feature-counts.pdf">pdf</a>)<p>\n')
 
-        fh.write('<hr>\n%s\n' % _citation_html)
         fh.write('</body></html>')
 
     sample_counts.sort_values(inplace=True)
@@ -154,19 +153,3 @@ def _summarize_even_sampling_depth(even_sampling_depth, counts):
     num_samples_retained = samples_retained.sum()
     num_sequences_retained = num_samples_retained * even_sampling_depth
     return samples_retained, num_samples_retained, num_sequences_retained
-
-
-_citation_html = (
-    "You're using the q2-feature-table QIIME 2 plugin. If you use this "
-    "information in any published work, please include the following URLs as "
-    "references:<p>\n"
-    "<ul>\n"
-    "\t<li><a href='http://github.com/qiime2/qiime2'>"
-    "http://github.com/qiime2/qiime2</a>\n"
-    "\t<li><a href='http://github.com/qiime2/q2-feature-table'>"
-    "http://github.com/qiime2/q2-feature-table</a>\n"
-    "</ul>\n<p>\n"
-    "If you experience any issues with this functionality, or would like to"
-    " request new features, please post to the <a href="
-    "'https://github.com/qiime2/q2-feature-table/issues'>q2-feature table "
-    "issue tracker</a>.")
