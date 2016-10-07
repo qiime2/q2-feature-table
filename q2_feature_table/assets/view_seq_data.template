@@ -27,8 +27,8 @@
       <div class="row">
         <div class="col-lg-12">
           <p>
-            To BLAST a sequence against the NCBI nt database, click the BLAST
-            link next to that sequence and then click the <i>View report</i>
+            To BLAST a sequence against the NCBI nt database, click the
+            sequence and then click the <i>View report</i>
             button on the resulting page.
           <p>
 
@@ -36,7 +36,6 @@
             <thead>
               <tr>
                 <th>Feature ID</th>
-                <th>BLAST link</th>
                 <th>Sequence</th>
               </tr>
             </thead>
@@ -44,8 +43,7 @@
             #for @sequence in @data:
               <tr>
                 <td>@sequence.id</td>
-                <td><a target="_blank" href="@sequence.url">BLAST</a>
-                <td>@sequence.seq</td>
+                <td><a target="_blank" href="@sequence.url">@sequence.seq</td></a>
               </tr>
             #end
             </tbody>
