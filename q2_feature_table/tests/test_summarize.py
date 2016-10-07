@@ -29,7 +29,7 @@ class ViewSequenceTests(unittest.TestCase):
 
             expected_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(expected_fp))
-            self.assertTrue('<td>ACGT</td>' in open(expected_fp).read())
+            self.assertTrue('ACGT</a>' in open(expected_fp).read())
             self.assertTrue('<td>seq2</td>' in open(expected_fp).read())
 
 
