@@ -7,6 +7,8 @@
 # ----------------------------------------------------------------------------
 
 import os
+import shutil
+import pkg_resources
 
 import biom
 import numpy as np
@@ -15,6 +17,7 @@ import scipy.optimize
 import seaborn as sns
 import matplotlib.pyplot as plt
 from q2_types.feature_data import DNAIterator
+from trender import TRender
 
 _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
                        "ALIGNMENT_VIEW=Pairwise&PROGRAM=blastn&DATABASE"
@@ -22,46 +25,38 @@ _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
 
 
 def view_seq_data(output_dir: str, data: DNAIterator) -> None:
+    sequences = []
+    for sequence in data:
+        str_seq = str(sequence)
+        sequences.append({'id': sequence.metadata['id'],
+                          'url': _blast_url_template % str_seq,
+                          'seq': str_seq})
+
+    TEMPLATES = pkg_resources.resource_filename('q2_feature_table', 'assets')
+    index = TRender('view_seq_data.template', path=TEMPLATES)
+    rendered_index = index.render({'data': sequences})
+
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
-        fh.write('<html><body>\n')
-        # style adapted from http://stackoverflow.com/a/6667942/3424666
-        fh.write(' <style>\n'
-                 '  table {table-layout:fixed; width:1250px;}\n'
-                 '  table td {word-wrap:break-word;}\n'
-                 ' </style>\n')
-        fh.write('To BLAST a sequence against the NCBI nt database, click the '
-                 'BLAST link next to that sequence and then click the '
-                 '<i>View report</i> button on the resulting page.<p>\n')
-        fh.write(' <table border=1>\n')
-        fh.write('  <tr><td width=300px>Feature ID</td>'
-                 '<td width=100px>BLAST link</td>'
-                 '<td>Sequence</td></tr>\n')
-        for sequence in data:
-            blast_url = _blast_url_template % (str(sequence))
-            fh.write('  <tr><td>%s</td><td><a target="_blank" href="%s">'
-                     'BLAST</a></td><td>%s</td></tr>\n' %
-                     (sequence.metadata['id'], blast_url, str(sequence)))
-        fh.write(' </table>\n')
-        fh.write('</body></html>')
+        fh.write(rendered_index)
+
+    for fn in ['bootstrap.min.css', 'qiime_logo_large.png']:
+        shutil.copy(os.path.join(TEMPLATES, fn), os.path.join(output_dir, fn))
 
 
 def view_taxa_data(output_dir: str, data: pd.Series) -> None:
+    prepped = []
+    for _id, taxa in data.iteritems():
+        prepped.append({'id': _id, 'taxa': taxa})
+
+    TEMPLATES = pkg_resources.resource_filename('q2_feature_table', 'assets')
+    index = TRender('view_taxa_data.template', path=TEMPLATES)
+    rendered_index = index.render({'data': prepped})
+
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
-        fh.write('<html><body>\n')
-        # style adapted from http://stackoverflow.com/a/6667942/3424666
-        fh.write(' <style>\n'
-                 '  table {table-layout:fixed; width:1250px;}\n'
-                 '  table td {word-wrap:break-word;}\n'
-                 ' </style>\n')
-        # Note: not using to_html here as that can result in the
-        # taxonomy strings being truncated.
-        fh.write(' <table border=1>\n')
-        fh.write('  <tr><td width=300px>Feature ID</td>'
-                 '<td>Taxonomy</td></tr>\n')
-        for id_, taxonomy in data.iteritems():
-            fh.write('  <tr><td>%s</td><td>%s</td></tr>' % (id_, taxonomy))
-        fh.write(' </table>\n')
-        fh.write('</body></html>')
+        fh.write(rendered_index)
+
+    for fn in ['bootstrap.min.css', 'qiime_logo_large.png']:
+        shutil.copy(os.path.join(TEMPLATES, fn), os.path.join(output_dir, fn))
 
 
 def summarize(output_dir: str, table: biom.Table) -> None:
