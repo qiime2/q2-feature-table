@@ -43,7 +43,7 @@
             #for @sequence in @data:
               <tr>
                 <td>@sequence.id</td>
-                <td><a target="_blank" href="@sequence.url">@sequence.seq</td></a>
+                <td><a target="_blank" href="@sequence.url">@sequence.seq</a></td>
               </tr>
             #end
             </tbody>
