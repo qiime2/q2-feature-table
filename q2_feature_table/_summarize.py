@@ -62,16 +62,6 @@ def view_taxa_data(output_dir: str, data: pd.Series) -> None:
 def summarize(output_dir: str, table: biom.Table) -> None:
     sample_summary, sample_counts = _count_summary(table, axis='sample')
 
-    sample_md, feature_md = _metadata_summary(table)
-    if len(sample_md) == 0:
-        sample_md = 'No sample metadata.'
-    else:
-        sample_md = ', '.join(sample_md)
-    if len(feature_md) == 0:
-        feature_md = 'No feature metadata.'
-    else:
-        feature_md = ', '.join(feature_md)
-
     max_count_even_sampling_depth = \
         _get_max_count_even_sampling_depth(sample_counts)
     sample_counts_ax = sns.distplot(sample_counts, kde=False, rug=True)
@@ -96,53 +86,43 @@ def summarize(output_dir: str, table: biom.Table) -> None:
     feature_counts_ax.get_figure().savefig(
         os.path.join(output_dir, 'feature-counts.png'))
 
+    sample_summary_table = _format_html_table(sample_summary.to_frame('Count'))
+    feature_summary_table = _format_html_table(
+        feature_summary.to_frame('Count'))
+
+    TEMPLATES = pkg_resources.resource_filename('q2_feature_table', 'assets')
+    index = TRender('summarize.template', path=TEMPLATES)
+    rendered_index = index.render({
+        'number_of_samples': len(table.ids(axis='sample')),
+        'number_of_features': len(table.ids(axis='observation')),
+        'total_counts': int(np.sum(sample_counts)),
+        'max_count_even_sampling_depth': max_count_even_sampling_depth,
+        'sample_summary_table': sample_summary_table,
+        'feature_summary_table': feature_summary_table,
+    })
+
     with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
-        fh.write('<html><body>\n')
-        fh.write('<h1>Table summary</h1>\n')
-        fh.write('Number of samples: %d<br>\n' % len(table.ids(axis='sample')))
-        fh.write('Number of features: %d<br>\n' %
-                 len(table.ids(axis='observation')))
-        fh.write('Total counts: %d<br>\n' % np.sum(sample_counts))
-        fh.write('An even sampling (i.e., rarefaction) depth of %d will retain'
-                 ' the largest number of sequences.<br>\n' %
-                 max_count_even_sampling_depth)
-        fh.write('Sample metadata categories: %s<br>\n' % sample_md)
-        fh.write('Feature metadata categories: %s<br>\n' % feature_md)
+        fh.write(rendered_index)
 
-        fh.write('<h1>Count per sample summary</h1>\n')
-        # This conversion is necessary to call to_html, pending
-        # https://github.com/pydata/pandas/issues/5563
-        fh.write('%s\n' % sample_summary.to_frame(name='Count').to_html())
-        fh.write('<p>\n')
-        fh.write('<img src="./sample-counts.png" width="700" height="500"><p>')
-        fh.write('\n')
-        fh.write('Image source (<a href="./sample-counts.png">png</a> | '
-                 '<a href="./sample-counts.pdf">pdf</a>)<p>\n')
-        fh.write('Counts per sample detail (<a href="./sample-count-detail.csv'
-                 '">csv</a> | <a href="./sample-count-detail.html">html</a>)'
-                 '<p>\n')
-
-        fh.write('<h1>Count per feature summary</h1>\n')
-        # This conversion is necessary to call to_html, pending
-        # https://github.com/pydata/pandas/issues/5563
-        fh.write('%s\n' % feature_summary.to_frame(name='Count').to_html())
-
-        fh.write('<h1>Count per feature detail</h1>')
-        fh.write('<img src="./feature-counts.png" width="700" height="500">'
-                 '<p>\n')
-        fh.write('Image source (<a href="./feature-counts.png">png</a> | '
-                 '<a href="./feature-counts.pdf">pdf</a>)<p>\n')
-
-        fh.write('</body></html>')
+    for fn in ['bootstrap.min.css', 'qiime_logo_large.png']:
+        shutil.copy(os.path.join(TEMPLATES, fn), os.path.join(output_dir, fn))
 
     sample_counts.sort_values(inplace=True)
     sample_counts.to_csv(os.path.join(output_dir, 'sample-count-detail.csv'))
+
+    sample_counts_table = _format_html_table(sample_counts.to_frame('Counts'))
+    sample_count_template = TRender('sample-count-detail.template',
+                                    path=TEMPLATES)
+    rendered_sample_count_template = sample_count_template.render({
+        'sample_counts_table': sample_counts_table})
+
     with open(os.path.join(output_dir, 'sample-count-detail.html'), 'w') as fh:
-        fh.write('<html><body>\n')
-        # This conversion is necessary to call to_html, pending
-        # https://github.com/pydata/pandas/issues/5563
-        fh.write(sample_counts.to_frame('Counts').to_html())
-        fh.write('\n</body></html>')
+        fh.write(rendered_sample_count_template)
+
+
+def _format_html_table(df):
+    table = df.to_html(classes="table table-striped table-hover")
+    return table.replace('border="1"', 'border="0"')
 
 
 def _counts(table, axis):
@@ -161,20 +141,6 @@ def _count_summary(table, axis='sample'):
                                '3rd quartile', 'Maximum count', 'Mean count'])
     summary.sort_values()
     return summary, counts
-
-
-def _metadata_summary(table):
-    if table.metadata() is None:
-        sample_md_keys = []
-    else:
-        sample_md_keys = table.metadata()[0].keys()
-
-    if table.metadata(axis='observation') is None:
-        feature_md_keys = []
-    else:
-        feature_md_keys = table.metadata(axis='observation')[0].keys()
-
-    return list(sample_md_keys), list(feature_md_keys)
 
 
 def _get_max_count_even_sampling_depth(counts):
