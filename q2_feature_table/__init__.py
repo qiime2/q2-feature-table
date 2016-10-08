@@ -14,7 +14,7 @@ from ._merge import (merge, merge_seq_data,
                      merge_taxa_data)
 
 
-__version__ = '0.0.1'
+__version__ = '0.0.5'
 
 __all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'summarize',
            'filter', 'merge', 'merge_seq_data',
