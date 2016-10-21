@@ -7,7 +7,6 @@
 # ----------------------------------------------------------------------------
 
 import os
-import shutil
 import pkg_resources
 
 import biom
@@ -17,11 +16,13 @@ import scipy.optimize
 import seaborn as sns
 import matplotlib.pyplot as plt
 from q2_types.feature_data import DNAIterator
-from trender import TRender
+import q2templates
 
 _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
                        "ALIGNMENT_VIEW=Pairwise&PROGRAM=blastn&DATABASE"
                        "=nt&CMD=Put&QUERY=%s")
+
+TEMPLATES = pkg_resources.resource_filename('q2_feature_table', '_summarize')
 
 
 def view_seq_data(output_dir: str, data: DNAIterator) -> None:
@@ -32,15 +33,8 @@ def view_seq_data(output_dir: str, data: DNAIterator) -> None:
                           'url': _blast_url_template % str_seq,
                           'seq': str_seq})
 
-    TEMPLATES = pkg_resources.resource_filename('q2_feature_table', 'assets')
-    index = TRender('view_seq_data.template', path=TEMPLATES)
-    rendered_index = index.render({'data': sequences})
-
-    with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
-        fh.write(rendered_index)
-
-    for fn in ['bootstrap.min.css', 'qiime_logo_large.png']:
-        shutil.copy(os.path.join(TEMPLATES, fn), os.path.join(output_dir, fn))
+    index = os.path.join(TEMPLATES, 'view_seq_data_assets', 'index.html')
+    q2templates.render(index, output_dir, context={'data': sequences})
 
 
 def view_taxa_data(output_dir: str, data: pd.Series) -> None:
@@ -48,15 +42,8 @@ def view_taxa_data(output_dir: str, data: pd.Series) -> None:
     for _id, taxa in data.iteritems():
         prepped.append({'id': _id, 'taxa': taxa})
 
-    TEMPLATES = pkg_resources.resource_filename('q2_feature_table', 'assets')
-    index = TRender('view_taxa_data.template', path=TEMPLATES)
-    rendered_index = index.render({'data': prepped})
-
-    with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
-        fh.write(rendered_index)
-
-    for fn in ['bootstrap.min.css', 'qiime_logo_large.png']:
-        shutil.copy(os.path.join(TEMPLATES, fn), os.path.join(output_dir, fn))
+    index = os.path.join(TEMPLATES, 'view_taxa_data_assets', 'index.html')
+    q2templates.render(index, output_dir, context={'data': prepped})
 
 
 def summarize(output_dir: str, table: biom.Table) -> None:
@@ -90,34 +77,26 @@ def summarize(output_dir: str, table: biom.Table) -> None:
     feature_summary_table = _format_html_table(
         feature_summary.to_frame('Count'))
 
-    TEMPLATES = pkg_resources.resource_filename('q2_feature_table', 'assets')
-    index = TRender('summarize.template', path=TEMPLATES)
-    rendered_index = index.render({
+    index = os.path.join(TEMPLATES, 'summarize_assets', 'index.html')
+    context = {
         'number_of_samples': len(table.ids(axis='sample')),
         'number_of_features': len(table.ids(axis='observation')),
         'total_counts': int(np.sum(sample_counts)),
         'max_count_even_sampling_depth': max_count_even_sampling_depth,
         'sample_summary_table': sample_summary_table,
         'feature_summary_table': feature_summary_table,
-    })
-
-    with open(os.path.join(output_dir, 'index.html'), 'w') as fh:
-        fh.write(rendered_index)
-
-    for fn in ['bootstrap.min.css', 'qiime_logo_large.png']:
-        shutil.copy(os.path.join(TEMPLATES, fn), os.path.join(output_dir, fn))
+    }
 
     sample_counts.sort_values(inplace=True)
     sample_counts.to_csv(os.path.join(output_dir, 'sample-count-detail.csv'))
 
     sample_counts_table = _format_html_table(sample_counts.to_frame('Counts'))
-    sample_count_template = TRender('sample-count-detail.template',
-                                    path=TEMPLATES)
-    rendered_sample_count_template = sample_count_template.render({
-        'sample_counts_table': sample_counts_table})
+    sample_count_template = os.path.join(
+        TEMPLATES, 'summarize_assets', 'sample-count-detail.html')
 
-    with open(os.path.join(output_dir, 'sample-count-detail.html'), 'w') as fh:
-        fh.write(rendered_sample_count_template)
+    context.update({'sample_counts_table': sample_counts_table})
+    templates = [index, sample_count_template]
+    q2templates.render(templates, output_dir, context=context)
 
 
 def _format_html_table(df):

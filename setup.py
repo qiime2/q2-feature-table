@@ -15,8 +15,13 @@ setup(
     packages=find_packages(),
     install_requires=['qiime >= 2.0.5', 'q2-types >= 0.0.5',
                       'biom-format >= 2.1.5, < 2.2.0', 'scipy', 'seaborn',
-                      'scikit-bio', 'trender'],
-    package_data={'q2_feature_table': ['workflows/*md', 'assets/*']},
+                      'scikit-bio', 'q2templates'],
+    package_data={'q2_feature_table': ['workflows/*md'],
+                  'q2_feature_table._summarize': [
+                        'summarize_assets/*.html',
+                        'view_seq_data_assets/index.html',
+                        'view_taxa_data_assets/index.html'
+                  ]},
     author="Greg Caporaso",
     author_email="gregcaporaso@gmail.com",
     description="Functionality for working with sample by feature tables.",
