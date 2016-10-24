@@ -106,12 +106,12 @@ class FilterSamplesTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             filter_samples(table, where="Subject='subject-1'")
 
-    def test_min_count(self):
+    def test_min_frequency(self):
         # no filtering
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, min_count=1)
+        actual = filter_samples(table, min_frequency=1)
         expected = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                          ['O1', 'O2'],
                          ['S1', 'S2', 'S3'])
@@ -121,7 +121,7 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, min_count=2)
+        actual = filter_samples(table, min_frequency=2)
         expected = Table(np.array([[1, 3], [1, 2]]),
                          ['O1', 'O2'],
                          ['S2', 'S3'])
@@ -131,7 +131,7 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, min_count=3)
+        actual = filter_samples(table, min_frequency=3)
         expected = Table(np.array([[3], [2]]),
                          ['O1', 'O2'],
                          ['S3'])
@@ -141,16 +141,16 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, min_count=42)
+        actual = filter_samples(table, min_frequency=42)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
-    def test_max_count(self):
+    def test_max_frequency(self):
         # no filtering
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, max_count=42)
+        actual = filter_samples(table, max_frequency=42)
         expected = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                          ['O1', 'O2'],
                          ['S1', 'S2', 'S3'])
@@ -160,7 +160,7 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, max_count=4)
+        actual = filter_samples(table, max_frequency=4)
         expected = Table(np.array([[0, 1], [1, 1]]),
                          ['O1', 'O2'],
                          ['S1', 'S2'])
@@ -170,7 +170,7 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, max_count=1)
+        actual = filter_samples(table, max_frequency=1)
         expected = Table(np.array([[1]]),
                          ['O2'],
                          ['S1'])
@@ -180,7 +180,7 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, max_count=0)
+        actual = filter_samples(table, max_frequency=0)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
@@ -351,7 +351,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1' OR Subject='subject-2'"
         actual = filter_samples(table, sample_metadata=metadata, where=where,
-                                min_count=1)
+                                min_frequency=1)
         expected = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                          ['O1', 'O2'],
                          ['S1', 'S2', 'S3'])
@@ -367,7 +367,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1'"
         actual = filter_samples(table, sample_metadata=metadata, where=where,
-                                min_count=2)
+                                min_frequency=2)
         expected = Table(np.array([[1], [1]]),
                          ['O1', 'O2'],
                          ['S2'])
@@ -378,7 +378,7 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, min_count=1, max_count=5)
+        actual = filter_samples(table, min_frequency=1, max_frequency=5)
         expected = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                          ['O1', 'O2'],
                          ['S1', 'S2', 'S3'])
@@ -388,7 +388,7 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, min_count=2, max_count=2)
+        actual = filter_samples(table, min_frequency=2, max_frequency=2)
         expected = Table(np.array([[1], [1]]),
                          ['O1', 'O2'],
                          ['S2'])
@@ -398,7 +398,7 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, max_count=2, min_features=2)
+        actual = filter_samples(table, max_frequency=2, min_features=2)
         expected = Table(np.array([[1], [1]]),
                          ['O1', 'O2'],
                          ['S2'])
@@ -413,12 +413,12 @@ class FilterFeaturesTests(unittest.TestCase):
         well as the 'sample' axis.
     """
 
-    def test_min_count(self):
+    def test_min_frequency(self):
         # no filtering
         table = Table(np.array([[0, 1, 1], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_features(table, min_count=2)
+        actual = filter_features(table, min_frequency=2)
         expected = Table(np.array([[0, 1, 1], [1, 1, 2]]),
                          ['O1', 'O2'],
                          ['S1', 'S2', 'S3'])
@@ -428,7 +428,7 @@ class FilterFeaturesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 1], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_features(table, min_count=3)
+        actual = filter_features(table, min_frequency=3)
         expected = Table(np.array([[1, 1, 2]]),
                          ['O2'],
                          ['S1', 'S2', 'S3'])
@@ -438,7 +438,7 @@ class FilterFeaturesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 1], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_features(table, min_count=5)
+        actual = filter_features(table, min_frequency=5)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 

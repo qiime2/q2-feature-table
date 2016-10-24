@@ -109,32 +109,32 @@ _where_description = ("The where parameter takes a SQLite WHERE clause. "
 plugin.methods.register_function(
     function=q2_feature_table.filter_samples,
     inputs={'table': FeatureTable[Frequency]},
-    parameters={'min_count': Int,
-                'max_count': Int,
+    parameters={'min_frequency': Int,
+                'max_frequency': Int,
                 'min_features': Int,
                 'max_features': Int,
                 'sample_metadata': Metadata,
                 'where': Str},
     outputs={'filtered_table': FeatureTable[Frequency]},
     name="Filter samples from table.",
-    description="Filter samples from table based on counts and/or "
-                "metadata. Any features with a count of zero after sample "
+    description="Filter samples from table based on frequency and/or "
+                "metadata. Any features with a frequency of zero after sample "
                 "filtering will also be removed.\n\n%s" % _where_description
 )
 
 plugin.methods.register_function(
     function=q2_feature_table.filter_features,
     inputs={'table': FeatureTable[Frequency]},
-    parameters={'min_count': Int,
-                'max_count': Int,
+    parameters={'min_frequency': Int,
+                'max_frequency': Int,
                 'min_samples': Int,
                 'max_samples': Int,
                 'feature_metadata': Metadata,
                 'where': Str},
     outputs={'filtered_table': FeatureTable[Frequency]},
     name="Filter features from table.",
-    description="Filter features from table based on counts and/or "
-                "metadata. Any samples with a count of zero after feature "
+    description="Filter features from table based on frequency and/or "
+                "metadata. Any samples with a frequency of zero after feature "
                 "filtering will also be removed.\n\n%s" % _where_description
 )
 

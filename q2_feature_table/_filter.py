@@ -55,24 +55,24 @@ def _ids_where(metadata, where):
     return ids
 
 
-def _get_biom_filter_function(ids_to_keep, min_count, max_count,
+def _get_biom_filter_function(ids_to_keep, min_frequency, max_frequency,
                               min_nonzero, max_nonzero):
     ids_to_keep = set(ids_to_keep)
-    if max_count is None:
-        max_count = np.inf
+    if max_frequency is None:
+        max_frequency = np.inf
     if max_nonzero is None:
         max_nonzero = np.inf
 
     def f(data_vector, id_, metadata):
         return (id_ in ids_to_keep) and \
-               (min_count <= data_vector.sum() <= max_count) and \
+               (min_frequency <= data_vector.sum() <= max_frequency) and \
                (min_nonzero <= (data_vector > 0).sum() <= max_nonzero)
     return f
 
 
-def _filter(table, min_count, max_count, min_nonzero, max_nonzero, metadata,
-            where, axis):
-    if min_count == 0 and max_count is None and min_nonzero == 0 and\
+def _filter(table, min_frequency, max_frequency, min_nonzero, max_nonzero,
+            metadata, where, axis):
+    if min_frequency == 0 and max_frequency is None and min_nonzero == 0 and\
        max_nonzero is None and metadata is None and where is None:
         raise ValueError("No filtering was requested.")
     if metadata is None and where is not None:
@@ -86,36 +86,40 @@ def _filter(table, min_count, max_count, min_nonzero, max_nonzero, metadata,
     else:
         ids_to_keep = table.ids(axis=axis)
 
-    filter_fn = _get_biom_filter_function(ids_to_keep, min_count, max_count,
-                                          min_nonzero, max_nonzero)
+    filter_fn = _get_biom_filter_function(ids_to_keep, min_frequency,
+                                          max_frequency, min_nonzero,
+                                          max_nonzero)
     table.filter(filter_fn, axis=axis, inplace=True)
     return table
 
 
-def filter_samples(table: biom.Table, min_count: int=0, max_count: int=None,
-                   min_features: int=0, max_features: int=None,
+def filter_samples(table: biom.Table, min_frequency: int=0,
+                   max_frequency: int=None, min_features: int=0,
+                   max_features: int=None,
                    sample_metadata: qiime.Metadata=None, where: str=None)\
                   -> biom.Table:
-    result = _filter(table=table, min_count=min_count, max_count=max_count,
-                     min_nonzero=min_features, max_nonzero=max_features,
-                     metadata=sample_metadata, where=where, axis='sample')
+    result = _filter(table=table, min_frequency=min_frequency,
+                     max_frequency=max_frequency, min_nonzero=min_features,
+                     max_nonzero=max_features, metadata=sample_metadata,
+                     where=where, axis='sample')
     # drop features that now have zero count
-    result = _filter(table=table, min_count=1, max_count=None,
+    result = _filter(table=table, min_frequency=1, max_frequency=None,
                      min_nonzero=0, max_nonzero=None, metadata=None,
                      where=None, axis='observation')
     return result
 
 
-def filter_features(table: biom.Table, min_count: int=0, max_count: int=None,
-                    min_samples: int=0, max_samples: int=None,
+def filter_features(table: biom.Table, min_frequency: int=0,
+                    max_frequency: int=None, min_samples: int=0,
+                    max_samples: int=None,
                     feature_metadata: qiime.Metadata=None, where: str=None)\
                    -> biom.Table:
-    result = _filter(table=table, min_count=min_count, max_count=max_count,
-                     min_nonzero=min_samples, max_nonzero=max_samples,
-                     metadata=feature_metadata, where=where,
-                     axis='observation')
+    result = _filter(table=table, min_frequency=min_frequency,
+                     max_frequency=max_frequency, min_nonzero=min_samples,
+                     max_nonzero=max_samples, metadata=feature_metadata,
+                     where=where, axis='observation')
     # drop samples that now have zero count
-    result = _filter(table=table, min_count=1, max_count=None,
+    result = _filter(table=table, min_frequency=1, max_frequency=None,
                      min_nonzero=0, max_nonzero=None, metadata=None,
                      where=None, axis='sample')
     return result
