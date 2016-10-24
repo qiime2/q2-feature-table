@@ -20,11 +20,9 @@ def _ids_where(metadata, where):
     conn.row_factory = lambda cursor, row: row[0]
 
     df.to_sql('metadata', conn)
+    id_column = df.index.name
 
     c = conn.cursor()
-    c.execute('SELECT * FROM metadata ORDER BY ROWID ASC LIMIT 1;')
-    names = [description[0] for description in c.description]
-    id_column = names[0]
 
     # In general we wouldn't want to format our query in this way because
     # it leaves us open to sql injection, but it seems acceptable here for
@@ -42,8 +40,8 @@ def _ids_where(metadata, where):
     # 3) sqlite3.Cursor.execute will only execute a single statement so
     #    inserting multiple statements (e.g., "Subject='subject-1'; DROP...")
     #    will result in an OperationalError being raised.
-    query = ('SELECT "{}" FROM metadata WHERE {} GROUP BY "{}" '
-             'ORDER BY "{}";'.format(id_column, where, id_column, id_column))
+    query = ('SELECT "{0}" FROM metadata WHERE {1} GROUP BY "{0}" '
+             'ORDER BY "{0}";'.format(id_column, where))
 
     try:
         c.execute(query)

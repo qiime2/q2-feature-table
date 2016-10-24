@@ -44,7 +44,7 @@ class IdsWhereTests(unittest.TestCase):
     def test_simple_expression(self):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
-                          index=['S1', 'S2', 'S3'])
+                          index=pd.Index(['S1', 'S2', 'S3'], name='id'))
         metadata = qiime.Metadata(df)
 
         where = "Subject='subject-1'"
@@ -75,7 +75,7 @@ class IdsWhereTests(unittest.TestCase):
     def test_more_complex_expressions(self):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
-                          index=['S1', 'S2', 'S3'])
+                          index=pd.Index(['S1', 'S2', 'S3'], name='id'))
         metadata = qiime.Metadata(df)
 
         where = "Subject='subject-1' OR Subject='subject-2'"
