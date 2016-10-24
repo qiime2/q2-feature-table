@@ -118,7 +118,7 @@ plugin.methods.register_function(
     outputs={'filtered_table': FeatureTable[Frequency]},
     name="Filter samples from table.",
     description="Filter samples from table based on counts and/or "
-                "metadata. Any samples with a count of zero after feature "
+                "metadata. Any features with a count of zero after sample "
                 "filtering will also be removed.\n\n%s" % _where_description
 )
 
@@ -134,7 +134,7 @@ plugin.methods.register_function(
     outputs={'filtered_table': FeatureTable[Frequency]},
     name="Filter features from table.",
     description="Filter features from table based on counts and/or "
-                "metadata. Any features with a count of zero after sample "
+                "metadata. Any samples with a count of zero after feature "
                 "filtering will also be removed.\n\n%s" % _where_description
 )
 
