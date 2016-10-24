@@ -15,7 +15,7 @@ setup(
     packages=find_packages(),
     install_requires=['qiime >= 2.0.5', 'q2-types >= 0.0.5',
                       'biom-format >= 2.1.5, < 2.2.0', 'scipy', 'seaborn',
-                      'scikit-bio', 'trender'],
+                      'scikit-bio', 'trender', 'numpy'],
     package_data={'q2_feature_table': ['workflows/*md', 'assets/*']},
     author="Greg Caporaso",
     author_email="gregcaporaso@gmail.com",
