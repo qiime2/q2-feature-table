@@ -41,6 +41,27 @@ class IdsWhereTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             _ids_where(metadata, where)
 
+    def test_invalid_where(self):
+        df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
+                           'SampleType': ['gut', 'tongue', 'gut']},
+                          index=['S1', 'S2', 'S3'])
+        metadata = qiime.Metadata(df)
+
+        where = "not-a-column-name='subject-1'"
+        with self.assertRaises(ValueError):
+            _ids_where(metadata, where)
+
+    def test_empty_result(self):
+        df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
+                           'SampleType': ['gut', 'tongue', 'gut']},
+                          index=pd.Index(['S1', 'S2', 'S3'], name='id'))
+        metadata = qiime.Metadata(df)
+
+        where = "Subject='subject-3'"
+        actual = _ids_where(metadata, where)
+        expected = []
+        self.assertEqual(actual, expected)
+
     def test_simple_expression(self):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
@@ -281,6 +302,20 @@ class FilterSamplesTests(unittest.TestCase):
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
+    def test_sample_metadata_extra_ids(self):
+        df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
+                           'SampleType': ['gut', 'tongue', 'gut']},
+                          index=['S-not-in-table', 'S2', 'S3'])
+        metadata = qiime.Metadata(df)
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table, sample_metadata=metadata)
+        expected = Table(np.array([[1, 3], [1, 2]]),
+                         ['O1', 'O2'],
+                         ['S2', 'S3'])
+        self.assertEqual(actual, expected)
+
     def test_where(self):
         # no filtering
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
@@ -340,7 +375,7 @@ class FilterSamplesTests(unittest.TestCase):
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
-    def test_combine_id_and_count_filters(self):
+    def test_combine_id_and_frequency_filters(self):
         # no filtering
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
@@ -357,7 +392,7 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S1', 'S2', 'S3'])
         self.assertEqual(actual, expected)
 
-        # id and count filters active
+        # id and frequency filters active
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
@@ -373,7 +408,7 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S2'])
         self.assertEqual(actual, expected)
 
-    def test_combine_count_filters(self):
+    def test_combine_frequency_filters(self):
         # no filtering
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],

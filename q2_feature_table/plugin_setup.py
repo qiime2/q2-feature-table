@@ -6,6 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import qiime
 from qiime.plugin import Plugin, Int, Properties, Metadata, Str
 
 import q2_feature_table
@@ -101,10 +102,9 @@ plugin.methods.register_function(
 )
 
 _where_description = ("The where parameter takes a SQLite WHERE clause. "
-                      "You can get help forming these expressions at the "
-                      "following links:\n"
-                      "https://en.wikipedia.org/wiki/Where_(SQL)\n"
-                      "http://www.w3schools.com/sql/sql_where.asp")
+                      "See the table filtering tutorial for additional "
+                      "detail: https://docs.qiime2.org/%s/tutorials/"
+                      "table-filtering.html" % qiime.__version__)
 
 plugin.methods.register_function(
     function=q2_feature_table.filter_samples,
@@ -119,7 +119,10 @@ plugin.methods.register_function(
     name="Filter samples from table.",
     description="Filter samples from table based on frequency and/or "
                 "metadata. Any features with a frequency of zero after sample "
-                "filtering will also be removed.\n\n%s" % _where_description
+                "filtering will also be removed. If no value(s) are provided "
+                "for max_frequency or max_features, they will default to "
+                "infinity (i.e., no maximum frequency and/or feature filter "
+                "will be applied).\n\n%s" % _where_description
 )
 
 plugin.methods.register_function(
@@ -135,7 +138,10 @@ plugin.methods.register_function(
     name="Filter features from table.",
     description="Filter features from table based on frequency and/or "
                 "metadata. Any samples with a frequency of zero after feature "
-                "filtering will also be removed.\n\n%s" % _where_description
+                "filtering will also be removed. If no value(s) are provided "
+                "for max_frequency and/or max_samples, they will default to "
+                "infinity (i.e., no maximum frequency and/or sample filter "
+                "will be applied).\n\n%s" % _where_description
 )
 
 plugin.visualizers.register_function(
