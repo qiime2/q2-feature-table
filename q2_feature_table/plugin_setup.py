@@ -6,12 +6,12 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime.plugin import Plugin, Int, Properties
+import qiime
+from qiime.plugin import Plugin, Int, Properties, Metadata, Str
 
 import q2_feature_table
 from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence)
-from q2_types.tree import Phylogeny, Rooted, Unrooted
 from q2_types.feature_data import FeatureData, Sequence, Taxonomy
 
 plugin = Plugin(
@@ -101,6 +101,49 @@ plugin.methods.register_function(
                 "result."
 )
 
+_where_description = ("The where parameter takes a SQLite WHERE clause. "
+                      "See the table filtering tutorial for additional "
+                      "detail: https://docs.qiime2.org/%s/tutorials/"
+                      "table-filtering.html" % qiime.__version__)
+
+plugin.methods.register_function(
+    function=q2_feature_table.filter_samples,
+    inputs={'table': FeatureTable[Frequency]},
+    parameters={'min_frequency': Int,
+                'max_frequency': Int,
+                'min_features': Int,
+                'max_features': Int,
+                'sample_metadata': Metadata,
+                'where': Str},
+    outputs={'filtered_table': FeatureTable[Frequency]},
+    name="Filter samples from table.",
+    description="Filter samples from table based on frequency and/or "
+                "metadata. Any features with a frequency of zero after sample "
+                "filtering will also be removed. If no value(s) are provided "
+                "for max_frequency or max_features, they will default to "
+                "infinity (i.e., no maximum frequency and/or feature filter "
+                "will be applied).\n\n%s" % _where_description
+)
+
+plugin.methods.register_function(
+    function=q2_feature_table.filter_features,
+    inputs={'table': FeatureTable[Frequency]},
+    parameters={'min_frequency': Int,
+                'max_frequency': Int,
+                'min_samples': Int,
+                'max_samples': Int,
+                'feature_metadata': Metadata,
+                'where': Str},
+    outputs={'filtered_table': FeatureTable[Frequency]},
+    name="Filter features from table.",
+    description="Filter features from table based on frequency and/or "
+                "metadata. Any samples with a frequency of zero after feature "
+                "filtering will also be removed. If no value(s) are provided "
+                "for max_frequency and/or max_samples, they will default to "
+                "infinity (i.e., no maximum frequency and/or sample filter "
+                "will be applied).\n\n%s" % _where_description
+)
+
 plugin.visualizers.register_function(
     function=q2_feature_table.summarize,
     inputs={'table': FeatureTable[Frequency | RelativeFrequency |
@@ -127,18 +170,4 @@ plugin.visualizers.register_function(
     name='View taxonomy associated with each feature',
     description="Generate tabular view of feature identifier to taxonomic "
                 "assignment mapping."
-)
-
-plugin.methods.register_function(
-    function=q2_feature_table.filter,
-    inputs={'table': FeatureTable[Frequency],
-            'tree': Phylogeny[Rooted | Unrooted]},
-    parameters={},
-    outputs=[('filtered_table', FeatureTable[Frequency])],
-    name="Remove features from table if they're not present in tree.",
-    description=("This method is a placeholder and will be generalized to "
-                 "support different types of filtering, including obtaining "
-                 "ids from different data types and filtering on both axes. "
-                 "See https://github.com/qiime2/q2-feature-table/issues/14 to "
-                 "track progress on this.")
 )

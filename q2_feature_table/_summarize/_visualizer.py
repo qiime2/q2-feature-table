@@ -49,8 +49,8 @@ def view_taxa_data(output_dir: str, data: pd.Series) -> None:
 def summarize(output_dir: str, table: biom.Table) -> None:
     sample_summary, sample_counts = _count_summary(table, axis='sample')
 
-    max_count_even_sampling_depth = \
-        _get_max_count_even_sampling_depth(sample_counts)
+    max_frequency_even_sampling_depth = \
+        _get_max_frequency_even_sampling_depth(sample_counts)
     sample_counts_ax = sns.distplot(sample_counts, kde=False, rug=True)
     sample_counts_ax.set_title('Counts per sample')
     sample_counts_ax.set_xlabel('Counts')
@@ -82,7 +82,7 @@ def summarize(output_dir: str, table: biom.Table) -> None:
         'number_of_samples': len(table.ids(axis='sample')),
         'number_of_features': len(table.ids(axis='observation')),
         'total_counts': int(np.sum(sample_counts)),
-        'max_count_even_sampling_depth': max_count_even_sampling_depth,
+        'max_frequency_even_sampling_depth': max_frequency_even_sampling_depth,
         'sample_summary_table': sample_summary_table,
         'feature_summary_table': feature_summary_table,
     }
@@ -122,7 +122,7 @@ def _count_summary(table, axis='sample'):
     return summary, counts
 
 
-def _get_max_count_even_sampling_depth(counts):
+def _get_max_frequency_even_sampling_depth(counts):
     return _get_depth_for_max_sequence_count(counts)
 
 
