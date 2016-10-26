@@ -14,7 +14,7 @@ setup(
     version='0.0.5',
     packages=find_packages(),
     install_requires=['qiime >= 2.0.5', 'q2-types >= 0.0.5',
-                      'biom-format >= 2.1.5, < 2.2.0', 'scipy', 'seaborn',
+                      'biom-format >= 2.1.5, < 2.2.0', 'seaborn',
                       'scikit-bio', 'q2templates', 'numpy'],
     package_data={'q2_feature_table': ['workflows/*md'],
                   'q2_feature_table._summarize': [

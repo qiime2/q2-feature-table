@@ -12,7 +12,6 @@ import pkg_resources
 import biom
 import numpy as np
 import pandas as pd
-import scipy.optimize
 import seaborn as sns
 import matplotlib.pyplot as plt
 from q2_types.feature_data import DNAIterator
@@ -47,42 +46,40 @@ def view_taxa_data(output_dir: str, data: pd.Series) -> None:
 
 
 def summarize(output_dir: str, table: biom.Table) -> None:
+    number_of_samples = table.shape[1]
+    number_of_features = table.shape[0]
+
     sample_summary, sample_counts = _count_summary(table, axis='sample')
+    if number_of_samples > 1:
+        sample_counts_ax = sns.distplot(sample_counts, kde=False, rug=True)
+        sample_counts_ax.set_xlabel('Frequency per sample')
+        sample_counts_ax.get_figure().savefig(
+            os.path.join(output_dir, 'sample-counts.pdf'))
+        sample_counts_ax.get_figure().savefig(
+            os.path.join(output_dir, 'sample-counts.png'))
+        plt.gcf().clear()
 
-    max_frequency_even_sampling_depth = \
-        _get_max_frequency_even_sampling_depth(sample_counts)
-    sample_counts_ax = sns.distplot(sample_counts, kde=False, rug=True)
-    sample_counts_ax.set_title('Counts per sample')
-    sample_counts_ax.set_xlabel('Counts')
-    sample_counts_ax.set_ylabel('Frequency')
-    sample_counts_ax.get_figure().savefig(
-        os.path.join(output_dir, 'sample-counts.pdf'))
-    sample_counts_ax.get_figure().savefig(
-        os.path.join(output_dir, 'sample-counts.png'))
-
-    plt.gcf().clear()
     feature_summary, feature_counts = _count_summary(table, axis='observation')
-    feature_counts_ax = sns.distplot(feature_counts, kde=False, rug=True)
-    feature_counts_ax.set_title('Counts per feature')
-    feature_counts_ax.set_xlabel('Counts')
-    feature_counts_ax.set_ylabel('Frequency')
-    feature_counts_ax.set_xscale('log')
-    feature_counts_ax.set_yscale('log')
-    feature_counts_ax.get_figure().savefig(
-        os.path.join(output_dir, 'feature-counts.pdf'))
-    feature_counts_ax.get_figure().savefig(
-        os.path.join(output_dir, 'feature-counts.png'))
+    if number_of_features > 1:
+        feature_counts_ax = sns.distplot(feature_counts, kde=False, rug=True)
+        feature_counts_ax.set_xlabel('Frequency per feature')
+        feature_counts_ax.set_xscale('log')
+        feature_counts_ax.set_yscale('log')
+        feature_counts_ax.get_figure().savefig(
+            os.path.join(output_dir, 'feature-counts.pdf'))
+        feature_counts_ax.get_figure().savefig(
+            os.path.join(output_dir, 'feature-counts.png'))
 
-    sample_summary_table = _format_html_table(sample_summary.to_frame('Count'))
+    sample_summary_table = _format_html_table(
+        sample_summary.to_frame('Frequency'))
     feature_summary_table = _format_html_table(
-        feature_summary.to_frame('Count'))
+        feature_summary.to_frame('Frequency'))
 
     index = os.path.join(TEMPLATES, 'summarize_assets', 'index.html')
     context = {
-        'number_of_samples': len(table.ids(axis='sample')),
-        'number_of_features': len(table.ids(axis='observation')),
+        'number_of_samples': number_of_samples,
+        'number_of_features': number_of_features,
         'total_counts': int(np.sum(sample_counts)),
-        'max_frequency_even_sampling_depth': max_frequency_even_sampling_depth,
         'sample_summary_table': sample_summary_table,
         'feature_summary_table': feature_summary_table,
     }
@@ -90,7 +87,8 @@ def summarize(output_dir: str, table: biom.Table) -> None:
     sample_counts.sort_values(inplace=True)
     sample_counts.to_csv(os.path.join(output_dir, 'sample-count-detail.csv'))
 
-    sample_counts_table = _format_html_table(sample_counts.to_frame('Counts'))
+    sample_counts_table = _format_html_table(
+        sample_counts.to_frame('Frequency'))
     sample_count_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'sample-count-detail.html')
 
@@ -116,28 +114,8 @@ def _count_summary(table, axis='sample'):
 
     summary = pd.Series([counts.min(), counts.quantile(0.25), counts.median(),
                          counts.quantile(0.75), counts.max(), counts.mean()],
-                        index=['Minimum count', '1st quartile', 'Median count',
-                               '3rd quartile', 'Maximum count', 'Mean count'])
+                        index=['Minimum frequency', '1st quartile',
+                               'Median frequency', '3rd quartile',
+                               'Maximum frequency', 'Mean frequency'])
     summary.sort_values()
     return summary, counts
-
-
-def _get_max_frequency_even_sampling_depth(counts):
-    return _get_depth_for_max_sequence_count(counts)
-
-
-def _get_depth_for_max_sequence_count(counts):
-    """Find the even sampling depth that retains the most sequences."""
-    def f(d):
-        return -1 * _summarize_even_sampling_depth(d, counts)[2]
-
-    res = scipy.optimize.minimize_scalar(
-            f, bounds=(counts.min(), counts.max()), method='bounded')
-    return int(np.floor(res.x))
-
-
-def _summarize_even_sampling_depth(even_sampling_depth, counts):
-    samples_retained = (counts >= even_sampling_depth)
-    num_samples_retained = samples_retained.sum()
-    num_sequences_retained = num_samples_retained * even_sampling_depth
-    return samples_retained, num_samples_retained, num_sequences_retained

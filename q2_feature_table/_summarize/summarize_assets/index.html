@@ -24,53 +24,54 @@
                 <td>{{ number_of_features }}</td>
               </tr>
               <tr>
-                <th scope="row">Total counts</th>
+                <th scope="row">Total frequency</th>
                 <td>{{ total_counts }}</td>
               </tr>
             </tbody>
           </table>
-          <p>
-            An even sampling (i.e., rarefaction) depth of {{ max_frequency_even_sampling_depth }}
-            will retain the largest number of sequences.
-          </p>
         </div>
       </div>
 
-      <h1>Count per sample summary</h1>
+      <h1>Frequency per sample</h1>
 
       <div class="row">
         <div class="col-lg-6">
           {{ sample_summary_table }}
-        </div>
-        <div class="col-lg-6">
-          <img src="sample-counts.png" width="700" height="500" class="center-block">
-          <p class="text-center">
-            Image source (<a href="sample-counts.png">png</a> |
-            <a href="sample-counts.pdf">pdf</a>)
-          </p>
-          <p class="text-center">
-            Counts per sample detail (<a href="sample-count-detail.csv">csv</a> |
+          <p class="text-left">
+            Frequency per sample detail (<a href="sample-count-detail.csv">csv</a> |
             <a href="sample-count-detail.html">html</a>)
           </p>
         </div>
+        {% if number_of_samples > 1 %}
+        <div class="col-lg-6">
+          <p class="text-center">
+              <a href="sample-counts.pdf">
+                  <img src="sample-counts.png" width="700" height="500" class="center-block">
+                  <br>
+                  <p class="text-center">Download as PDF</p>
+              </a>
+          </p>
+        </div>
+        {% endif %}
       </div>
 
       <div class="row">
         <div class="col-md-6">
-          <h1>Count per feature summary</h1>
+          <h1>Frequency per feature</h1>
 
           {{ feature_summary_table }}
         </div>
+        {% if number_of_features > 1 %}
         <div class="col-md-6">
-          <h1>Count per feature detail</h1>
-          <p>
-            <img src="feature-counts.png" width="700" height="500" class="center-block">
-            <p class="text-center">
-              Image source (<a href="feature-counts.png">png</a> |
-              <a href="feature-counts.pdf">pdf</a>)
-            </p>
+          <p class="text-center">
+              <a href="feature-counts.pdf">
+                  <img src="feature-counts.png" width="700" height="500" class="center-block">
+                  <br>
+                  <p class="text-center">Download as PDF</p>
+              </a>
           </p>
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
