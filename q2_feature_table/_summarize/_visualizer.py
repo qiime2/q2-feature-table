@@ -46,13 +46,13 @@ def view_taxa_data(output_dir: str, data: pd.Series) -> None:
 
 
 def summarize(output_dir: str, table: biom.Table) -> None:
-    number_of_samples = len(table.ids(axis='sample'))
-    number_of_features = len(table.ids(axis='observation'))
+    number_of_samples = table.shape[1]
+    number_of_features = table.shape[0]
 
     sample_summary, sample_counts = _count_summary(table, axis='sample')
     if number_of_samples > 1:
         sample_counts_ax = sns.distplot(sample_counts, kde=False, rug=True)
-        sample_counts_ax.set_xlabel('Frequency of sample')
+        sample_counts_ax.set_xlabel('Frequency per sample')
         sample_counts_ax.get_figure().savefig(
             os.path.join(output_dir, 'sample-counts.pdf'))
         sample_counts_ax.get_figure().savefig(
@@ -62,7 +62,7 @@ def summarize(output_dir: str, table: biom.Table) -> None:
     feature_summary, feature_counts = _count_summary(table, axis='observation')
     if number_of_features > 1:
         feature_counts_ax = sns.distplot(feature_counts, kde=False, rug=True)
-        feature_counts_ax.set_xlabel('Frequency of feature')
+        feature_counts_ax.set_xlabel('Frequency per feature')
         feature_counts_ax.set_xscale('log')
         feature_counts_ax.set_yscale('log')
         feature_counts_ax.get_figure().savefig(
@@ -87,7 +87,8 @@ def summarize(output_dir: str, table: biom.Table) -> None:
     sample_counts.sort_values(inplace=True)
     sample_counts.to_csv(os.path.join(output_dir, 'sample-count-detail.csv'))
 
-    sample_counts_table = _format_html_table(sample_counts.to_frame('Counts'))
+    sample_counts_table = _format_html_table(
+        sample_counts.to_frame('Frequency'))
     sample_count_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'sample-count-detail.html')
 
