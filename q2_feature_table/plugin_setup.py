@@ -23,16 +23,16 @@ plugin = Plugin(
 
 plugin.methods.register_function(
     function=q2_feature_table.rarefy,
-    # TODO use more restrictive primitive type for `depth`
     inputs={'table': FeatureTable[Frequency]},
-    parameters={'counts_per_sample': Int},
+    parameters={'sampling_depth': Int},
     outputs=[('rarefied_table',
               FeatureTable[Frequency] % Properties('uniform-sampling'))],
     name='Rarefy table',
-    description="Subsample counts from all samples without replacement so "
-                "that the sum of counts in each sample is equal. Samples "
-                "where the sum of counts is less than the requested counts "
-                "per sample will be not be included in the resulting table."
+    description="Subsample frequencies from all samples without replacement "
+                "so that the sum of frequencies in each sample is equal to "
+                "sampling-depth. Samples where the sum of frequencies is less "
+                "than sampling-depth will be not be included in the resulting "
+                "table."
 )
 
 plugin.methods.register_function(
@@ -54,7 +54,8 @@ plugin.methods.register_function(
          FeatureTable[RelativeFrequency] % Properties('uniform-sampling'))],
     name="Convert to relative frequencies",
     description="Convert frequencies to relative frequencies by dividing each "
-                "count in a sample by the sum of counts in that sample."
+                "frequency in a sample by the sum of frequencies in that "
+                "sample."
 )
 
 plugin.methods.register_function(

@@ -25,7 +25,7 @@
               </tr>
               <tr>
                 <th scope="row">Total frequency</th>
-                <td>{{ total_counts }}</td>
+                <td>{{ total_frequencies }}</td>
               </tr>
             </tbody>
           </table>
@@ -38,15 +38,15 @@
         <div class="col-lg-6">
           {{ sample_summary_table }}
           <p class="text-left">
-            Frequency per sample detail (<a href="sample-count-detail.csv">csv</a> |
-            <a href="sample-count-detail.html">html</a>)
+            Frequency per sample detail (<a href="sample-frequency-detail.csv">csv</a> |
+            <a href="sample-frequency-detail.html">html</a>)
           </p>
         </div>
         {% if number_of_samples > 1 %}
         <div class="col-lg-6">
           <p class="text-center">
-              <a href="sample-counts.pdf">
-                  <img src="sample-counts.png" width="700" height="500" class="center-block">
+              <a href="sample-frequencies.pdf">
+                  <img src="sample-frequencies.png" width="700" height="500" class="center-block">
                   <br>
                   <p class="text-center">Download as PDF</p>
               </a>
@@ -64,8 +64,8 @@
         {% if number_of_features > 1 %}
         <div class="col-md-6">
           <p class="text-center">
-              <a href="feature-counts.pdf">
-                  <img src="feature-counts.png" width="700" height="500" class="center-block">
+              <a href="feature-frequencies.pdf">
+                  <img src="feature-frequencies.png" width="700" height="500" class="center-block">
                   <br>
                   <p class="text-center">Download as PDF</p>
               </a>
