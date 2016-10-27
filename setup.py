@@ -19,8 +19,7 @@ setup(
     package_data={'q2_feature_table': ['workflows/*md'],
                   'q2_feature_table._summarize': [
                         'summarize_assets/*.html',
-                        'view_seq_data_assets/index.html',
-                        'view_taxa_data_assets/index.html'
+                        'tabulate_seqs_assets/index.html'
                   ]},
     author="Greg Caporaso",
     author_email="gregcaporaso@gmail.com",

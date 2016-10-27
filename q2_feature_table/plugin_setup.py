@@ -155,20 +155,11 @@ plugin.visualizers.register_function(
 )
 
 plugin.visualizers.register_function(
-    function=q2_feature_table.view_seq_data,
+    function=q2_feature_table.tabulate_seqs,
     inputs={'data': FeatureData[Sequence]},
     parameters={},
     name='View sequence associated with each feature',
     description="Generate tabular view of feature identifier to sequence "
                 "mapping, including links to BLAST each sequence against "
                 "the NCBI nt database."
-)
-
-plugin.visualizers.register_function(
-    function=q2_feature_table.view_taxa_data,
-    inputs={'data': FeatureData[Taxonomy]},
-    parameters={},
-    name='View taxonomy associated with each feature',
-    description="Generate tabular view of feature identifier to taxonomic "
-                "assignment mapping."
 )
