@@ -24,7 +24,7 @@ _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
 TEMPLATES = pkg_resources.resource_filename('q2_feature_table', '_summarize')
 
 
-def view_seq_data(output_dir: str, data: DNAIterator) -> None:
+def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
     sequences = []
     for sequence in data:
         str_seq = str(sequence)
@@ -32,17 +32,8 @@ def view_seq_data(output_dir: str, data: DNAIterator) -> None:
                           'url': _blast_url_template % str_seq,
                           'seq': str_seq})
 
-    index = os.path.join(TEMPLATES, 'view_seq_data_assets', 'index.html')
+    index = os.path.join(TEMPLATES, 'tabulate_seqs_assets', 'index.html')
     q2templates.render(index, output_dir, context={'data': sequences})
-
-
-def view_taxa_data(output_dir: str, data: pd.Series) -> None:
-    prepped = []
-    for _id, taxa in data.iteritems():
-        prepped.append({'id': _id, 'taxa': taxa})
-
-    index = os.path.join(TEMPLATES, 'view_taxa_data_assets', 'index.html')
-    q2templates.render(index, output_dir, context={'data': prepped})
 
 
 def summarize(output_dir: str, table: biom.Table) -> None:

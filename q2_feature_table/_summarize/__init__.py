@@ -6,6 +6,6 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from ._visualizer import (summarize, view_seq_data, view_taxa_data)
+from ._visualizer import (summarize, tabulate_seqs)
 
-__all__ = ['summarize', 'view_seq_data', 'view_taxa_data']
+__all__ = ['summarize', 'tabulate_seqs']

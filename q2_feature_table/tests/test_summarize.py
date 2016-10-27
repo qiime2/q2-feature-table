@@ -11,13 +11,12 @@ import unittest
 import tempfile
 
 import skbio
-import pandas as pd
 from q2_types import DNAIterator
 
-from q2_feature_table import (view_seq_data, view_taxa_data)
+from q2_feature_table import tabulate_seqs
 
 
-class ViewSequenceTests(unittest.TestCase):
+class TabulateSeqsTests(unittest.TestCase):
 
     def test_basic(self):
         seqs = DNAIterator(
@@ -25,25 +24,9 @@ class ViewSequenceTests(unittest.TestCase):
                          skbio.DNA('AAAA', metadata={'id': 'seq2'}))))
 
         with tempfile.TemporaryDirectory() as output_dir:
-            view_seq_data(output_dir, seqs)
+            tabulate_seqs(output_dir, seqs)
 
             expected_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(expected_fp))
             self.assertTrue('ACGT</a>' in open(expected_fp).read())
-            self.assertTrue('<td>seq2</td>' in open(expected_fp).read())
-
-
-class ViewFeatureTests(unittest.TestCase):
-
-    def test_basic(self):
-        taxa = pd.Series(['AAA; BBB; CCC', 'AAA; BBB; DDD'],
-                         index=['seq1', 'seq2'])
-
-        with tempfile.TemporaryDirectory() as output_dir:
-            view_taxa_data(output_dir, taxa)
-
-            expected_fp = os.path.join(output_dir, 'index.html')
-            self.assertTrue(os.path.exists(expected_fp))
-            self.assertTrue('<td>AAA; BBB; CCC</td>' in
-                            open(expected_fp).read())
             self.assertTrue('<td>seq2</td>' in open(expected_fp).read())
