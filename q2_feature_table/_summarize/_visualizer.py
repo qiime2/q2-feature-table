@@ -49,26 +49,30 @@ def summarize(output_dir: str, table: biom.Table) -> None:
     number_of_samples = table.shape[1]
     number_of_features = table.shape[0]
 
-    sample_summary, sample_counts = _count_summary(table, axis='sample')
+    sample_summary, sample_frequencies = _frequency_summary(
+        table, axis='sample')
     if number_of_samples > 1:
-        sample_counts_ax = sns.distplot(sample_counts, kde=False, rug=True)
-        sample_counts_ax.set_xlabel('Frequency per sample')
-        sample_counts_ax.get_figure().savefig(
-            os.path.join(output_dir, 'sample-counts.pdf'))
-        sample_counts_ax.get_figure().savefig(
-            os.path.join(output_dir, 'sample-counts.png'))
+        sample_frequencies_ax = sns.distplot(sample_frequencies, kde=False,
+                                             rug=True)
+        sample_frequencies_ax.set_xlabel('Frequency per sample')
+        sample_frequencies_ax.get_figure().savefig(
+            os.path.join(output_dir, 'sample-frequencies.pdf'))
+        sample_frequencies_ax.get_figure().savefig(
+            os.path.join(output_dir, 'sample-frequencies.png'))
         plt.gcf().clear()
 
-    feature_summary, feature_counts = _count_summary(table, axis='observation')
+    feature_summary, feature_frequencies = _frequency_summary(
+        table, axis='observation')
     if number_of_features > 1:
-        feature_counts_ax = sns.distplot(feature_counts, kde=False, rug=True)
-        feature_counts_ax.set_xlabel('Frequency per feature')
-        feature_counts_ax.set_xscale('log')
-        feature_counts_ax.set_yscale('log')
-        feature_counts_ax.get_figure().savefig(
-            os.path.join(output_dir, 'feature-counts.pdf'))
-        feature_counts_ax.get_figure().savefig(
-            os.path.join(output_dir, 'feature-counts.png'))
+        feature_frequencies_ax = sns.distplot(feature_frequencies, kde=False,
+                                              rug=True)
+        feature_frequencies_ax.set_xlabel('Frequency per feature')
+        feature_frequencies_ax.set_xscale('log')
+        feature_frequencies_ax.set_yscale('log')
+        feature_frequencies_ax.get_figure().savefig(
+            os.path.join(output_dir, 'feature-frequencies.pdf'))
+        feature_frequencies_ax.get_figure().savefig(
+            os.path.join(output_dir, 'feature-frequencies.png'))
 
     sample_summary_table = _format_html_table(
         sample_summary.to_frame('Frequency'))
@@ -79,21 +83,22 @@ def summarize(output_dir: str, table: biom.Table) -> None:
     context = {
         'number_of_samples': number_of_samples,
         'number_of_features': number_of_features,
-        'total_counts': int(np.sum(sample_counts)),
+        'total_frequencies': int(np.sum(sample_frequencies)),
         'sample_summary_table': sample_summary_table,
         'feature_summary_table': feature_summary_table,
     }
 
-    sample_counts.sort_values(inplace=True)
-    sample_counts.to_csv(os.path.join(output_dir, 'sample-count-detail.csv'))
+    sample_frequencies.sort_values(inplace=True)
+    sample_frequencies.to_csv(
+        os.path.join(output_dir, 'sample-frequency-detail.csv'))
 
-    sample_counts_table = _format_html_table(
-        sample_counts.to_frame('Frequency'))
-    sample_count_template = os.path.join(
-        TEMPLATES, 'summarize_assets', 'sample-count-detail.html')
+    sample_frequencies_table = _format_html_table(
+        sample_frequencies.to_frame('Frequency'))
+    sample_frequency_template = os.path.join(
+        TEMPLATES, 'summarize_assets', 'sample-frequency-detail.html')
 
-    context.update({'sample_counts_table': sample_counts_table})
-    templates = [index, sample_count_template]
+    context.update({'sample_frequencies_table': sample_frequencies_table})
+    templates = [index, sample_frequency_template]
     q2templates.render(templates, output_dir, context=context)
 
 
@@ -102,20 +107,21 @@ def _format_html_table(df):
     return table.replace('border="1"', 'border="0"')
 
 
-def _counts(table, axis):
+def _frequencies(table, axis):
     result = {}
-    for count_vector, id_, _ in table.iter(axis=axis):
-        result[id_] = float(count_vector.sum())
+    for frequency_vector, id_, _ in table.iter(axis=axis):
+        result[id_] = float(frequency_vector.sum())
     return pd.Series(result)
 
 
-def _count_summary(table, axis='sample'):
-    counts = _counts(table, axis=axis)
+def _frequency_summary(table, axis='sample'):
+    frequencies = _frequencies(table, axis=axis)
 
-    summary = pd.Series([counts.min(), counts.quantile(0.25), counts.median(),
-                         counts.quantile(0.75), counts.max(), counts.mean()],
+    summary = pd.Series([frequencies.min(), frequencies.quantile(0.25),
+                         frequencies.median(), frequencies.quantile(0.75),
+                         frequencies.max(), frequencies.mean()],
                         index=['Minimum frequency', '1st quartile',
                                'Median frequency', '3rd quartile',
                                'Maximum frequency', 'Mean frequency'])
     summary.sort_values()
-    return summary, counts
+    return summary, frequencies
