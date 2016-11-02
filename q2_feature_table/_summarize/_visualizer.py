@@ -99,10 +99,7 @@ def _format_html_table(df):
 
 
 def _frequencies(table, axis):
-    result = {}
-    for frequency_vector, id_, _ in table.iter(axis=axis):
-        result[id_] = float(frequency_vector.sum())
-    return pd.Series(result)
+    return pd.Series(data=table.sum(axis=axis), index=table.ids(axis=axis))
 
 
 def _frequency_summary(table, axis='sample'):
