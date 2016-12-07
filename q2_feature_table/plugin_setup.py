@@ -18,7 +18,14 @@ plugin = Plugin(
     name='feature-table',
     version=q2_feature_table.__version__,
     website='https://github.com/qiime2/q2-feature-table',
-    package='q2_feature_table'
+    package='q2_feature_table',
+    citation_text=('The Biological Observation Matrix (BIOM) format or: how '
+                   'I learned to stop worrying and love the ome-ome. '
+                   'Daniel McDonald, Jose C Clemente, Justin Kuczynski, '
+                   'Jai Ram Rideout, Jesse Stombaugh, Doug Wendel, Andreas '
+                   'Wilke, Susan Huse, John Hufnagle, Folker Meyer, Rob '
+                   'Knight and J Gregory Caporaso. GigaScience 1:7 (2012).'
+                   'doi:10.1186/2047-217X-1-7')
 )
 
 plugin.methods.register_function(
