@@ -123,7 +123,7 @@ plugin.methods.register_function(
                 'max_features': Int,
                 'sample_metadata': Metadata,
                 'where': Str},
-    outputs={'filtered_table': FeatureTable[Frequency]},
+    outputs=[('filtered_table', FeatureTable[Frequency])],
     name="Filter samples from table.",
     description="Filter samples from table based on frequency and/or "
                 "metadata. Any features with a frequency of zero after sample "
@@ -142,7 +142,7 @@ plugin.methods.register_function(
                 'max_samples': Int,
                 'feature_metadata': Metadata,
                 'where': Str},
-    outputs={'filtered_table': FeatureTable[Frequency]},
+    outputs=[('filtered_table', FeatureTable[Frequency])],
     name="Filter features from table.",
     description="Filter features from table based on frequency and/or "
                 "metadata. Any samples with a frequency of zero after feature "

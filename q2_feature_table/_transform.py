@@ -16,8 +16,8 @@ def presence_absence(table: biom.Table) -> biom.Table:
     return table
 
 
-def relative_frequency(table: biom.Table, axis: str='sample') -> biom.Table:
+def relative_frequency(table: biom.Table) -> biom.Table:
     """ Convert feature table in-place from frequencies to relative frequencies
     """
-    table.norm(axis=axis, inplace=True)
+    table.norm(axis='sample', inplace=True)
     return table
