@@ -1,13 +1,13 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016--, QIIME development team.
+# Copyright (c) 2016-2017, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import qiime
-from qiime.plugin import Plugin, Int, Properties, Metadata, Str
+import qiime2
+from qiime2.plugin import Plugin, Int, Properties, Metadata, Str
 
 import q2_feature_table
 from q2_types.feature_table import (
@@ -112,7 +112,7 @@ plugin.methods.register_function(
 _where_description = ("The where parameter takes a SQLite WHERE clause. "
                       "See the table filtering tutorial for additional "
                       "detail: https://docs.qiime2.org/%s/tutorials/"
-                      "table-filtering.html" % qiime.__version__)
+                      "table-filtering.html" % qiime2.__version__)
 
 plugin.methods.register_function(
     function=q2_feature_table.filter_samples,

@@ -1,13 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016--, QIIME development team.
-#
-# Distributed under the terms of the Modified BSD License.
-#
-# The full license is in the file LICENSE, distributed with this software.
-# ----------------------------------------------------------------------------
-
-# ----------------------------------------------------------------------------
-# Copyright (c) 2016--, QIIME development team.
+# Copyright (c) 2016-2017, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -16,7 +8,7 @@
 
 import unittest
 
-import qiime
+import qiime2
 import numpy as np
 import pandas as pd
 from biom.table import Table
@@ -31,7 +23,7 @@ class IdsWhereTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=['S1', 'S2', 'S3'])
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
 
         where = "Subject='subject-1' AND SampleType="
         with self.assertRaises(ValueError):
@@ -45,7 +37,7 @@ class IdsWhereTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=['S1', 'S2', 'S3'])
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
 
         where = "not-a-column-name='subject-1'"
         with self.assertRaises(ValueError):
@@ -55,7 +47,7 @@ class IdsWhereTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='id'))
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
 
         where = "Subject='subject-3'"
         actual = _ids_where(metadata, where)
@@ -66,7 +58,7 @@ class IdsWhereTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='id'))
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
 
         where = "Subject='subject-1'"
         actual = _ids_where(metadata, where)
@@ -97,7 +89,7 @@ class IdsWhereTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='id'))
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
 
         where = "Subject='subject-1' OR Subject='subject-2'"
         actual = _ids_where(metadata, where)
@@ -268,7 +260,7 @@ class FilterSamplesTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=['S1', 'S2', 'S3'])
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -282,7 +274,7 @@ class FilterSamplesTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-2'],
                            'SampleType': ['tongue', 'gut']},
                           index=['S2', 'S3'])
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -294,7 +286,7 @@ class FilterSamplesTests(unittest.TestCase):
 
         # filter all
         df = pd.DataFrame({})
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -306,7 +298,7 @@ class FilterSamplesTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=['S-not-in-table', 'S2', 'S3'])
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -321,7 +313,7 @@ class FilterSamplesTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -336,7 +328,7 @@ class FilterSamplesTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -351,7 +343,7 @@ class FilterSamplesTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -366,7 +358,7 @@ class FilterSamplesTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -380,7 +372,7 @@ class FilterSamplesTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -396,7 +388,7 @@ class FilterSamplesTests(unittest.TestCase):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -481,7 +473,7 @@ class FilterFeaturesTests(unittest.TestCase):
         # no filtering
         df = pd.DataFrame({'SequencedGenome': ['yes', 'yes']},
                           index=['O1', 'O2'])
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -494,7 +486,7 @@ class FilterFeaturesTests(unittest.TestCase):
         # filter one
         df = pd.DataFrame({'SequencedGenome': ['yes']},
                           index=['O1'])
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -506,7 +498,7 @@ class FilterFeaturesTests(unittest.TestCase):
 
         # filter all
         df = pd.DataFrame({})
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -518,7 +510,7 @@ class FilterFeaturesTests(unittest.TestCase):
         # no filtering
         df = pd.DataFrame({'SequencedGenome': ['yes', 'no']},
                           index=pd.Index(['O1', 'O2'], name='feature-id'))
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -532,7 +524,7 @@ class FilterFeaturesTests(unittest.TestCase):
         # filter one
         df = pd.DataFrame({'SequencedGenome': ['yes', 'no']},
                           index=pd.Index(['O1', 'O2'], name='feature-id'))
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -546,7 +538,7 @@ class FilterFeaturesTests(unittest.TestCase):
         # filter all
         df = pd.DataFrame({'SequencedGenome': ['yes', 'no']},
                           index=pd.Index(['O1', 'O2'], name='feature-id'))
-        metadata = qiime.Metadata(df)
+        metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
@@ -554,6 +546,7 @@ class FilterFeaturesTests(unittest.TestCase):
         actual = filter_features(table, feature_metadata=metadata, where=where)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016--, QIIME development team.
+# Copyright (c) 2016-2017, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -10,12 +10,11 @@ from setuptools import setup, find_packages
 
 setup(
     name="q2-feature-table",
-    # TODO stop duplicating version string
-    version='0.0.7.dev0',
+    version='2017.2.0.dev0',
     packages=find_packages(),
-    install_requires=['qiime >= 2.0.6', 'q2-types >= 0.0.6',
-                      'biom-format >= 2.1.5, < 2.2.0', 'seaborn',
-                      'scikit-bio', 'q2templates >= 0.0.6', 'numpy'],
+    install_requires=['qiime2 == 2017.2.*', 'q2-types == 2017.2.*',
+                      'q2templates == 2017.2.*', 'seaborn', 'numpy',
+                      'biom-format >= 2.1.5, < 2.2.0', 'scikit-bio'],
     package_data={'q2_feature_table': ['workflows/*md'],
                   'q2_feature_table._summarize': [
                         'summarize_assets/*.html',
@@ -25,9 +24,9 @@ setup(
     author_email="gregcaporaso@gmail.com",
     description="Functionality for working with sample by feature tables.",
     license='BSD-3-Clause',
-    url="http://www.qiime.org",
+    url="https://qiime2.org",
     entry_points={
-        'qiime.plugins':
+        'qiime2.plugins':
         ['q2-feature-table=q2_feature_table.plugin_setup:plugin']
     }
 )

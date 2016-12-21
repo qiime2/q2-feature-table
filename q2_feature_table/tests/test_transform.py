@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016--, QIIME development team.
+# Copyright (c) 2016-2017, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -42,6 +42,7 @@ class PresenceAbsenceTests(TestCase):
         self.assertEqual(set(a.ids(axis='observation')), set(['O1', 'O2']))
         npt.assert_array_equal(a.matrix_data.toarray(),
                                np.array([[0, 1, 1], [1, 1, 1]]))
+
 
 if __name__ == "__main__":
     main()

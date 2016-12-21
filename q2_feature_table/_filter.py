@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016--, QIIME development team.
+# Copyright (c) 2016-2017, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -9,7 +9,7 @@
 import sqlite3
 
 import biom
-import qiime
+import qiime2
 import numpy as np
 
 
@@ -104,7 +104,7 @@ def _filter(table, min_frequency, max_frequency, min_nonzero, max_nonzero,
 def filter_samples(table: biom.Table, min_frequency: int=0,
                    max_frequency: int=None, min_features: int=0,
                    max_features: int=None,
-                   sample_metadata: qiime.Metadata=None, where: str=None)\
+                   sample_metadata: qiime2.Metadata=None, where: str=None)\
                   -> biom.Table:
     _filter(table=table, min_frequency=min_frequency,
             max_frequency=max_frequency, min_nonzero=min_features,
@@ -117,7 +117,7 @@ def filter_samples(table: biom.Table, min_frequency: int=0,
 def filter_features(table: biom.Table, min_frequency: int=0,
                     max_frequency: int=None, min_samples: int=0,
                     max_samples: int=None,
-                    feature_metadata: qiime.Metadata=None, where: str=None)\
+                    feature_metadata: qiime2.Metadata=None, where: str=None)\
                    -> biom.Table:
     _filter(table=table, min_frequency=min_frequency,
             max_frequency=max_frequency, min_nonzero=min_samples,

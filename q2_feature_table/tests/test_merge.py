@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016--, QIIME development team.
+# Copyright (c) 2016-2017, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -122,6 +122,7 @@ class MergeFeatureTaxonomyTests(unittest.TestCase):
         exp = pd.Series(['a;b;c;d', 'a;b;c;e', 'a;b;c;e'],
                         index=['f1', 'f2', 'f3'])
         pdt.assert_series_equal(obs, exp)
+
 
 if __name__ == "__main__":
     unittest.main()
