@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016--, QIIME development team.
+# Copyright (c) 2016-2017, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -26,6 +26,7 @@ class RarefyTests(TestCase):
         self.assertEqual(set(a.ids(axis='sample')), set(['S2', 'S3']))
         self.assertEqual(set(a.ids(axis='observation')), set(['O1', 'O2']))
         npt.assert_array_equal(a.sum(axis='sample'), np.array([2., 2.]))
+
 
 if __name__ == "__main__":
     main()
