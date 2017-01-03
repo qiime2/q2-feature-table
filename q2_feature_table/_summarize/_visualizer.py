@@ -17,6 +17,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from q2_types.feature_data import DNAIterator
 import q2templates
+import skbio
 
 _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
                        "ALIGNMENT_VIEW=Pairwise&PROGRAM=blastn&DATABASE"
@@ -27,11 +28,13 @@ TEMPLATES = pkg_resources.resource_filename('q2_feature_table', '_summarize')
 
 def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
     sequences = []
-    for sequence in data:
-        str_seq = str(sequence)
-        sequences.append({'id': sequence.metadata['id'],
-                          'url': _blast_url_template % str_seq,
-                          'seq': str_seq})
+    with open(os.path.join(output_dir, 'sequences.fasta'), 'w') as fh:
+        for sequence in data:
+            skbio.io.write(sequence, format='fasta', into=fh)
+            str_seq = str(sequence)
+            sequences.append({'id': sequence.metadata['id'],
+                              'url': _blast_url_template % str_seq,
+                              'seq': str_seq})
 
     index = os.path.join(TEMPLATES, 'tabulate_seqs_assets', 'index.html')
     q2templates.render(index, output_dir, context={'data': sequences})
