@@ -17,15 +17,15 @@
             <tbody>
               <tr>
                 <th scope="row">Number of samples</th>
-                <td>{{ number_of_samples }}</td>
+                <td>{{ "{:,}".format(number_of_samples) }}</td>
               </tr>
               <tr>
                 <th scope="row">Number of features</th>
-                <td>{{ number_of_features }}</td>
+                <td>{{ "{:,}".format(number_of_features) }}</td>
               </tr>
               <tr>
                 <th scope="row">Total frequency</th>
-                <td>{{ total_frequencies }}</td>
+                <td>{{ "{:,}".format(total_frequencies) }}</td>
               </tr>
             </tbody>
           </table>

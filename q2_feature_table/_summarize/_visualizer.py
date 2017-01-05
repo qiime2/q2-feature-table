@@ -14,6 +14,7 @@ import biom
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import matplotlib
 import matplotlib.pyplot as plt
 from q2_types.feature_data import DNAIterator
 import q2templates
@@ -54,6 +55,8 @@ def summarize(output_dir: str, table: biom.Table) -> None:
     if number_of_samples > 1:
         sample_frequencies_ax = sns.distplot(sample_frequencies, kde=False,
                                              rug=True)
+        sample_frequencies_ax.get_xaxis().set_major_formatter(
+            matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
         sample_frequencies_ax.set_xlabel('Frequency per sample')
         sample_frequencies_ax.get_figure().savefig(
             os.path.join(output_dir, 'sample-frequencies.pdf'))
@@ -75,9 +78,9 @@ def summarize(output_dir: str, table: biom.Table) -> None:
             os.path.join(output_dir, 'feature-frequencies.png'))
 
     sample_summary_table = _format_html_table(
-        sample_summary.to_frame('Frequency'))
+        sample_summary.apply('{:,}'.format).to_frame('Frequency'))
     feature_summary_table = _format_html_table(
-        feature_summary.to_frame('Frequency'))
+        feature_summary.apply('{:,}'.format).to_frame('Frequency'))
 
     index = os.path.join(TEMPLATES, 'summarize_assets', 'index.html')
     context = {
