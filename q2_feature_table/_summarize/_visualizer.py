@@ -8,6 +8,7 @@
 
 import os
 import pkg_resources
+import shutil
 
 import biom
 import numpy as np
@@ -34,6 +35,11 @@ def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
 
     index = os.path.join(TEMPLATES, 'tabulate_seqs_assets', 'index.html')
     q2templates.render(index, output_dir, context={'data': sequences})
+
+    js = os.path.join(
+        TEMPLATES, 'tabulate_seqs_assets', 'js', 'tsorter.min.js')
+    os.mkdir(os.path.join(output_dir, 'js'))
+    shutil.copy(js, os.path.join(output_dir, 'js', 'tsorter.min.js'))
 
 
 def summarize(output_dir: str, table: biom.Table) -> None:
