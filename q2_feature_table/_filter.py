@@ -6,53 +6,9 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import sqlite3
-
 import biom
 import qiime2
 import numpy as np
-
-
-def _ids_where(metadata, where):
-    df = metadata.to_dataframe()
-
-    conn = sqlite3.connect(':memory:')
-    conn.row_factory = lambda cursor, row: row[0]
-
-    df.to_sql('metadata', conn)
-    id_column = df.index.name
-
-    c = conn.cursor()
-
-    # In general we wouldn't want to format our query in this way because
-    # it leaves us open to sql injection, but it seems acceptable here for
-    # a few reasons:
-    # 1) This is a throw-away database which we're just creating to have
-    #    access to the query language, so any malicious behavior wouldn't
-    #    impact any data that isn't temporary
-    # 2) The substitution syntax recommended in the docs doesn't allow
-    #    us to specify complex where statements, which is what we need to do
-    #    here. For example, we need to specify things like:
-    #        WHERE Subject='subject-1' AND SampleType='gut'
-    #    but their qmark/named-style syntaxes only supports substition of
-    #    variables, such as:
-    #        WHERE Subject=?
-    # 3) sqlite3.Cursor.execute will only execute a single statement so
-    #    inserting multiple statements (e.g., "Subject='subject-1'; DROP...")
-    #    will result in an OperationalError being raised.
-    query = ('SELECT "{0}" FROM metadata WHERE {1} GROUP BY "{0}" '
-             'ORDER BY "{0}";'.format(id_column, where))
-
-    try:
-        c.execute(query)
-    except sqlite3.OperationalError:
-        conn.close()
-        raise ValueError("Selection of ids failed with query:\n %s"
-                         % query)
-
-    ids = c.fetchall()
-    conn.close()
-    return ids
 
 
 def _get_biom_filter_function(ids_to_keep, min_frequency, max_frequency,
@@ -82,10 +38,8 @@ def _filter(table, min_frequency, max_frequency, min_nonzero, max_nonzero,
         raise ValueError("Metadata must be provided if 'where' is "
                          "specified.")
 
-    if where is not None:
-        ids_to_keep = _ids_where(metadata, where)
-    elif metadata is not None:
-        ids_to_keep = metadata.to_dataframe().index
+    if metadata is not None:
+        ids_to_keep = metadata.ids(where=where)
     else:
         ids_to_keep = table.ids(axis=axis)
 
