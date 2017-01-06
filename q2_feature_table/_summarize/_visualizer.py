@@ -53,8 +53,16 @@ def summarize(output_dir: str, table: biom.Table) -> None:
     sample_summary, sample_frequencies = _frequency_summary(
         table, axis='sample')
     if number_of_samples > 1:
+        # Freedman–Diaconis rule
+        IQR = sample_summary['3rd quartile'] - sample_summary['1st quartile']
+        bin_width = (2 * IQR) / (number_of_samples ** (1/3))
+
+        # Calculate the bin count, with a minimum of 5 bins
+        bins = max((sample_summary['Maximum frequency'] -
+                    sample_summary['Minimum frequency']) / bin_width + 1, 5)
+
         sample_frequencies_ax = sns.distplot(sample_frequencies, kde=False,
-                                             rug=True)
+                                             rug=True, bins=round(bins))
         sample_frequencies_ax.get_xaxis().set_major_formatter(
             matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
         sample_frequencies_ax.set_xlabel('Frequency per sample')
