@@ -119,9 +119,11 @@ def _frequency_summary(table, axis='sample'):
 
     summary = pd.Series([frequencies.min(), frequencies.quantile(0.25),
                          frequencies.median(), frequencies.quantile(0.75),
-                         frequencies.max(), frequencies.mean()],
+                         frequencies.max()],
                         index=['Minimum frequency', '1st quartile',
                                'Median frequency', '3rd quartile',
-                               'Maximum frequency', 'Mean frequency'])
-    summary.sort_values()
+                               'Maximum frequency'])
+    mean = pd.Series([frequencies.mean()], index=['Mean frequency'])
+    summary.sort_values(ascending=False, inplace=True)
+    summary = mean.append(summary)
     return summary, frequencies
