@@ -92,16 +92,24 @@ def summarize(output_dir: str, table: biom.Table) -> None:
     }
 
     sample_frequencies.sort_values(inplace=True)
+    feature_frequencies.sort_values(inplace=True)
     sample_frequencies.to_csv(
         os.path.join(output_dir, 'sample-frequency-detail.csv'))
+    feature_frequencies.to_csv(
+        os.path.join(output_dir, 'feature-frequency-detail.csv'))
 
     sample_frequencies_table = _format_html_table(
         sample_frequencies.to_frame('Frequency'))
+    feature_frequencies_table = _format_html_table(
+        feature_frequencies.to_frame('Frequency'))
     sample_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'sample-frequency-detail.html')
+    feature_frequency_template = os.path.join(
+        TEMPLATES, 'summarize_assets', 'feature-frequency-detail.html')
 
-    context.update({'sample_frequencies_table': sample_frequencies_table})
-    templates = [index, sample_frequency_template]
+    context.update({'sample_frequencies_table': sample_frequencies_table,
+                    'feature_frequencies_table': feature_frequencies_table})
+    templates = [index, sample_frequency_template, feature_frequency_template]
     q2templates.render(templates, output_dir, context=context)
 
 
