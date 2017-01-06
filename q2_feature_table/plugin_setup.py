@@ -112,7 +112,7 @@ plugin.methods.register_function(
 _where_description = ("The where parameter takes a SQLite WHERE clause. "
                       "See the table filtering tutorial for additional "
                       "detail: https://docs.qiime2.org/%s/tutorials/"
-                      "table-filtering.html" % qiime2.__version__)
+                      "table-filtering/" % qiime2.__version__)
 
 plugin.methods.register_function(
     function=q2_feature_table.filter_samples,
