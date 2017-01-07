@@ -275,3 +275,13 @@ plugin.visualizers.register_function(
                 "mapping, including links to BLAST each sequence against "
                 "the NCBI nt database."
 )
+
+plugin.visualizers.register_function(
+    function=q2_feature_table.explore_rarefaction,
+    inputs={'table': FeatureTable[Frequency]},
+    parameters={'sample_metadata': Metadata},
+    name='Explore potential sample loss through rarefaction',
+    description='Interactively visualize sample loss that may be caused by '
+                'various rarefaction depths. Also determine which Metadata '
+                'would be lost by rarefaction.'
+)

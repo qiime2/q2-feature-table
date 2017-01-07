@@ -23,6 +23,10 @@ setup(
                         'summarize_assets/*.html',
                         'tabulate_seqs_assets/js/*',
                         'tabulate_seqs_assets/index.html'
+                  ],
+                  'q2_feature_table._explore_rarefaction': [
+                        'assets/index.html',
+                        'assets/app/*.js'
                   ]},
     author="Greg Caporaso",
     author_email="gregcaporaso@gmail.com",

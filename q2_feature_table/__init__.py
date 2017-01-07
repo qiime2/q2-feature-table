@@ -13,10 +13,10 @@ from ._transform import (presence_absence, relative_frequency)
 from ._summarize import (summarize, tabulate_seqs)
 from ._merge import (merge, merge_seq_data, merge_taxa_data)
 from ._filter import (filter_samples, filter_features)
-
+from ._explore_rarefaction import explore_rarefaction
 
 __version__ = pkg_resources.get_distribution('q2-feature-table').version
 
 __all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'summarize',
            'merge', 'merge_seq_data', 'filter_samples', 'filter_features',
-           'merge_taxa_data', 'tabulate_seqs']
+           'merge_taxa_data', 'tabulate_seqs', 'explore_rarefaction']
