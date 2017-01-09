@@ -20,8 +20,22 @@ TEMPLATES = pkg_resources.resource_filename('q2_feature_table',
 
 def explore_rarefaction(output_dir: str, table: pd.DataFrame,
                         sample_metadata: qiime2.Metadata=None) -> None:
+
+    with open(os.path.join(output_dir, 'data.jsonp'), 'w') as fh:
+        fh.write("load(")
+        table.to_json(fh)
+        fh.write(', ')
+        if sample_metadata:
+            sample_metadata.to_dataframe().to_json(fh)
+        else:
+            fh.write('{}')
+        fh.write(');')
+
+    context = {'min_count': 0,
+               'max_count': table.max().max()}
+
     index = os.path.join(TEMPLATES, 'assets', 'index.html')
-    q2templates.render(index, output_dir)
+    q2templates.render(index, output_dir, context=context)
 
     shutil.copytree(os.path.join(TEMPLATES, 'assets', 'app'),
                     os.path.join(output_dir, 'app'))

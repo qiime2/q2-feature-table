@@ -3,7 +3,9 @@
   "version": "",
   "description": "",
   "main": "main.js",
-  "dependencies": {},
+  "dependencies": {
+    "d3": "^4.4.1"
+  },
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-loader": "^6.2.10",
@@ -17,7 +19,10 @@
     "webpack-dev-server": "^1.16.2"
   },
   "eslintConfig": {
-    "extends": "airbnb"
+    "extends": "airbnb",
+    "env": {
+      "browser": true
+    }
   },
   "scripts": {
     "test": "eslint src/",
