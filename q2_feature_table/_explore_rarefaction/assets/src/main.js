@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { chart } from './chart';
+import table from './table';
 
 const slider = select('#slider');
 const sliderValue = select('#slider-value');
@@ -25,4 +25,5 @@ sliderValue.on('change', () => {
 });
 
 sliderValue.node().value = slider.node().value;
-chart(t, m);
+/* global t, m, c */
+table(t, m, c);

@@ -29,6 +29,8 @@ def explore_rarefaction(output_dir: str, table: pd.DataFrame,
             sample_metadata.to_dataframe().to_json(fh)
         else:
             fh.write('{}')
+        fh.write(', ')
+        table.sum(axis=1).to_json(fh)
         fh.write(');')
 
     context = {'min_count': 0,

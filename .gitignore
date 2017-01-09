@@ -64,5 +64,9 @@ target/
 # vi
 .*.swp
 
+# qiime
+*.qza
+*.qzv
+
 .DS_Store
 node_modules

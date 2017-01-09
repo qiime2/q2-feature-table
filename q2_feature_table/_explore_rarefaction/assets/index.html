@@ -2,32 +2,6 @@
 
 {% block head %}
 <script src="./app/vendor.bundle.js"></script>
-<style>
-
-body {
-  font: 10px sans-serif;
-  position: relative;
-}
-
-.node {
-  box-sizing: border-box;
-  position: absolute;
-  overflow: hidden;
-}
-
-.node-label {
-  padding: 4px;
-  line-height: 1em;
-  white-space: pre;
-}
-
-.node-value {
-  color: rgba(0,0,0,0.8);
-  font-size: 9px;
-  margin-top: 1px;
-}
-
-</style>
 {% endblock %}
 
 {% block content %}
@@ -46,13 +20,15 @@ body {
       max="{{ max_count }}"
     >
   </div>
-  <div id="chart" class="col-lg-10 col-md-10 col-sm-12 col-xs-12"></div>
+  <div id="table" class="col-lg-10 col-md-10 col-sm-12 col-xs-12"></div>
   <script type="text/javascript">
     let t;
     let m;
-    function load(table, metadata) {
+    let c;
+    function load(table, metadata, counts) {
       t = table;
       m = metadata;
+      c = counts;
     }
   </script>
   <script src='./data.jsonp?callback=load'></script>
