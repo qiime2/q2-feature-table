@@ -34,7 +34,7 @@ def explore_rarefaction(output_dir: str, table: pd.DataFrame,
         fh.write(');')
 
     context = {'min_count': 0,
-               'max_count': table.max().max()}
+               'max_count': table.sum(axis=1).max()}
 
     index = os.path.join(TEMPLATES, 'assets', 'index.html')
     q2templates.render(index, output_dir, context=context)

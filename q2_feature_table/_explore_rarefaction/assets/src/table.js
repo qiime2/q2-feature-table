@@ -9,7 +9,7 @@ const chart = (data, metadata, counts) => {
   Object.keys(counts).forEach(key => myTableData.push([key, counts[key]]));
 
   table
-    .attr('class', 'table table-striped table-hover');
+    .attr('class', 'table table-hover');
   header
     .selectAll('th')
     .data(['Sample ID', 'Feature Count'])
@@ -20,8 +20,9 @@ const chart = (data, metadata, counts) => {
     .selectAll('tr')
     .data(myTableData)
     .enter()
-    .append('tr');
-  const cells = rows  // eslint-disable-line no-unused-vars
+    .append('tr')
+    .attr('class', d => (+d[1] < d3.select('#slider').node().value ? 'alert-danger' : ''));
+  rows
     .selectAll('td')
     .data(d => d)
     .enter()
