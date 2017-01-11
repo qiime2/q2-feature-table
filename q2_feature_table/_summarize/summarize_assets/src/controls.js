@@ -1,12 +1,11 @@
 import * as d3 from 'd3';
 
-
-const init = () => {
+const initializeControls = () => {
   const slider = d3.select('#slider');
   const sliderValue = d3.select('#slider-value');
 
   sliderValue.on('input', () => {
-    if (parseInt(sliderValue.node().value, 10) > parseInt(slider.node().max, 10)) {
+    if (+sliderValue.node().value > +slider.node().max) {
       sliderValue.node().value = slider.node().max;
       slider.node().value = slider.node().max;
     } else {
@@ -23,14 +22,14 @@ const init = () => {
 
 
   slider
-    .on('input', () => {
+    .on('input.slide', () => {
       sliderValue.node().value = slider.node().value;
       d3.select('tbody')
         .selectAll('tr')
-        .attr('class', d => (+d[1] < slider.node().value ? 'alert-danger' : ''));
+        .attr('class', d => (+d[1] < +slider.node().value ? 'alert-danger' : ''));
     });
 
   sliderValue.node().value = slider.node().value;
 };
 
-export default init;
+export default initializeControls;
