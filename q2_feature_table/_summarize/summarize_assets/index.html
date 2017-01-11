@@ -17,15 +17,15 @@
             <tbody>
               <tr>
                 <th scope="row">Number of samples</th>
-                <td>{{ number_of_samples }}</td>
+                <td>{{ "{:,}".format(number_of_samples) }}</td>
               </tr>
               <tr>
                 <th scope="row">Number of features</th>
-                <td>{{ number_of_features }}</td>
+                <td>{{ "{:,}".format(number_of_features) }}</td>
               </tr>
               <tr>
                 <th scope="row">Total frequency</th>
-                <td>{{ total_frequencies }}</td>
+                <td>{{ "{:,}".format(total_frequencies) }}</td>
               </tr>
             </tbody>
           </table>
@@ -56,13 +56,16 @@
       </div>
 
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-lg-6">
           <h1>Frequency per feature</h1>
-
           {{ feature_summary_table }}
+          <p class="text-left">
+            Frequency per feature detail (<a href="feature-frequency-detail.csv">csv</a> |
+            <a href="feature-frequency-detail.html">html</a>)
+          </p>
         </div>
         {% if number_of_features > 1 %}
-        <div class="col-md-6">
+        <div class="col-lg-6">
           <p class="text-center">
               <a href="feature-frequencies.pdf">
                   <img src="feature-frequencies.png" width="700" height="500" class="center-block">

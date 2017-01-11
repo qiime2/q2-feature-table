@@ -14,6 +14,7 @@ import biom
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import matplotlib
 import matplotlib.pyplot as plt
 from q2_types.feature_data import DNAIterator
 import q2templates
@@ -52,8 +53,18 @@ def summarize(output_dir: str, table: biom.Table) -> None:
     sample_summary, sample_frequencies = _frequency_summary(
         table, axis='sample')
     if number_of_samples > 1:
+        # Freedman–Diaconis rule
+        IQR = sample_summary['3rd quartile'] - sample_summary['1st quartile']
+        bin_width = (2 * IQR) / (number_of_samples ** (1/3))
+
+        # Calculate the bin count, with a minimum of 5 bins
+        bins = max((sample_summary['Maximum frequency'] -
+                    sample_summary['Minimum frequency']) / bin_width, 5)
+
         sample_frequencies_ax = sns.distplot(sample_frequencies, kde=False,
-                                             rug=True)
+                                             rug=True, bins=round(bins))
+        sample_frequencies_ax.get_xaxis().set_major_formatter(
+            matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
         sample_frequencies_ax.set_xlabel('Frequency per sample')
         sample_frequencies_ax.get_figure().savefig(
             os.path.join(output_dir, 'sample-frequencies.pdf'))
@@ -75,9 +86,9 @@ def summarize(output_dir: str, table: biom.Table) -> None:
             os.path.join(output_dir, 'feature-frequencies.png'))
 
     sample_summary_table = _format_html_table(
-        sample_summary.to_frame('Frequency'))
+        sample_summary.apply('{:,}'.format).to_frame('Frequency'))
     feature_summary_table = _format_html_table(
-        feature_summary.to_frame('Frequency'))
+        feature_summary.apply('{:,}'.format).to_frame('Frequency'))
 
     index = os.path.join(TEMPLATES, 'summarize_assets', 'index.html')
     context = {
@@ -88,17 +99,25 @@ def summarize(output_dir: str, table: biom.Table) -> None:
         'feature_summary_table': feature_summary_table,
     }
 
-    sample_frequencies.sort_values(inplace=True)
+    sample_frequencies.sort_values(inplace=True, ascending=False)
+    feature_frequencies.sort_values(inplace=True, ascending=False)
     sample_frequencies.to_csv(
         os.path.join(output_dir, 'sample-frequency-detail.csv'))
+    feature_frequencies.to_csv(
+        os.path.join(output_dir, 'feature-frequency-detail.csv'))
 
     sample_frequencies_table = _format_html_table(
         sample_frequencies.to_frame('Frequency'))
+    feature_frequencies_table = _format_html_table(
+        feature_frequencies.to_frame('Frequency'))
     sample_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'sample-frequency-detail.html')
+    feature_frequency_template = os.path.join(
+        TEMPLATES, 'summarize_assets', 'feature-frequency-detail.html')
 
-    context.update({'sample_frequencies_table': sample_frequencies_table})
-    templates = [index, sample_frequency_template]
+    context.update({'sample_frequencies_table': sample_frequencies_table,
+                    'feature_frequencies_table': feature_frequencies_table})
+    templates = [index, sample_frequency_template, feature_frequency_template]
     q2templates.render(templates, output_dir, context=context)
 
 
@@ -120,5 +139,4 @@ def _frequency_summary(table, axis='sample'):
                         index=['Minimum frequency', '1st quartile',
                                'Median frequency', '3rd quartile',
                                'Maximum frequency', 'Mean frequency'])
-    summary.sort_values()
     return summary, frequencies
