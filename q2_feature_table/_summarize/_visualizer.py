@@ -59,7 +59,7 @@ def summarize(output_dir: str, table: biom.Table) -> None:
 
         # Calculate the bin count, with a minimum of 5 bins
         bins = max((sample_summary['Maximum frequency'] -
-                    sample_summary['Minimum frequency']) / bin_width + 1, 5)
+                    sample_summary['Minimum frequency']) / bin_width, 5)
 
         sample_frequencies_ax = sns.distplot(sample_frequencies, kde=False,
                                              rug=True, bins=round(bins))
@@ -99,8 +99,8 @@ def summarize(output_dir: str, table: biom.Table) -> None:
         'feature_summary_table': feature_summary_table,
     }
 
-    sample_frequencies.sort_values(inplace=True)
-    feature_frequencies.sort_values(inplace=True)
+    sample_frequencies.sort_values(inplace=True, ascending=False)
+    feature_frequencies.sort_values(inplace=True, ascending=False)
     sample_frequencies.to_csv(
         os.path.join(output_dir, 'sample-frequency-detail.csv'))
     feature_frequencies.to_csv(
@@ -135,11 +135,8 @@ def _frequency_summary(table, axis='sample'):
 
     summary = pd.Series([frequencies.min(), frequencies.quantile(0.25),
                          frequencies.median(), frequencies.quantile(0.75),
-                         frequencies.max()],
+                         frequencies.max(), frequencies.mean()],
                         index=['Minimum frequency', '1st quartile',
                                'Median frequency', '3rd quartile',
-                               'Maximum frequency'])
-    mean = pd.Series([frequencies.mean()], index=['Mean frequency'])
-    summary.sort_values(ascending=False, inplace=True)
-    summary = mean.append(summary)
+                               'Maximum frequency', 'Mean frequency'])
     return summary, frequencies
