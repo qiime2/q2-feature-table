@@ -10,7 +10,6 @@ import os
 import pkg_resources
 import shutil
 
-import biom
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -121,6 +120,8 @@ def summarize(output_dir: str, table: pd.DataFrame,
 
     feature_frequencies_table = _format_html_table(
         feature_frequencies.to_frame('Frequency'))
+    overview_template = os.path.join(
+        TEMPLATES, 'summarize_assets', 'overview.html')
     sample_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'sample-frequency-detail.html')
     feature_frequency_template = os.path.join(
@@ -129,7 +130,8 @@ def summarize(output_dir: str, table: pd.DataFrame,
     context.update({'min_count': 0,
                     'max_count': table.sum(axis=1).max(),
                     'feature_frequencies_table': feature_frequencies_table})
-    templates = [index, sample_frequency_template, feature_frequency_template]
+    templates = [index, sample_frequency_template,
+                 feature_frequency_template, overview_template]
     q2templates.render(templates, output_dir, context=context)
 
     shutil.copytree(os.path.join(TEMPLATES, 'summarize_assets', 'app'),

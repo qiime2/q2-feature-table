@@ -21,12 +21,11 @@ setup(
                       'ipywidgets'],
     package_data={'q2_feature_table._summarize': [
                         'summarize_assets/*.html',
+                        'assets/app/*.js',
+                        'assets/app/js/*.js',
+                        'assets/app/css/*.css',
                         'tabulate_seqs_assets/js/*',
                         'tabulate_seqs_assets/index.html'
-                  ],
-                  'q2_feature_table._explore_rarefaction': [
-                        'assets/index.html',
-                        'assets/app/*.js'
                   ]},
     author="Greg Caporaso",
     author_email="gregcaporaso@gmail.com",

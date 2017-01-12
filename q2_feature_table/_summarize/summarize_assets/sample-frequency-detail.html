@@ -1,31 +1,35 @@
-{% extends "base.html" %}
 
 {% block head %}
+<link rel="stylesheet" href="./q2templateassets/css/bootstrap.min.css">
+<link rel="stylesheet" href="./q2templateassets/css/normalize.css">
 <script src="./app/vendor.bundle.js"></script>
+<script src="./app/js/child.js"></script>
 {% endblock %}
 
 {% block content %}
-  <div class="form-group col-lg-2 col-md-2 col-sm-12 col-xs-12">
-    <label for="slider-value">Sampling Depth:</label>
-    <input
-      id="slider-value"
-      class="form-control"
-      type="number"
-    >
-    <br>
-    <input
-      id="slider"
-      type="range"
-      value="0"
-      min="{{ min_count }}"
-      max="{{ max_count }}"
-    >
+  <div class="row">
+    <div class="form-group col-lg-2 col-md-2 col-sm-12 col-xs-12">
+      <label for="slider-value">Sampling Depth:</label>
+      <input
+        id="slider-value"
+        class="form-control"
+        type="number"
+      >
+      <br>
+      <input
+        id="slider"
+        type="range"
+        value="0"
+        min="{{ min_count }}"
+        max="{{ max_count }}"
+      >
+    </div>
+    <div id="table" class="col-lg-10 col-md-10 col-sm-12 col-xs-12"></div>
   </div>
-  <div id="table" class="col-lg-10 col-md-10 col-sm-12 col-xs-12"></div>
   <script type="text/javascript">
-    let t;
-    let m;
-    let c;
+    var t;
+    var m;
+    var c;
     function load(table, metadata, counts) {
       t = table;
       m = metadata;

@@ -20,7 +20,6 @@ const initializeControls = () => {
     }
   });
 
-
   slider
     .on('input.slide', () => {
       sliderValue.node().value = slider.node().value;

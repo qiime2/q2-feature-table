@@ -1,9 +1,14 @@
-{% extends "base.html" %}
+
+{% block head %}
+  <link rel="stylesheet" href="./q2templateassets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./q2templateassets/css/normalize.css">
+  <script src="./app/js/child.js"></script>
+{% endblock %}
 
 {% block content %}
-  <div class="row">
-    <div class="col-lg-12">
-      {{ feature_frequencies_table }}
-    </div>
+<div class="row">
+  <div class="col-lg-12">
+    {{ feature_frequencies_table }}
   </div>
+</div>
 {% endblock %}
