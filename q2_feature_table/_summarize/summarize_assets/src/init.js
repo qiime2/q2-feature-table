@@ -6,7 +6,14 @@
 // The full license is in the file LICENSE, distributed with this software.
 // ----------------------------------------------------------------------------
 
-import init from './init';
+import initializeControls from './controls';
+import initializeTable from './table';
+import initializeHistogram from './hist';
 
-/* global t, m, c */
-init(t, m, c);
+const init = (table, metadata, counts) => {
+  initializeControls();
+  initializeTable(counts);
+  initializeHistogram(metadata);
+};
+
+export default init;

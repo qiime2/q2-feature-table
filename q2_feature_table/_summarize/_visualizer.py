@@ -49,7 +49,7 @@ def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
 def summarize(output_dir: str, table: pd.DataFrame,
               sample_metadata: qiime2.Metadata=None) -> None:
     number_of_samples, number_of_features = table.shape
-
+    counts = table.sum(axis=1)
     with open(os.path.join(output_dir, 'data.jsonp'), 'w') as fh:
         fh.write("load(")
         table.to_json(fh)
@@ -59,7 +59,7 @@ def summarize(output_dir: str, table: pd.DataFrame,
         else:
             fh.write('{}')
         fh.write(', ')
-        table.sum(axis=1).to_json(fh)
+        counts.to_json(fh)
         fh.write(');')
 
     sample_summary, sample_frequencies = _frequency_summary(
@@ -127,8 +127,7 @@ def summarize(output_dir: str, table: pd.DataFrame,
     feature_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'feature-frequency-detail.html')
 
-    context.update({'min_count': 0,
-                    'max_count': table.sum(axis=1).max(),
+    context.update({'max_count': counts.max(),
                     'feature_frequencies_table': feature_frequencies_table})
     templates = [index, sample_frequency_template,
                  feature_frequency_template, overview_template]

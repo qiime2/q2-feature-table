@@ -1,8 +1,16 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) 2016-2017, QIIME 2 development team.
+//
+// Distributed under the terms of the Modified BSD License.
+//
+// The full license is in the file LICENSE, distributed with this software.
+// ----------------------------------------------------------------------------
+
 import * as d3 from 'd3';
 
 export const myTableData = [];
 
-const initializeTable = (data, metadata, counts) => {
+const initializeTable = (counts) => {
   const table = d3.select('#table').append('table');
   const header = table.append('thead').append('tr');
   const tableBody = table.append('tbody');
@@ -37,6 +45,7 @@ const initializeTable = (data, metadata, counts) => {
   };
 
   formGroup
+    .append('div')
     .selectAll('span')
     .data(['Sample Loss: ', ...calcSampleLoss()])
     .enter()

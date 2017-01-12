@@ -1,9 +1,11 @@
-
 {% block head %}
 <link rel="stylesheet" href="./q2templateassets/css/bootstrap.min.css">
 <link rel="stylesheet" href="./q2templateassets/css/normalize.css">
 <script src="./app/vendor.bundle.js"></script>
 <script src="./app/js/child.js"></script>
+<style media="screen">
+  .bar rect { fill: steelblue; }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -20,11 +22,15 @@
         id="slider"
         type="range"
         value="0"
-        min="{{ min_count }}"
+        min="0"
         max="{{ max_count }}"
       >
+      <br>
     </div>
-    <div id="table" class="col-lg-10 col-md-10 col-sm-12 col-xs-12"></div>
+    <div id="histogram" class="col-lg-10 col-md-10 col-sm-12 col-xs-12"></div>
+  </div>
+  <div class="row">
+    <div id="table" class="col-lg-10 col-md-10 col-sm-12 col-xs-12 pull-right"></div>
   </div>
   <script type="text/javascript">
     var t;
