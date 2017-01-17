@@ -8,7 +8,47 @@
 
 import * as d3 from 'd3';
 
-function buildChart(svg, metadata, props) {
+// TODO: I don't like this...
+let DROPPED = [];
+let METADATA;
+let PROPS;
+let X;
+let Y;
+
+const updateChart = () => {
+  const option = d3.select('select').node().value;
+  const validKeys = Object.keys(METADATA[option]).filter(key => !DROPPED.includes(key));
+  const data = validKeys.map(key => METADATA[option][key]);
+
+  const bins = d3.histogram()
+    .domain(X.domain())(data);
+
+  // TODO: There has to be a better way than transforming each group downwards...
+  d3.selectAll('.overlay-group')
+    .data(bins)
+    .attr('style', function transform(d) {
+      const barHeight = d3.select(d3.select(this).node().parentNode).select('rect').node().getBBox().height;
+      return `transform: translate(0, ${barHeight - (PROPS.height - Y(d.length))}px)`;
+    })
+    .select('.overlay')
+    .attr('height', d => PROPS.height - Y(d.length));
+};
+
+export const addSampleMetadata = (sampleID) => {
+  if (DROPPED.includes(sampleID)) {
+    DROPPED = DROPPED.filter(i => i !== sampleID);
+    updateChart();
+  }
+};
+
+export const dropSampleMetadata = (sampleID) => {
+  if (!DROPPED.includes(sampleID)) {
+    DROPPED.push(sampleID);
+    updateChart();
+  }
+};
+
+const buildChart = (svg, metadata, props) => {
   const option = d3.select('select').node().value;
 
   const data = Object.keys(metadata[option]).map(key => metadata[option][key]);
@@ -53,6 +93,15 @@ function buildChart(svg, metadata, props) {
     .attr('width', x(bins[0].x1) - x(bins[0].x0) - 1)
     .attr('height', d => props.height - y(d.length));
 
+  bar
+    .append('g')
+    .attr('class', 'overlay-group')
+    .append('rect')
+    .attr('class', 'overlay')
+    .attr('x', 1)
+    .attr('width', x(bins[0].x1) - x(bins[0].x0) - 1)
+    .attr('height', d => props.height - y(d.length));
+
   g
     .append('g')
     .attr('class', 'axis axis--x')
@@ -63,19 +112,23 @@ function buildChart(svg, metadata, props) {
     .append('g')
     .attr('class', 'axis axis--y')
     .call(d3.axisLeft(y));
-}
 
-const initializeHistogram = (metadata) => {
+  X = x;
+  Y = y;
+};
+
+const initializeChart = (metadata) => {
+  METADATA = metadata;
   const margin = { top: 10, right: 30, bottom: 30, left: 40 };
   const props = {
-    margin: margin,
+    margin,
     width: 960 - margin.left - margin.right,
     height: 500 - margin.top - margin.bottom,
   };
+  PROPS = props;
 
   const svg = d3.select('#histogram')
     .append('svg')
-    .attr('class', 'text-center')
     .attr('width', props.width + props.margin.left + props.margin.right)
     .attr('height', props.height + props.margin.top + props.margin.bottom);
   const select = d3.select('.form-group')
@@ -92,4 +145,4 @@ const initializeHistogram = (metadata) => {
   buildChart(svg, metadata, props);
 };
 
-export default initializeHistogram;
+export default initializeChart;

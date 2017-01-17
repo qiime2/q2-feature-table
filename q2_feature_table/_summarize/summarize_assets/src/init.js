@@ -8,12 +8,12 @@
 
 import initializeControls from './controls';
 import initializeTable from './table';
-import initializeHistogram from './hist';
+import initializeChart from './chart';
 
 const init = (table, metadata, counts) => {
   initializeControls();
   initializeTable(counts);
-  initializeHistogram(metadata);
+  initializeChart(metadata);
 };
 
 export default init;

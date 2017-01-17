@@ -8,6 +8,8 @@
 
 import * as d3 from 'd3';
 
+import { addSampleMetadata, dropSampleMetadata } from './chart';
+
 const initializeControls = () => {
   const slider = d3.select('#slider');
   const sliderValue = d3.select('#slider-value');
@@ -33,7 +35,14 @@ const initializeControls = () => {
       sliderValue.node().value = slider.node().value;
       d3.select('tbody')
         .selectAll('tr')
-        .attr('class', d => (+d[1] < +slider.node().value ? 'alert-danger' : ''));
+        .attr('class', (d) => {
+          if (+d[1] < +slider.node().value) {
+            dropSampleMetadata(d[0]);
+            return 'alert-danger';
+          }
+          addSampleMetadata(d[0]);
+          return '';
+        });
     });
 
   sliderValue.node().value = slider.node().value;
