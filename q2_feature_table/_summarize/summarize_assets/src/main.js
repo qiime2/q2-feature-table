@@ -8,5 +8,5 @@
 
 import init from './init';
 
-/* global t, m, c */
-init(t, m, c);
+/* global m, c */
+init(m, c);

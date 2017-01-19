@@ -10,10 +10,12 @@ import initializeControls from './controls';
 import initializeTable from './table';
 import initializeChart from './chart';
 
-const init = (table, metadata, counts) => {
+const init = (metadata, counts) => {
   initializeControls();
   initializeTable(counts);
-  initializeChart(metadata);
+  if (Object.keys(metadata).length) {
+    initializeChart(metadata);
+  }
 };
 
 export default init;
