@@ -6,35 +6,33 @@
 // The full license is in the file LICENSE, distributed with this software.
 // ----------------------------------------------------------------------------
 
-import * as d3 from 'd3';
+import {
+  select,
+  selectAll,
+  histogram,
+  scaleBand,
+  scaleLinear,
+  max,
+  axisBottom,
+  axisLeft,
+} from 'd3';
 
 let DROPPED = [];
 
-
-const buildBins = (data, x, isLinear) => (
-  isLinear ? d3.histogram().domain(x.domain())(data) : d3.histogram()(data.map(x))
-);
+const buildBins = (data, x) => (histogram()(data.map(x)));
 
 
 const updateChart = (metadata, props, xScale, yScale) => {
-  const option = d3.select('select').node().value;
+  const option = select('select').node().value;
   const validKeys = Object.keys(metadata[option]).filter(key => !DROPPED.includes(key));
   const data = validKeys.map(key => metadata[option][key]);
-  const isLinear = !isNaN(data.reduce((x, y) => x + (+y), 0));
 
-  const bins = buildBins(data, xScale, isLinear);
+  const bins = buildBins(data, xScale);
 
-  // TODO: There has to be a better way than transforming each group downwards...
-  d3.selectAll('.overlay-group')
+  selectAll('.overlay-group')
     .data(bins)
-    .attr('style', function transform(d) {
-      const parent = d3.select(this).node().parentNode;
-      const barHeight = d3.select(parent)
-        .select('rect').node().getBBox().height;
-
-      return `transform: translate(0, ${barHeight - (props.height - yScale(d.length))}px)`;
-    })
   .select('.overlay')
+    .attr('y', d => yScale(d.length))
     .attr('height', d => props.height - yScale(d.length));
 };
 
@@ -51,10 +49,9 @@ export const dropSampleMetadata = (sampleID) => {
 };
 
 const buildChart = (svg, metadata, props) => {
-  const option = d3.select('select').node().value;
+  const option = select('select').node().value;
 
   const data = Object.keys(metadata[option]).map(key => metadata[option][key]);
-  const isLinear = !isNaN(data.reduce((x, y) => x + (+y), 0));
   const setArray = [...new Set(data)];
 
   svg.selectAll('g').remove();
@@ -64,51 +61,44 @@ const buildChart = (svg, metadata, props) => {
     .append('g')
       .attr('transform', `translate(${props.margin.left}, ${props.margin.top})`);
 
-  const minX = Math.min(...data);
-  const maxX = Math.max(...data);
+  const x = scaleBand()
+    .domain(setArray)
+    .rangeRound([0, props.width - props.margin.left - props.margin.right]);
 
-  const x = isLinear ?
-    d3.scaleLinear()
-      .domain([minX - ((maxX - minX) * 0.03), maxX])
-      .range([0, props.width]) :
-    d3.scaleBand()
-      .domain(setArray)
-      .rangeRound([0, props.width]);
+  const bins = buildBins(data, x);
 
-  const bins = buildBins(data, x, isLinear);
-
-  const y = d3.scaleLinear()
-    .domain([0, d3.max(bins, d => d.length)])
+  const y = scaleLinear()
+    .domain([0, max(bins, d => d.length)])
     .range([props.height, 0]);
 
   const bar = g.selectAll('.bar')
     .data(bins)
     .enter()
       .append('g')
-        .attr('class', 'bar')
-        .attr('transform', d => `translate(${isLinear ? x(d.x0) : d.x0}, ${y(d.length)})`);
+        .attr('class', 'bar');
+        // .attr('transform', d => `translate(${d.x0}, ${y(d.length)})`);
 
-  const xAxis = d3.axisBottom(x);
-  const yAxis = d3.axisLeft(y);
-
-  const calcBarWidth = (d) => {
-    if (isLinear) {
-      return Math.floor(x(x.ticks(xAxis.ticks()[0])[1]) - x(x.ticks(xAxis.ticks()[0])[0])) - 1;
-    }
-    return (d.x0 === d.x1) ? 50 : d.x1 - d.x0 - 1;
-  };
+  const xAxis = axisBottom(x);
+  const yAxis = axisLeft(y);
 
   bar.append('rect')
-    .attr('x', 1)
-    .attr('width', calcBarWidth)
+    .attr('fill', 'black')
+    .attr('opacity', 0.15)
+    .attr('x', d => d.x0)
+    .attr('y', d => y(d.length))
+    .attr('width', x.bandwidth() - 1)
     .attr('height', d => props.height - y(d.length))
   .select(function backToBar() { return this.parentNode; })
     .append('g')
       .attr('class', 'overlay-group')
     .append('rect')
       .attr('class', 'overlay')
-      .attr('x', 1)
-      .attr('width', calcBarWidth)
+      .attr('fill', 'steelblue')
+      .attr('opacity', 1)
+      .attr('stroke', 'lightgray')
+      .attr('x', d => d.x0)
+      .attr('y', d => y(d.length))
+      .attr('width', x.bandwidth() - 1)
       .attr('height', d => props.height - y(d.length));
 
   g.append('g')
@@ -130,12 +120,12 @@ const buildChart = (svg, metadata, props) => {
     .attr('class', 'axis axis--y')
     .call(yAxis);
 
-  d3.select('#slider')
+  select('#slider')
     .on('input.drop', () => {
-      d3.select('tbody')
+      select('tbody')
         .selectAll('tr')
           .each(d => (
-            +d[1] < +d3.select('#slider').node().value ?
+            +d[1] < +select('#slider').node().value ?
               dropSampleMetadata(d[0]) :
               addSampleMetadata(d[0])
           ));
@@ -155,15 +145,15 @@ const initializeChart = (metadata) => {
     height: 500 - margin.top - margin.bottom,
   };
 
-  const svg = d3.select('#histogram')
+  const svg = select('#histogram')
     .append('svg')
       .attr('width', props.width + props.margin.left + props.margin.right)
       .attr('height', 600 + props.margin.top + props.margin.bottom);
-  const select = d3.select('.form-group')
+  const selection = select('.form-group')
     .append('select')
       .attr('class', 'form-control')
       .on('change', () => buildChart(svg, metadata, props));
-  select.selectAll('option')
+  selection.selectAll('option')
     .data(Object.keys(metadata))
     .enter()
       .append('option')

@@ -6,12 +6,12 @@
 // The full license is in the file LICENSE, distributed with this software.
 // ----------------------------------------------------------------------------
 
-import * as d3 from 'd3';
+import { select } from 'd3';
 
 
 const initializeControls = () => {
-  const slider = d3.select('#slider');
-  const sliderValue = d3.select('#slider-value');
+  const slider = select('#slider');
+  const sliderValue = select('#slider-value');
 
   sliderValue.on('input', () => {
     if (+sliderValue.node().value > +slider.node().max) {
@@ -32,7 +32,7 @@ const initializeControls = () => {
   slider
     .on('input.slide', () => {
       sliderValue.node().value = slider.node().value;
-      d3.select('tbody')
+      select('tbody')
         .selectAll('tr')
         .attr('class', d => (+d[1] < +slider.node().value ? 'alert-danger' : ''));
     });
