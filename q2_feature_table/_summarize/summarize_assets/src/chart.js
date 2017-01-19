@@ -12,10 +12,7 @@ let DROPPED = [];
 
 
 const buildBins = (data, x, isLinear) => (
-  isLinear ?
-    d3.histogram()
-      .domain(x.domain())(data) :
-    d3.histogram()(data.map(x))
+  isLinear ? d3.histogram().domain(x.domain())(data) : d3.histogram()(data.map(x))
 );
 
 
@@ -37,7 +34,7 @@ const updateChart = (metadata, props, xScale, yScale) => {
 
       return `transform: translate(0, ${barHeight - (props.height - yScale(d.length))}px)`;
     })
-    .select('.overlay')
+  .select('.overlay')
     .attr('height', d => props.height - yScale(d.length));
 };
 
@@ -65,7 +62,7 @@ const buildChart = (svg, metadata, props) => {
 
   const g = svg
     .append('g')
-    .attr('transform', `translate(${props.margin.left}, ${props.margin.top})`);
+      .attr('transform', `translate(${props.margin.left}, ${props.margin.top})`);
 
   const minX = Math.min(...data);
   const maxX = Math.max(...data);
@@ -88,8 +85,8 @@ const buildChart = (svg, metadata, props) => {
     .data(bins)
     .enter()
       .append('g')
-      .attr('class', 'bar')
-      .attr('transform', d => `translate(${isLinear ? x(d.x0) : d.x0}, ${y(d.length)})`);
+        .attr('class', 'bar')
+        .attr('transform', d => `translate(${isLinear ? x(d.x0) : d.x0}, ${y(d.length)})`);
 
   const xAxis = d3.axisBottom(x);
   const yAxis = d3.axisLeft(y);
@@ -101,30 +98,26 @@ const buildChart = (svg, metadata, props) => {
     return (d.x0 === d.x1) ? 50 : d.x1 - d.x0 - 1;
   };
 
-  bar
-    .append('rect')
+  bar.append('rect')
     .attr('x', 1)
     .attr('width', calcBarWidth)
-    .attr('height', d => props.height - y(d.length));
-
-  bar
+    .attr('height', d => props.height - y(d.length))
+  .select(function backToBar() { return this.parentNode; })
     .append('g')
-    .attr('class', 'overlay-group')
+      .attr('class', 'overlay-group')
     .append('rect')
-    .attr('class', 'overlay')
-    .attr('x', 1)
-    .attr('width', calcBarWidth)
-    .attr('height', d => props.height - y(d.length));
+      .attr('class', 'overlay')
+      .attr('x', 1)
+      .attr('width', calcBarWidth)
+      .attr('height', d => props.height - y(d.length));
 
-  g
-    .append('g')
+  g.append('g')
     .attr('class', 'axis axis--x')
     .attr('transform', `translate(0, ${props.height})`)
     .call(xAxis);
 
   if (setArray.length > 5) {
-    g
-      .selectAll('text')
+    g.selectAll('text')
       .attr('y', 0)
       .attr('x', 9)
       .attr('dy', '.35em')
@@ -133,8 +126,7 @@ const buildChart = (svg, metadata, props) => {
   }
 
 
-  g
-    .append('g')
+  g.append('g')
     .attr('class', 'axis axis--y')
     .call(yAxis);
 
@@ -142,13 +134,16 @@ const buildChart = (svg, metadata, props) => {
     .on('input.drop', () => {
       d3.select('tbody')
         .selectAll('tr')
-        .each(d => (
-          +d[1] < +d3.select('#slider').node().value ?
-            dropSampleMetadata(d[0]) :
-            addSampleMetadata(d[0])
-        ));
+          .each(d => (
+            +d[1] < +d3.select('#slider').node().value ?
+              dropSampleMetadata(d[0]) :
+              addSampleMetadata(d[0])
+          ));
       updateChart(metadata, props, x, y);
     });
+
+  // If anything has been dropped already, update on redraw
+  updateChart(metadata, props, x, y);
 };
 
 
@@ -162,14 +157,13 @@ const initializeChart = (metadata) => {
 
   const svg = d3.select('#histogram')
     .append('svg')
-    .attr('width', props.width + props.margin.left + props.margin.right)
-    .attr('height', 600 + props.margin.top + props.margin.bottom);
+      .attr('width', props.width + props.margin.left + props.margin.right)
+      .attr('height', 600 + props.margin.top + props.margin.bottom);
   const select = d3.select('.form-group')
     .append('select')
-    .attr('class', 'form-control')
-    .on('change', () => buildChart(svg, metadata, props));
-  select
-    .selectAll('option')
+      .attr('class', 'form-control')
+      .on('change', () => buildChart(svg, metadata, props));
+  select.selectAll('option')
     .data(Object.keys(metadata))
     .enter()
       .append('option')

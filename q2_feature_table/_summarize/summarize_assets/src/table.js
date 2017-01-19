@@ -18,21 +18,17 @@ const initializeTable = (counts) => {
 
   Object.keys(counts).forEach(key => myTableData.push([key, counts[key]]));
 
-  table
-    .attr('class', 'table table-hover');
-  header
-    .selectAll('th')
+  table.attr('class', 'table table-hover');
+  header.selectAll('th')
     .data(['Sample ID', 'Feature Count'])
     .enter()
       .append('th')
-      .text(d => d);
-  const rows = tableBody
-    .selectAll('tr')
+        .text(d => d);
+  const rows = tableBody.selectAll('tr')
     .data(myTableData)
     .enter()
       .append('tr');
-  rows
-    .selectAll('td')
+  rows.selectAll('td')
     .data(d => d)
     .enter()
       .append('td')
@@ -46,7 +42,7 @@ const initializeTable = (counts) => {
 
   formGroup
     .append('div')
-    .selectAll('span')
+  .selectAll('span')
     .data(['Sample Loss: ', ...calcSampleLoss()])
     .enter()
       .append('span')
@@ -54,8 +50,7 @@ const initializeTable = (counts) => {
 
   d3.select('#slider')
     .on('input.calc', () => {
-      formGroup
-        .selectAll('span')
+      formGroup.selectAll('span')
         .data(['Sample Loss: ', ...calcSampleLoss()])
         .text(d => d);
     });
