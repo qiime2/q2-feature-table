@@ -21,9 +21,9 @@ setup(
                       'ipywidgets'],
     package_data={'q2_feature_table._summarize': [
                         'summarize_assets/*.html',
-                        'assets/app/*.js',
-                        'assets/app/js/*.js',
-                        'assets/app/css/*.css',
+                        'summarize_assets/app/*.js',
+                        'summarize_assets/app/js/*.js',
+                        'summarize_assets/app/css/*.css',
                         'tabulate_seqs_assets/js/*',
                         'tabulate_seqs_assets/index.html'
                   ]},

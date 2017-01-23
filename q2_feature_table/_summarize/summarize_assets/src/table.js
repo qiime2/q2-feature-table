@@ -6,15 +6,15 @@
 // The full license is in the file LICENSE, distributed with this software.
 // ----------------------------------------------------------------------------
 
-import * as d3 from 'd3';
-
-export const myTableData = [];
+import { select } from 'd3';
 
 const initializeTable = (counts) => {
-  const table = d3.select('#table').append('table');
+  const myTableData = [];
+
+  const table = select('#table').append('table');
   const header = table.append('thead').append('tr');
   const tableBody = table.append('tbody');
-  const formGroup = d3.select('.form-group').append('span');
+  const formGroup = select('.form-group').append('span');
 
   Object.keys(counts).forEach(key => myTableData.push([key, counts[key]]));
 
@@ -36,7 +36,7 @@ const initializeTable = (counts) => {
 
 
   const calcSampleLoss = () => {
-    const lost = myTableData.reduce((i, j) => i + (j[1] < +d3.select('#slider').node().value ? 1 : 0), 0);
+    const lost = myTableData.reduce((i, j) => i + (j[1] < +select('#slider').node().value ? 1 : 0), 0);
     return [lost, ` (${((lost / myTableData.length) * 100).toFixed(2)}%)`];
   };
 
@@ -48,7 +48,7 @@ const initializeTable = (counts) => {
       .append('span')
       .text(d => d);
 
-  d3.select('#slider')
+  select('#slider')
     .on('input.calc', () => {
       formGroup.selectAll('span')
         .data(['Sample Loss: ', ...calcSampleLoss()])

@@ -22,31 +22,44 @@ let DROPPED = [];
 const buildBins = (data, x) => (histogram()(data.map(x)));
 
 
-const updateChart = (metadata, props, xScale, yScale) => {
+const updateChart = (metadata, props, x, y) => {
   const option = select('select').node().value;
   const validKeys = Object.keys(metadata[option]).filter(key => !DROPPED.includes(key));
   const data = validKeys.map(key => metadata[option][key]);
 
-  const bins = buildBins(data, xScale);
+  selectAll('.overlay-group').remove();
 
-  selectAll('.overlay-group')
-    .data(bins)
-  .select('.overlay')
-    .attr('y', d => yScale(d.length))
-    .attr('height', d => props.height - yScale(d.length));
+  const bins = buildBins(data, x);
+
+  selectAll('.bar')
+      .data(bins)
+    .append('g')
+      .attr('class', 'overlay-group')
+    .append('rect')
+      .attr('class', 'overlay')
+      .attr('fill', 'steelblue')
+      .attr('opacity', 1)
+      .attr('stroke', 'lightgray')
+      .attr('x', d => d.x0)
+      .attr('y', d => y(d.length))
+      .attr('width', x.bandwidth() - 1)
+      .attr('height', d => props.height - y(d.length));
 };
 
-export const addSampleMetadata = (sampleID) => {
+
+const addSampleMetadata = (sampleID) => {
   if (DROPPED.includes(sampleID)) {
     DROPPED = DROPPED.filter(i => i !== sampleID);
   }
 };
 
-export const dropSampleMetadata = (sampleID) => {
+
+const dropSampleMetadata = (sampleID) => {
   if (!DROPPED.includes(sampleID)) {
     DROPPED.push(sampleID);
   }
 };
+
 
 const buildChart = (svg, metadata, props) => {
   const option = select('select').node().value;
@@ -76,7 +89,6 @@ const buildChart = (svg, metadata, props) => {
     .enter()
       .append('g')
         .attr('class', 'bar');
-        // .attr('transform', d => `translate(${d.x0}, ${y(d.length)})`);
 
   const xAxis = axisBottom(x);
   const yAxis = axisLeft(y);
@@ -87,19 +99,18 @@ const buildChart = (svg, metadata, props) => {
     .attr('x', d => d.x0)
     .attr('y', d => y(d.length))
     .attr('width', x.bandwidth() - 1)
-    .attr('height', d => props.height - y(d.length))
-  .select(function backToBar() { return this.parentNode; })
-    .append('g')
-      .attr('class', 'overlay-group')
-    .append('rect')
-      .attr('class', 'overlay')
-      .attr('fill', 'steelblue')
-      .attr('opacity', 1)
-      .attr('stroke', 'lightgray')
-      .attr('x', d => d.x0)
-      .attr('y', d => y(d.length))
-      .attr('width', x.bandwidth() - 1)
-      .attr('height', d => props.height - y(d.length));
+    .attr('height', d => props.height - y(d.length));
+  bar.append('g')
+    .attr('class', 'overlay-group')
+  .append('rect')
+    .attr('class', 'overlay')
+    .attr('fill', 'steelblue')
+    .attr('opacity', 1)
+    .attr('stroke', 'lightgray')
+    .attr('x', d => d.x0)
+    .attr('y', d => y(d.length))
+    .attr('width', x.bandwidth() - 1)
+    .attr('height', d => props.height - y(d.length));
 
   g.append('g')
     .attr('class', 'axis axis--x')
@@ -120,17 +131,21 @@ const buildChart = (svg, metadata, props) => {
     .attr('class', 'axis axis--y')
     .call(yAxis);
 
+  const callUpdate = () => {
+    select('tbody')
+      .selectAll('tr')
+        .each(d => (
+          +d[1] < +select('#slider').node().value ?
+            dropSampleMetadata(d[0]) :
+            addSampleMetadata(d[0])
+        ));
+    updateChart(metadata, props, x, y);
+  };
+
   select('#slider')
-    .on('input.drop', () => {
-      select('tbody')
-        .selectAll('tr')
-          .each(d => (
-            +d[1] < +select('#slider').node().value ?
-              dropSampleMetadata(d[0]) :
-              addSampleMetadata(d[0])
-          ));
-      updateChart(metadata, props, x, y);
-    });
+    .on('input.drop', callUpdate);
+  select('#slider-value')
+    .on('input.type', callUpdate);
 
   // If anything has been dropped already, update on redraw
   updateChart(metadata, props, x, y);

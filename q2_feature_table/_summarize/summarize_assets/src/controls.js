@@ -20,6 +20,9 @@ const initializeControls = () => {
     } else {
       slider.node().value = sliderValue.node().value;
     }
+    select('tbody')
+      .selectAll('tr')
+      .attr('class', d => (+d[1] < +slider.node().value ? 'alert-danger' : ''));
   });
 
   sliderValue.on('change', () => {
@@ -27,6 +30,9 @@ const initializeControls = () => {
       sliderValue.node().value = 0;
       slider.node().value = slider.node().min;
     }
+    select('tbody')
+      .selectAll('tr')
+      .attr('class', d => (+d[1] < +slider.node().value ? 'alert-danger' : ''));
   });
 
   slider
