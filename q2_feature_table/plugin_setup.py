@@ -34,6 +34,12 @@ plugin.methods.register_function(
     parameters={'sampling_depth': Int},
     outputs=[('rarefied_table',
               FeatureTable[Frequency] % Properties('uniform-sampling'))],
+    input_descriptions={'table': 'The feature table to be rarefied.'},
+    parameter_descriptions={
+        'sampling_depth': ('The total frequency that each sample should be '
+                          'rarefied to.')
+    },
+    output_descriptions={'rarefied_table': 'The resulting feature table.'},
     name='Rarefy table',
     description="Subsample frequencies from all samples without replacement "
                 "so that the sum of frequencies in each sample is equal to "
@@ -47,6 +53,11 @@ plugin.methods.register_function(
     inputs={'table': FeatureTable[Frequency | RelativeFrequency]},
     parameters={},
     outputs=[('presence_absence_table', FeatureTable[PresenceAbsence])],
+    input_descriptions={'table': 'The feature table to be converted.'},
+    parameter_descriptions={},
+    output_descriptions={
+        'presence_absence_table': 'The resulting feature table.'
+    },
     name="Convert to presence/absence",
     description="Convert frequencies to binary values indicating presence or "
                 "absence of a feature in a sample."
@@ -59,6 +70,11 @@ plugin.methods.register_function(
     outputs=[
         ('relative_frequency_table',
          FeatureTable[RelativeFrequency] % Properties('uniform-sampling'))],
+    input_descriptions={'table': 'The feature table to be converted.'},
+    parameter_descriptions={},
+    output_descriptions={
+        'relative_frequency_table': 'The resulting feature table.'
+    },
     name="Convert to relative frequencies",
     description="Convert frequencies to relative frequencies by dividing each "
                 "frequency in a sample by the sum of frequencies in that "
@@ -72,6 +88,12 @@ plugin.methods.register_function(
     parameters={},
     outputs=[
         ('merged_table', FeatureTable[Frequency])],
+    input_descriptions={
+        'table1': 'The first feature table to be merged.',
+        'table2': 'The second feature table to be merged.',
+    },
+    parameter_descriptions={},
+    output_descriptions={'merged_table': 'The resulting feature table.'},
     name="Combine two tables",
     description="Combines a pair of feature tables which contain different "
                 "samples, and which may or may not contain the same features."
@@ -85,6 +107,14 @@ plugin.methods.register_function(
     parameters={},
     outputs=[
         ('merged_data', FeatureData[Sequence])],
+    input_descriptions={
+        'data1': 'The first collection of feature sequences to be merged.',
+        'data2': 'The second collection of feature sequences to be merged.',
+    },
+    parameter_descriptions={},
+    output_descriptions={
+        'merged_data': 'The resulting collection of feature sequences.'
+    },
     name="Combine two collections of feature sequences",
     description="Combines a pair of feature data objects which may or may not "
                 "contain data for the same features. If different feature "
@@ -101,6 +131,14 @@ plugin.methods.register_function(
     parameters={},
     outputs=[
         ('merged_data', FeatureData[Taxonomy])],
+    input_descriptions={
+        'data1': 'The first collection of feature taxonomies to be merged.',
+        'data2': 'The second collection of feature taxonomies to be merged.',
+    },
+    parameter_descriptions={},
+    output_descriptions={
+        'merged_data': 'The resulting collection of feature taxonomies.'
+    },
     name="Combine two collections of feature taxonomies",
     description="Combines a pair of feature data objects which may or may not "
                 "contain data for the same features. If different feature "
@@ -108,11 +146,6 @@ plugin.methods.register_function(
                 "the data from the first (data1) will be propagated to the "
                 "result."
 )
-
-_where_description = ("The 'where' parameter takes a SQLite WHERE clause. "
-                      "See the filtering tutorial for additional "
-                      "details: https://docs.qiime2.org/%s/tutorials/"
-                      "filtering/" % qiime2.__version__)
 
 plugin.methods.register_function(
     function=q2_feature_table.filter_samples,
@@ -124,13 +157,36 @@ plugin.methods.register_function(
                 'sample_metadata': Metadata,
                 'where': Str},
     outputs=[('filtered_table', FeatureTable[Frequency])],
+    input_descriptions={
+        'table': 'The feature table from which samples should be filtered.'
+    },
+    parameter_descriptions={
+        'min_frequency': ('The minimum total frequency that a sample must '
+                          'have to be retained.'),
+        'max_frequency': ('The maximum total frequency that a sample can '
+                          'have to be retained.'),
+        'min_features': ('The minimum number of features that a sample must '
+                          'have to be retained.'),
+        'max_features': ('The maximum number of features that a sample can '
+                          'have to be retained.'),
+        'sample_metadata': 'Sample metadata used in conjuction with `where` '
+                           'parameter to select samples to retain.',
+        'where': 'SQLite WHERE clause specifying sample metadata criteria '
+                 'that must be met to be included in the filtered feature '
+                 'table. If not provided, all samples in `sample_metadata` '
+                 'that are also in the feature table will be retained.'
+    },
+    output_descriptions={'filtered_table': 'The resulting feature table.'},
     name="Filter samples from table.",
     description="Filter samples from table based on frequency and/or "
                 "metadata. Any features with a frequency of zero after sample "
                 "filtering will also be removed. If no value(s) are provided "
                 "for max_frequency or max_features, they will default to "
                 "infinity (i.e., no maximum frequency and/or feature filter "
-                "will be applied).\n\n%s" % _where_description
+                "will be applied). See the filtering tutorial for additional "
+                "details: "
+                "https://docs.qiime2.org/%s/tutorials/filtering/" %
+                qiime2.__version__
 )
 
 plugin.methods.register_function(
@@ -143,13 +199,36 @@ plugin.methods.register_function(
                 'feature_metadata': Metadata,
                 'where': Str},
     outputs=[('filtered_table', FeatureTable[Frequency])],
+    input_descriptions={
+        'table': 'The feature table from which features should be filtered.'
+    },
+    parameter_descriptions={
+        'min_frequency': ('The minimum total frequency that a feature must '
+                          'have to be retained.'),
+        'max_frequency': ('The maximum total frequency that a feature can '
+                          'have to be retained.'),
+        'min_samples': ('The minimum number of samples that a feature must '
+                          'be observed in to be retained.'),
+        'max_samples': ('The maximum number of samples that a feature can '
+                          'be observed in to be retained.'),
+        'feature_metadata': 'Feature metadata used in conjuction with `where` '
+                           'parameter to select features to retain.',
+        'where': 'SQLite WHERE clause specifying feature metadata criteria '
+                 'that must be met to be included in the filtered feature '
+                 'table. If not provided, all features in `feature_metadata` '
+                 'that are also in the feature table will be retained.'
+    },
+    output_descriptions={'filtered_table': 'The resulting feature table.'},
     name="Filter features from table.",
     description="Filter features from table based on frequency and/or "
                 "metadata. Any samples with a frequency of zero after feature "
                 "filtering will also be removed. If no value(s) are provided "
                 "for max_frequency and/or max_samples, they will default to "
                 "infinity (i.e., no maximum frequency and/or sample filter "
-                "will be applied).\n\n%s" % _where_description
+                "will be applied). See the filtering tutorial for additional "
+                "details: "
+                "https://docs.qiime2.org/%s/tutorials/filtering/" %
+                qiime2.__version__
 )
 
 plugin.visualizers.register_function(
@@ -157,6 +236,8 @@ plugin.visualizers.register_function(
     inputs={'table': FeatureTable[Frequency | RelativeFrequency |
                                   PresenceAbsence]},
     parameters={},
+    input_descriptions={'table': 'The feature table to be summarized.'},
+    parameter_descriptions={},
     name="Summarize table",
     description="Generate visual and tabular summaries of a feature table."
 )
@@ -165,6 +246,8 @@ plugin.visualizers.register_function(
     function=q2_feature_table.tabulate_seqs,
     inputs={'data': FeatureData[Sequence]},
     parameters={},
+    input_descriptions={'data': 'The feature sequences to be tabulated.'},
+    parameter_descriptions={},
     name='View sequence associated with each feature',
     description="Generate tabular view of feature identifier to sequence "
                 "mapping, including links to BLAST each sequence against "
