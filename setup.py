@@ -15,8 +15,7 @@ setup(
     install_requires=['qiime2 == 2017.2.*', 'q2-types == 2017.2.*',
                       'q2templates == 2017.2.*', 'seaborn', 'numpy',
                       'biom-format >= 2.1.5, < 2.2.0', 'scikit-bio'],
-    package_data={'q2_feature_table': ['workflows/*md'],
-                  'q2_feature_table._summarize': [
+    package_data={'q2_feature_table._summarize': [
                         'summarize_assets/*.html',
                         'tabulate_seqs_assets/js/*',
                         'tabulate_seqs_assets/index.html'
