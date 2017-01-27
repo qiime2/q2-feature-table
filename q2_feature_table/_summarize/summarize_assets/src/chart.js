@@ -37,46 +37,22 @@ const dropSampleMetadata = (sampleID) => {
 };
 
 
-const updateChart = (metadata, props, x, y) => {
+const updateChart = (svg, metadata, props) => {
   const option = select('select').node().value;
   const validKeys = Object.keys(metadata[option]).filter(key => !DROPPED.includes(key));
-  const data = validKeys.map(key => metadata[option][key]);
-
-  selectAll('.overlay-group').remove();
-
-  const bins = buildBins(data, x);
-
-  selectAll('.bar')
-      .data(bins)
-    .append('g')
-      .attr('class', 'overlay-group')
-    .append('rect')
-      .attr('class', 'overlay')
-      .attr('fill', 'steelblue')
-      .attr('opacity', 1)
-      .attr('stroke', 'lightgray')
-      .attr('x', d => d.x0)
-      .attr('y', d => y(d.length))
-      .attr('width', d => (d.x1 - d.x0 - 1 > 0 ? d.x1 - d.x0 - 1 : x.bandwidth() - 1))
-      .attr('height', d => props.height - y(d.length));
-};
-
-
-const buildChart = (svg, metadata, props) => {
-  const option = select('select').node().value;
-
+  const validData = validKeys.map(key => metadata[option][key]);
   const data = Object.keys(metadata[option]).map(key => metadata[option][key]);
   const setArray = [...new Set(data)];
 
   setArray.sort(naturalSort);
 
   svg.selectAll('g').remove();
-  svg.selectAll('rect').remove();
+  svg.selectAll('.bar').remove();
+  svg.selectAll('.overlay-group').remove();
 
   const g = svg
     .append('g')
       .attr('transform', `translate(${props.margin.left}, ${props.margin.top})`);
-
 
   const x = scaleBand()
     .domain(setArray)
@@ -84,43 +60,23 @@ const buildChart = (svg, metadata, props) => {
     .paddingInner([0.1])
     .paddingOuter([0.3]);
 
-  const bins = buildBins(data, x);
+  const originalBins = buildBins(data, x);
+  const newBins = buildBins(validData, x);
 
   const y = scaleLinear()
-    .domain([0, max(bins, d => d.length)])
+    .domain([0, Math.max(max(originalBins, d => d.length), max(newBins, d => d.length))])
     .range([props.height, 0]);
 
   const bar = g.selectAll('.bar')
-    .data(bins)
+    .data(originalBins)
     .enter()
       .append('g')
         .attr('class', 'bar');
 
-  const xAxis = axisBottom(x);
-  const yAxis = axisLeft(y);
-
-  bar.append('rect')
-    .attr('fill', 'black')
-    .attr('opacity', 0.15)
-    .attr('x', d => d.x0)
-    .attr('y', d => y(d.length))
-    .attr('width', d => (d.x1 - d.x0 - 1 > 0 ? d.x1 - d.x0 - 1 : x.bandwidth() - 1))
-    .attr('height', d => props.height - y(d.length));
-  bar.append('g')
-    .attr('class', 'overlay-group')
-  .append('rect')
-    .attr('class', 'overlay')
-    .attr('fill', 'steelblue')
-    .attr('opacity', 1)
-    .attr('stroke', 'lightgray')
-    .attr('y', d => y(d.length))
-    .attr('width', d => (d.x1 - d.x0 - 1 > 0 ? d.x1 - d.x0 - 1 : x.bandwidth() - 1))
-    .attr('height', d => props.height - y(d.length));
-
   g.append('g')
     .attr('class', 'axis axis--x')
     .attr('transform', `translate(0, ${props.height})`)
-    .call(xAxis);
+    .call(axisBottom(x));
 
   if (setArray.length > 5) {
     g.selectAll('text')
@@ -131,29 +87,33 @@ const buildChart = (svg, metadata, props) => {
       .style('text-anchor', 'start');
   }
 
+  bar.append('rect')
+    .attr('class', 'original')
+    .attr('fill', 'black')
+    .attr('opacity', 0.15)
+    .attr('x', d => d.x0)
+    .attr('y', d => y(d.length))
+    .attr('width', d => (d.x1 - d.x0 - 1 > 0 ? d.x1 - d.x0 - 1 : x.bandwidth() - 1))
+    .attr('height', d => props.height - y(d.length));
+
+  selectAll('.bar')
+      .data(newBins)
+    .append('g')
+      .attr('class', 'overlay-group')
+    .append('rect')
+      .attr('class', 'overlay')
+      .attr('fill', 'steelblue')
+      .style('opacity', 1)
+      .style('fill-opacity', 1)
+      .attr('stroke', 'lightgray')
+      .attr('x', d => d.x0)
+      .attr('y', d => y(d.length))
+      .attr('width', d => (d.x1 - d.x0 - 1 > 0 ? d.x1 - d.x0 - 1 : x.bandwidth() - 1))
+      .attr('height', d => props.height - y(d.length));
 
   g.append('g')
     .attr('class', 'axis axis--y')
-    .call(yAxis);
-
-  const callUpdate = () => {
-    select('tbody')
-      .selectAll('tr')
-        .each(d => (
-          +d[1] < +select('#slider').node().value ?
-            dropSampleMetadata(d[0]) :
-            addSampleMetadata(d[0])
-        ));
-    updateChart(metadata, props, x, y);
-  };
-
-  select('#slider')
-    .on('input.drop', callUpdate);
-  select('#slider-value')
-    .on('input.type', callUpdate);
-
-  // If anything has been dropped already, update on redraw
-  updateChart(metadata, props, x, y);
+    .call(axisLeft(y));
 };
 
 
@@ -172,14 +132,30 @@ const initializeChart = (metadata) => {
   const selection = select('.form-group')
     .append('select')
       .attr('class', 'form-control')
-      .on('change', () => buildChart(svg, metadata, props));
+      .on('change', () => updateChart(svg, metadata, props));
   selection.selectAll('option')
     .data(Object.keys(metadata))
     .enter()
       .append('option')
       .text(d => d);
 
-  buildChart(svg, metadata, props);
+  const callUpdate = () => {
+    select('tbody')
+      .selectAll('tr')
+        .each(d => (
+          +d[1] < +select('#slider').node().value ?
+            dropSampleMetadata(d[0]) :
+            addSampleMetadata(d[0])
+        ));
+    updateChart(svg, metadata, props);
+  };
+
+  select('#slider')
+    .on('input.drop', callUpdate);
+  select('#slider-value')
+    .on('input.type', callUpdate);
+
+  updateChart(svg, metadata, props);
 };
 
 export default initializeChart;
