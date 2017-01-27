@@ -7,19 +7,34 @@
 // ----------------------------------------------------------------------------
 
 import {
-  select,
-  selectAll,
-  histogram,
-  scaleBand,
-  scaleLinear,
-  max,
   axisBottom,
   axisLeft,
+  scaleBand,
+  scaleLinear,
+  histogram,
+  max,
+  select,
+  selectAll,
 } from 'd3';
+import naturalSort from 'javascript-natural-sort';
 
 let DROPPED = [];
 
 const buildBins = (data, x) => (histogram()(data.map(x)));
+
+
+const addSampleMetadata = (sampleID) => {
+  if (DROPPED.includes(sampleID)) {
+    DROPPED = DROPPED.filter(i => i !== sampleID);
+  }
+};
+
+
+const dropSampleMetadata = (sampleID) => {
+  if (!DROPPED.includes(sampleID)) {
+    DROPPED.push(sampleID);
+  }
+};
 
 
 const updateChart = (metadata, props, x, y) => {
@@ -42,22 +57,8 @@ const updateChart = (metadata, props, x, y) => {
       .attr('stroke', 'lightgray')
       .attr('x', d => d.x0)
       .attr('y', d => y(d.length))
-      .attr('width', x.bandwidth() - 1)
+      .attr('width', d => (d.x1 - d.x0 - 1 > 0 ? d.x1 - d.x0 - 1 : x.bandwidth() - 1))
       .attr('height', d => props.height - y(d.length));
-};
-
-
-const addSampleMetadata = (sampleID) => {
-  if (DROPPED.includes(sampleID)) {
-    DROPPED = DROPPED.filter(i => i !== sampleID);
-  }
-};
-
-
-const dropSampleMetadata = (sampleID) => {
-  if (!DROPPED.includes(sampleID)) {
-    DROPPED.push(sampleID);
-  }
 };
 
 
@@ -67,6 +68,8 @@ const buildChart = (svg, metadata, props) => {
   const data = Object.keys(metadata[option]).map(key => metadata[option][key]);
   const setArray = [...new Set(data)];
 
+  setArray.sort(naturalSort);
+
   svg.selectAll('g').remove();
   svg.selectAll('rect').remove();
 
@@ -74,9 +77,12 @@ const buildChart = (svg, metadata, props) => {
     .append('g')
       .attr('transform', `translate(${props.margin.left}, ${props.margin.top})`);
 
+
   const x = scaleBand()
     .domain(setArray)
-    .rangeRound([0, props.width - props.margin.left - props.margin.right]);
+    .range([0, props.width])
+    .paddingInner([0.1])
+    .paddingOuter([0.3]);
 
   const bins = buildBins(data, x);
 
@@ -98,7 +104,7 @@ const buildChart = (svg, metadata, props) => {
     .attr('opacity', 0.15)
     .attr('x', d => d.x0)
     .attr('y', d => y(d.length))
-    .attr('width', x.bandwidth() - 1)
+    .attr('width', d => (d.x1 - d.x0 - 1 > 0 ? d.x1 - d.x0 - 1 : x.bandwidth() - 1))
     .attr('height', d => props.height - y(d.length));
   bar.append('g')
     .attr('class', 'overlay-group')
@@ -107,9 +113,8 @@ const buildChart = (svg, metadata, props) => {
     .attr('fill', 'steelblue')
     .attr('opacity', 1)
     .attr('stroke', 'lightgray')
-    .attr('x', d => d.x0)
     .attr('y', d => y(d.length))
-    .attr('width', x.bandwidth() - 1)
+    .attr('width', d => (d.x1 - d.x0 - 1 > 0 ? d.x1 - d.x0 - 1 : x.bandwidth() - 1))
     .attr('height', d => props.height - y(d.length));
 
   g.append('g')

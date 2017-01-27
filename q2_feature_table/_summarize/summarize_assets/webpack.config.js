@@ -4,7 +4,7 @@ var webpack = require('webpack');
 module.exports = {
   entry: {
     app: './src/main.js',
-    vendor: ['d3']
+    vendor: ['d3', 'javascript-natural-sort']
   },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin('vendor', 'app/vendor.bundle.js'),

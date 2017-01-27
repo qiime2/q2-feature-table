@@ -4,7 +4,8 @@
   "description": "",
   "main": "main.js",
   "dependencies": {
-    "d3": "^4.4.1"
+    "d3": "^4.4.1",
+    "javascript-natural-sort": "^0.7.1"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
