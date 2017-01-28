@@ -15,6 +15,7 @@ const init = (metadata, counts) => {
   initializeTable(counts);
   if (Object.keys(metadata).length) {
     initializeChart(metadata);
+    window.addEventListener('resize', () => initializeChart(metadata));
   }
 };
 

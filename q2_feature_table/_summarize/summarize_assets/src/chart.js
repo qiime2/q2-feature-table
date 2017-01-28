@@ -118,20 +118,24 @@ const updateChart = (svg, metadata, props) => {
 
 
 const initializeChart = (metadata) => {
-  const margin = { top: 10, right: 30, bottom: 30, left: 40 };
+  select('svg').remove();
+  select('.metadata-dropdown').remove();
+
+  const margin = { top: 10, right: 30, bottom: 30, left: 30 };
+  const width = select('#histogram').node().offsetWidth * 0.75;
   const props = {
     margin,
-    width: 960 - margin.left - margin.right,
-    height: 500 - margin.top - margin.bottom,
+    width: width - margin.left - margin.right,
+    height: ((width * 9) / 16) - margin.top - margin.bottom,
   };
 
   const svg = select('#histogram')
     .append('svg')
       .attr('width', props.width + props.margin.left + props.margin.right)
-      .attr('height', 600 + props.margin.top + props.margin.bottom);
+      .attr('height', props.height + props.margin.top + props.margin.bottom + 150);
   const selection = select('.form-group')
     .append('select')
-      .attr('class', 'form-control')
+      .attr('class', 'form-control metadata-dropdown')
       .on('change', () => updateChart(svg, metadata, props));
   selection.selectAll('option')
     .data(Object.keys(metadata))
@@ -156,6 +160,7 @@ const initializeChart = (metadata) => {
     .on('input.type', callUpdate);
 
   updateChart(svg, metadata, props);
+  svg.attr('display', 'block').style('margin', '0 auto');
 };
 
 export default initializeChart;
