@@ -53,7 +53,7 @@ def summarize(output_dir: str, table: pd.DataFrame,
     with open(os.path.join(output_dir, 'data.jsonp'), 'w') as fh:
         fh.write("load(")
         if sample_metadata:
-            sample_metadata.to_dataframe().to_json(fh)
+            sample_metadata.to_dataframe().loc[counts.index].to_json(fh)
         else:
             fh.write('{}')
         fh.write(', ')
