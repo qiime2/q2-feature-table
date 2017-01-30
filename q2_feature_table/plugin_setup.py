@@ -259,7 +259,7 @@ plugin.visualizers.register_function(
                                   PresenceAbsence]},
     parameters={'sample_metadata': Metadata},
     input_descriptions={'table': 'The feature table to be summarized.'},
-    parameter_descriptions={},
+    parameter_descriptions={'sample_metadata': 'The sample metadata.'},
     name="Summarize table",
     description="Generate visual and tabular summaries of a feature table."
 )
