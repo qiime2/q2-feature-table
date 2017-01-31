@@ -18,33 +18,25 @@ import {
 } from 'd3';
 import naturalSort from 'javascript-natural-sort';
 
-let DROPPED = [];
 
-const buildBins = (data, x) => (histogram()(data.map(x)));
-
-
-const addSampleMetadata = (sampleID) => {
-  if (DROPPED.includes(sampleID)) {
-    DROPPED = DROPPED.filter(i => i !== sampleID);
+const categoricalBin = (data, counts, x) => {
+  const result = [];
+  x.domain().forEach(d => result.push(Object.keys(data).filter(e => data[e] === d).map(id => counts[id])));
+  for (let i = 0; i < x.domain().length; i += 1) {
+    result[i].x0 = x(x.domain()[i]);
   }
+  return result
 };
 
 
-const dropSampleMetadata = (sampleID) => {
-  if (!DROPPED.includes(sampleID)) {
-    DROPPED.push(sampleID);
-  }
-};
-
-
-const updateChart = (svg, metadata, props) => {
+const updateChart = (svg, metadata, props, counts, threshold) => {
   const option = select('select').node().value;
-  const validKeys = Object.keys(metadata[option]).filter(key => !DROPPED.includes(key));
-  const validData = validKeys.map(key => metadata[option][key]);
-  const data = Object.keys(metadata[option]).map(key => metadata[option][key]);
-  const setArray = [...new Set(data)];
 
-  setArray.sort(naturalSort);
+  const data = metadata[option];
+  const categories = [...new Set(Object.keys(data).map(key => data[key]))];
+
+  categories.sort(naturalSort);
+
 
   svg.selectAll('g').remove();
   svg.selectAll('.bar').remove();
@@ -55,20 +47,19 @@ const updateChart = (svg, metadata, props) => {
       .attr('transform', `translate(${props.margin.left}, ${props.margin.top})`);
 
   const x = scaleBand()
-    .domain(setArray)
+    .domain(categories)
     .range([0, props.width])
     .paddingInner([0.1])
     .paddingOuter([0.3]);
 
-  const originalBins = buildBins(data, x);
-  const newBins = buildBins(validData, x);
+  const bins = categoricalBin(data, counts, x);
 
   const y = scaleLinear()
-    .domain([0, Math.max(max(originalBins, d => d.length), max(newBins, d => d.length))])
+    .domain([0, max(bins, d => d.length)])
     .range([props.height, 0]);
 
   const bar = g.selectAll('.bar')
-    .data(originalBins)
+    .data(bins)
     .enter()
       .append('g')
         .attr('class', 'bar');
@@ -78,7 +69,7 @@ const updateChart = (svg, metadata, props) => {
     .attr('transform', `translate(0, ${props.height})`)
     .call(axisBottom(x));
 
-  if (setArray.length > 5) {
+  if (categories.length > 5) {
     g.selectAll('text')
       .attr('y', 0)
       .attr('x', 9)
@@ -93,11 +84,11 @@ const updateChart = (svg, metadata, props) => {
     .attr('opacity', 0.15)
     .attr('x', d => d.x0)
     .attr('y', d => y(d.length))
-    .attr('width', d => (d.x1 - d.x0 - 1 > 0 ? d.x1 - d.x0 - 1 : x.bandwidth() - 1))
+    .attr('width', x.bandwidth() - 1)
     .attr('height', d => props.height - y(d.length));
 
   selectAll('.bar')
-      .data(newBins)
+      .data(bins)
     .append('g')
       .attr('class', 'overlay-group')
     .append('rect')
@@ -107,9 +98,9 @@ const updateChart = (svg, metadata, props) => {
       .style('fill-opacity', 1)
       .attr('stroke', 'lightgray')
       .attr('x', d => d.x0)
-      .attr('y', d => y(d.length))
-      .attr('width', d => (d.x1 - d.x0 - 1 > 0 ? d.x1 - d.x0 - 1 : x.bandwidth() - 1))
-      .attr('height', d => props.height - y(d.length));
+      .attr('y', d => y(d.filter(count => count >= threshold).length))
+      .attr('width', x.bandwidth() - 1)
+      .attr('height', d => props.height - y(d.filter(count => count >= threshold).length));
 
   g.append('g')
     .attr('class', 'axis axis--y')
@@ -117,7 +108,7 @@ const updateChart = (svg, metadata, props) => {
 };
 
 
-const initializeChart = (metadata) => {
+const initializeChart = (metadata, counts) => {
   select('svg').remove();
   select('.metadata-dropdown').remove();
 
@@ -128,6 +119,7 @@ const initializeChart = (metadata) => {
     width: width - margin.left - margin.right,
     height: ((width * 9) / 16) - margin.top - margin.bottom,
   };
+  let threshold = 0;
 
   const svg = select('#histogram')
     .append('svg')
@@ -136,7 +128,7 @@ const initializeChart = (metadata) => {
   const selection = select('.form-group')
     .append('select')
       .attr('class', 'form-control metadata-dropdown')
-      .on('change', () => updateChart(svg, metadata, props));
+      .on('change', () => updateChart(svg, metadata, props, counts, threshold));
   selection.selectAll('option')
     .data(Object.keys(metadata))
     .enter()
@@ -144,22 +136,18 @@ const initializeChart = (metadata) => {
       .text(d => d);
 
   const callUpdate = () => {
-    select('tbody')
-      .selectAll('tr')
-        .each(d => (
-          +d[1] < +select('#slider').node().value ?
-            dropSampleMetadata(d[0]) :
-            addSampleMetadata(d[0])
-        ));
-    updateChart(svg, metadata, props);
+    threshold = +select('#slider').node().value;
+    updateChart(svg, metadata, props, counts, threshold);
   };
 
   select('#slider')
     .on('input.drop', callUpdate);
   select('#slider-value')
+    .on('change.drop', callUpdate);
+  select('#slider-value')
     .on('input.type', callUpdate);
 
-  updateChart(svg, metadata, props);
+  updateChart(svg, metadata, props, counts, threshold);
   svg.attr('display', 'block').style('margin', '0 auto');
 };
 
