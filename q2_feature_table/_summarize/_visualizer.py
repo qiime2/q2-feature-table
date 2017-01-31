@@ -62,7 +62,7 @@ def summarize(output_dir: str, table: biom.Table) -> None:
                     sample_summary['Minimum frequency']) / bin_width, 5)
 
         sample_frequencies_ax = sns.distplot(sample_frequencies, kde=False,
-                                             rug=True, bins=round(bins))
+                                             rug=True, bins=int(round(bins)))
         sample_frequencies_ax.get_xaxis().set_major_formatter(
             matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
         sample_frequencies_ax.set_xlabel('Frequency per sample')
