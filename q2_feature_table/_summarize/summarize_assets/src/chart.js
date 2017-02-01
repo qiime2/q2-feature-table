@@ -112,6 +112,7 @@ const buildChart = (svg, props, metadata, counts) => {
   const hiddenDepths = d3.select('#hidden-depths');
   hiddenDepths
     .on('change', () => updateChart(bar, props, y, +hiddenDepths.node().value));
+  updateChart(bar, props, y, +hiddenDepths.node().value);
 };
 
 

@@ -10,6 +10,7 @@ import os
 import pkg_resources
 import shutil
 
+import biom
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -46,22 +47,12 @@ def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
     shutil.copy(js, os.path.join(output_dir, 'js', 'tsorter.min.js'))
 
 
-def summarize(output_dir: str, table: pd.DataFrame,
+def summarize(output_dir: str, table: biom.Table,
               sample_metadata: qiime2.Metadata=None) -> None:
     number_of_samples, number_of_features = table.shape
-    counts = table.sum(axis=1)
-    with open(os.path.join(output_dir, 'data.jsonp'), 'w') as fh:
-        fh.write("load(")
-        if sample_metadata:
-            sample_metadata.to_dataframe().loc[counts.index].to_json(fh)
-        else:
-            fh.write('{}')
-        fh.write(', ')
-        counts.to_json(fh)
-        fh.write(');')
 
     sample_summary, sample_frequencies = _frequency_summary(
-        table, axis=1)
+        table, axis='sample')
     if number_of_samples > 1:
         # Freedman–Diaconis rule
         IQR = sample_summary['3rd quartile'] - sample_summary['1st quartile']
@@ -72,7 +63,7 @@ def summarize(output_dir: str, table: pd.DataFrame,
                     sample_summary['Minimum frequency']) / bin_width, 5)
 
         sample_frequencies_ax = sns.distplot(sample_frequencies, kde=False,
-                                             rug=True, bins=round(bins))
+                                             rug=True, bins=int(round(bins)))
         sample_frequencies_ax.get_xaxis().set_major_formatter(
             matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
         sample_frequencies_ax.set_xlabel('Frequency per sample')
@@ -83,7 +74,7 @@ def summarize(output_dir: str, table: pd.DataFrame,
         plt.gcf().clear()
 
     feature_summary, feature_frequencies = _frequency_summary(
-        table, axis=0)
+        table, axis='observation')
     if number_of_features > 1:
         feature_frequencies_ax = sns.distplot(feature_frequencies, kde=False,
                                               rug=True)
@@ -125,7 +116,7 @@ def summarize(output_dir: str, table: pd.DataFrame,
     feature_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'feature-frequency-detail.html')
 
-    context.update({'max_count': counts.max(),
+    context.update({'max_count': sample_frequencies.max(),
                     'feature_frequencies_table': feature_frequencies_table})
     templates = [index, sample_frequency_template,
                  feature_frequency_template, overview_template]
@@ -134,6 +125,17 @@ def summarize(output_dir: str, table: pd.DataFrame,
     shutil.copytree(os.path.join(TEMPLATES, 'summarize_assets', 'app'),
                     os.path.join(output_dir, 'app'))
 
+    with open(os.path.join(output_dir, 'data.jsonp'), 'w') as fh:
+        fh.write("app.init(")
+        if sample_metadata:
+            df = sample_metadata.to_dataframe()
+            df.loc[sample_frequencies.index].to_json(fh)
+        else:
+            fh.write('{}')
+        fh.write(', ')
+        sample_frequencies.to_json(fh)
+        fh.write(');')
+
 
 def _format_html_table(df):
     table = df.to_html(classes="table table-striped table-hover")
@@ -141,7 +143,7 @@ def _format_html_table(df):
 
 
 def _frequencies(table, axis):
-    return table.sum(axis=axis)
+    return pd.Series(data=table.sum(axis=axis), index=table.ids(axis=axis))
 
 
 def _frequency_summary(table, axis='sample'):

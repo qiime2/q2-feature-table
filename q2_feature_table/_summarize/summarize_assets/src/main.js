@@ -6,7 +6,14 @@
 // The full license is in the file LICENSE, distributed with this software.
 // ----------------------------------------------------------------------------
 
-import init from './init';
+import initializeControls from './controls';
+import initializeTable from './table';
+import initializeChart from './chart';
 
-/* global m, c */
-init(m, c);
+export const init = (metadata, counts) => {
+  initializeTable(counts);
+  if (Object.keys(metadata).length) {
+    initializeChart(metadata, counts);
+  }
+  initializeControls();
+};

@@ -9,13 +9,16 @@ module.exports = {
   plugins: [
     new webpack.optimize.CommonsChunkPlugin('vendor', 'app/vendor.bundle.js'),
     new webpack.optimize.UglifyJsPlugin({
-      compress: { warnings: false }
+      compress: { warnings: false },
+      mangle: { except: ['init'] }
     }),
     new webpack.NoErrorsPlugin(),
   ],
   output: {
     path: __dirname,
-    filename: 'app/bundle.js'
+    filename: 'app/bundle.js',
+    libraryTarget: 'var',
+    library: 'app'
   },
   resolve: {
     extensions: ['', '.js']
