@@ -6,47 +6,45 @@
 // The full license is in the file LICENSE, distributed with this software.
 // ----------------------------------------------------------------------------
 
-import {
-  axisBottom,
-  axisLeft,
-  scaleBand,
-  scaleLinear,
-  histogram,
-  max,
-  select,
-  selectAll,
-} from 'd3';
 import naturalSort from 'javascript-natural-sort';
+import * as d3 from 'd3';
 
 
 const categoricalBin = (data, counts, x) => {
   const result = [];
-  x.domain().forEach(d => result.push(Object.keys(data).filter(e => data[e] === d).map(id => counts[id])));
-  for (let i = 0; i < x.domain().length; i += 1) {
-    result[i].x0 = x(x.domain()[i]);
-  }
-  return result
+  x.domain().forEach((cat) => {
+    const catArray = Object.keys(data)
+                      .filter(sampleID => data[sampleID] === cat)
+                      .map(sampleID => counts[sampleID]);
+    catArray.x0 = x(cat);
+    result.push(catArray);
+  });
+  return result;
 };
 
 
-const updateChart = (svg, metadata, props, counts, threshold) => {
-  const option = select('select').node().value;
+const updateChart = (bar, props, y, threshold) => {
+  bar.selectAll('.overlay')
+    .attr('y', d => y(d.filter(count => count >= threshold).length))
+    .attr('height', d => props.height - y(d.filter(count => count >= threshold).length));
+};
 
+const buildChart = (svg, props, metadata, counts) => {
+  svg.selectAll('*').remove();
+
+  const threshold = d3.select('#slider').node().min;
+  const option = d3.select('select').node().value;
   const data = metadata[option];
   const categories = [...new Set(Object.keys(data).map(key => data[key]))];
 
   categories.sort(naturalSort);
 
-
-  svg.selectAll('g').remove();
-  svg.selectAll('.bar').remove();
-  svg.selectAll('.overlay-group').remove();
-
   const g = svg
-    .append('g')
-      .attr('transform', `translate(${props.margin.left}, ${props.margin.top})`);
+      .append('g')
+    .attr('transform', `translate(${props.margin.left}, ${props.margin.top})`);
 
-  const x = scaleBand()
+  const x = d3
+    .scaleBand()
     .domain(categories)
     .range([0, props.width])
     .paddingInner([0.1])
@@ -54,21 +52,17 @@ const updateChart = (svg, metadata, props, counts, threshold) => {
 
   const bins = categoricalBin(data, counts, x);
 
-  const y = scaleLinear()
-    .domain([0, max(bins, d => d.length)])
+  const y = d3
+    .scaleLinear()
+    .domain([0, d3.max(bins, d => d.length)])
     .range([props.height, 0]);
-
-  const bar = g.selectAll('.bar')
-    .data(bins)
-    .enter()
-      .append('g')
-        .attr('class', 'bar');
 
   g.append('g')
     .attr('class', 'axis axis--x')
     .attr('transform', `translate(0, ${props.height})`)
-    .call(axisBottom(x));
+    .call(d3.axisBottom(x));
 
+  // vertical axis labels if there are a good amount of categories
   if (categories.length > 5) {
     g.selectAll('text')
       .attr('y', 0)
@@ -78,7 +72,20 @@ const updateChart = (svg, metadata, props, counts, threshold) => {
       .style('text-anchor', 'start');
   }
 
-  bar.append('rect')
+  g.append('g')
+    .attr('class', 'axis axis--y')
+    .call(d3.axisLeft(y));
+
+  const bar = g
+      .selectAll('.bar')
+    .data(bins)
+      .enter()
+    .append('g')
+    .attr('class', 'bar');
+
+  // build backdrop
+  bar
+      .append('rect')
     .attr('class', 'original')
     .attr('fill', 'black')
     .attr('opacity', 0.15)
@@ -87,67 +94,60 @@ const updateChart = (svg, metadata, props, counts, threshold) => {
     .attr('width', x.bandwidth() - 1)
     .attr('height', d => props.height - y(d.length));
 
-  selectAll('.bar')
-      .data(bins)
-    .append('g')
-      .attr('class', 'overlay-group')
-    .append('rect')
-      .attr('class', 'overlay')
-      .attr('fill', 'steelblue')
-      .style('opacity', 1)
-      .style('fill-opacity', 1)
-      .attr('stroke', 'lightgray')
-      .attr('x', d => d.x0)
-      .attr('y', d => y(d.filter(count => count >= threshold).length))
-      .attr('width', x.bandwidth() - 1)
-      .attr('height', d => props.height - y(d.filter(count => count >= threshold).length));
+  // build overlay
+  bar
+      .append('g')
+    .attr('class', 'overlay-group')
+      .append('rect')
+    .attr('class', 'overlay')
+    .attr('fill', 'steelblue')
+    .style('opacity', 1)
+    .style('fill-opacity', 1)
+    .attr('stroke', 'lightgray')
+    .attr('x', d => d.x0)
+    .attr('y', d => y(d.filter(count => count >= threshold).length))
+    .attr('width', x.bandwidth() - 1)
+    .attr('height', d => props.height - y(d.filter(count => count >= threshold).length));
 
-  g.append('g')
-    .attr('class', 'axis axis--y')
-    .call(axisLeft(y));
+  const hiddenDepths = d3.select('#hidden-depths');
+  hiddenDepths
+    .on('change', () => updateChart(bar, props, y, +hiddenDepths.node().value));
 };
 
 
 const initializeChart = (metadata, counts) => {
-  select('svg').remove();
-  select('.metadata-dropdown').remove();
+  d3.select('svg').remove();
+  d3.select('.metadata-dropdown').remove();
 
   const margin = { top: 10, right: 30, bottom: 30, left: 30 };
-  const width = select('#histogram').node().offsetWidth * 0.75;
+  const width = d3.select('#histogram').node().offsetWidth * 0.75;
   const props = {
     margin,
     width: width - margin.left - margin.right,
-    height: ((width * 9) / 16) - margin.top - margin.bottom,
-  };
-  let threshold = 0;
+    height: ((width * 9) / 16) - margin.top - margin.bottom };
 
-  const svg = select('#histogram')
-    .append('svg')
-      .attr('width', props.width + props.margin.left + props.margin.right)
-      .attr('height', props.height + props.margin.top + props.margin.bottom + 150);
-  const selection = select('.form-group')
-    .append('select')
-      .attr('class', 'form-control metadata-dropdown')
-      .on('change', () => updateChart(svg, metadata, props, counts, threshold));
+  const svg = d3.select('#histogram')
+      .append('svg')
+    .attr('width', props.width + props.margin.left + props.margin.right)
+    .attr('height', props.height + props.margin.top + props.margin.bottom + 150);
+
+  const formGroup = d3.select('.form-group');
+  const selection = formGroup
+      .append('select')
+    .attr('class', 'form-control metadata-dropdown')
+    .on('change', () => buildChart(svg, props, metadata, counts));
   selection.selectAll('option')
     .data(Object.keys(metadata))
-    .enter()
-      .append('option')
-      .text(d => d);
+      .enter()
+    .append('option')
+    .text(d => d);
+  formGroup
+      .append('input')
+    .attr('type', 'hidden')
+    .attr('value', d3.select('#slider').node().value)
+    .attr('id', 'hidden-depths');
 
-  const callUpdate = () => {
-    threshold = +select('#slider').node().value;
-    updateChart(svg, metadata, props, counts, threshold);
-  };
-
-  select('#slider')
-    .on('input.drop', callUpdate);
-  select('#slider-value')
-    .on('change.drop', callUpdate);
-  select('#slider-value')
-    .on('input.type', callUpdate);
-
-  updateChart(svg, metadata, props, counts, threshold);
+  buildChart(svg, props, metadata, counts);
   svg.attr('display', 'block').style('margin', '0 auto');
 };
 

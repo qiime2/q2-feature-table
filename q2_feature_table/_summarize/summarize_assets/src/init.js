@@ -11,12 +11,11 @@ import initializeTable from './table';
 import initializeChart from './chart';
 
 const init = (metadata, counts) => {
-  initializeControls();
   initializeTable(counts);
   if (Object.keys(metadata).length) {
     initializeChart(metadata, counts);
-    window.addEventListener('resize', () => initializeChart(metadata, counts));
   }
+  initializeControls();
 };
 
 export default init;
