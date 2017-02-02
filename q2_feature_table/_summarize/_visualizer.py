@@ -54,13 +54,17 @@ def summarize(output_dir: str, table: biom.Table,
     sample_summary, sample_frequencies = _frequency_summary(
         table, axis='sample')
     if number_of_samples > 1:
-        # Freedman–Diaconis rule
-        IQR = sample_summary['3rd quartile'] - sample_summary['1st quartile']
-        bin_width = (2 * IQR) / (number_of_samples ** (1/3))
 
-        # Calculate the bin count, with a minimum of 5 bins
-        bins = max((sample_summary['Maximum frequency'] -
-                    sample_summary['Minimum frequency']) / bin_width, 5)
+        IQR = sample_summary['3rd quartile'] - sample_summary['1st quartile']
+        if IQR == 0.0:
+            bins = 5
+        else:
+            # Freedman–Diaconis rule
+            bin_width = (2 * IQR) / (number_of_samples ** (1/3))
+
+            # Calculate the bin count, with a minimum of 5 bins
+            bins = max((sample_summary['Maximum frequency'] -
+                        sample_summary['Minimum frequency']) / bin_width, 5)
 
         sample_frequencies_ax = sns.distplot(sample_frequencies, kde=False,
                                              rug=True, bins=int(round(bins)))
