@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 from q2_types.feature_data import DNAIterator
 import q2templates
 import skbio
+import qiime2
 
 _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
                        "ALIGNMENT_VIEW=Pairwise&PROGRAM=blastn&DATABASE"
@@ -46,9 +47,9 @@ def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
     shutil.copy(js, os.path.join(output_dir, 'js', 'tsorter.min.js'))
 
 
-def summarize(output_dir: str, table: biom.Table) -> None:
-    number_of_samples = table.shape[1]
-    number_of_features = table.shape[0]
+def summarize(output_dir: str, table: biom.Table,
+              sample_metadata: qiime2.Metadata=None) -> None:
+    number_of_features, number_of_samples = table.shape
 
     sample_summary, sample_frequencies = _frequency_summary(
         table, axis='sample')
@@ -62,7 +63,7 @@ def summarize(output_dir: str, table: biom.Table) -> None:
                     sample_summary['Minimum frequency']) / bin_width, 5)
 
         sample_frequencies_ax = sns.distplot(sample_frequencies, kde=False,
-                                             rug=True, bins=round(bins))
+                                             rug=True, bins=int(round(bins)))
         sample_frequencies_ax.get_xaxis().set_major_formatter(
             matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
         sample_frequencies_ax.set_xlabel('Frequency per sample')
@@ -106,19 +107,35 @@ def summarize(output_dir: str, table: biom.Table) -> None:
     feature_frequencies.to_csv(
         os.path.join(output_dir, 'feature-frequency-detail.csv'))
 
-    sample_frequencies_table = _format_html_table(
-        sample_frequencies.to_frame('Frequency'))
     feature_frequencies_table = _format_html_table(
         feature_frequencies.to_frame('Frequency'))
+    overview_template = os.path.join(
+        TEMPLATES, 'summarize_assets', 'overview.html')
     sample_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'sample-frequency-detail.html')
     feature_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'feature-frequency-detail.html')
 
-    context.update({'sample_frequencies_table': sample_frequencies_table,
+    context.update({'max_count': sample_frequencies.max(),
                     'feature_frequencies_table': feature_frequencies_table})
-    templates = [index, sample_frequency_template, feature_frequency_template]
-    q2templates.render(templates, output_dir, context=context)
+    templates = [index, sample_frequency_template,
+                 feature_frequency_template, overview_template]
+    styles = ["base.html", "child.html"]
+    q2templates.render(templates, output_dir, context=context, styles=styles)
+
+    shutil.copytree(os.path.join(TEMPLATES, 'summarize_assets', 'app'),
+                    os.path.join(output_dir, 'app'))
+
+    with open(os.path.join(output_dir, 'data.jsonp'), 'w') as fh:
+        fh.write("app.init(")
+        if sample_metadata:
+            df = sample_metadata.to_dataframe()
+            df.loc[sample_frequencies.index].to_json(fh)
+        else:
+            fh.write('{}')
+        fh.write(', ')
+        sample_frequencies.to_json(fh)
+        fh.write(');')
 
 
 def _format_html_table(df):

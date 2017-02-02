@@ -6,7 +6,6 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import qiime2
 from qiime2.plugin import Plugin, Int, Properties, Metadata, Str
 
 import q2_feature_table
@@ -203,9 +202,7 @@ plugin.methods.register_function(
     description="Filter samples from table based on frequency and/or "
                 "metadata. Any features with a frequency of zero after sample "
                 "filtering will also be removed. See the filtering tutorial "
-                "for additional details: "
-                "https://docs.qiime2.org/%s/tutorials/filtering/" %
-                qiime2.__version__
+                "on https://docs.qiime2.org for additional details."
 )
 
 plugin.methods.register_function(
@@ -248,18 +245,16 @@ plugin.methods.register_function(
     description="Filter features from table based on frequency and/or "
                 "metadata. Any samples with a frequency of zero after feature "
                 "filtering will also be removed. See the filtering tutorial "
-                "for additional details: "
-                "https://docs.qiime2.org/%s/tutorials/filtering/" %
-                qiime2.__version__
+                "on https://docs.qiime2.org for additional details."
 )
 
 plugin.visualizers.register_function(
     function=q2_feature_table.summarize,
     inputs={'table': FeatureTable[Frequency | RelativeFrequency |
                                   PresenceAbsence]},
-    parameters={},
+    parameters={'sample_metadata': Metadata},
     input_descriptions={'table': 'The feature table to be summarized.'},
-    parameter_descriptions={},
+    parameter_descriptions={'sample_metadata': 'The sample metadata.'},
     name="Summarize table",
     description="Generate visual and tabular summaries of a feature table."
 )

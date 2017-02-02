@@ -14,7 +14,6 @@ from ._summarize import (summarize, tabulate_seqs)
 from ._merge import (merge, merge_seq_data, merge_taxa_data)
 from ._filter import (filter_samples, filter_features)
 
-
 __version__ = pkg_resources.get_distribution('q2-feature-table').version
 
 __all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'summarize',
