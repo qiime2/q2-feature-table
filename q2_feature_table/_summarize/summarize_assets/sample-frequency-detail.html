@@ -1,40 +1,34 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-    <link rel="stylesheet" href="./q2templateassets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./q2templateassets/css/normalize.css">
-    <script src="./app/vendor.bundle.js"></script>
-    <script src="./app/js/child.js"></script>
-  </head>
-  <body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="form-group col-lg-2 col-md-2 col-sm-12 col-xs-12">
-          <label for="slider-value">Sampling Depth:</label>
-          <input
-            id="slider-value"
-            class="form-control"
-            type="number"
-          >
-          <br>
-          <input
-            id="slider"
-            type="range"
-            value="0"
-            min="0"
-            max="{{ max_count }}"
-          >
-          <br>
-        </div>
-        <div id="histogram" class="col-lg-10 col-md-10 col-sm-12 col-xs-12"></div>
-      </div>
-      <div class="row">
-        <div id="table" class="col-lg-10 col-md-10 col-sm-12 col-xs-12 pull-right"></div>
-      </div>
+{% extends "child.html" %}
+
+{% block head %}
+  <script src="./app/vendor.bundle.js"></script>
+  <script src="./app/js/child.js"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="form-group col-lg-2 col-md-2 col-sm-12 col-xs-12">
+      <label for="slider-value">Sampling Depth:</label>
+      <input
+        id="slider-value"
+        class="form-control"
+        type="number"
+      >
+      <br>
+      <input
+        id="slider"
+        type="range"
+        value="0"
+        min="0"
+        max="{{ max_count }}"
+      >
+      <br>
     </div>
-    <script src='./app/bundle.js'></script>
-    <script src='./data.jsonp'></script>
-  </body>
-</html>
+    <div id="histogram" class="col-lg-10 col-md-10 col-sm-12 col-xs-12"></div>
+  </div>
+  <div class="row">
+    <div id="table" class="col-lg-10 col-md-10 col-sm-12 col-xs-12 pull-right"></div>
+  </div>
+  <script src='./app/bundle.js'></script>
+  <script src='./data.jsonp'></script>
+{% endblock %}

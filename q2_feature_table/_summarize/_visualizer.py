@@ -120,7 +120,8 @@ def summarize(output_dir: str, table: biom.Table,
                     'feature_frequencies_table': feature_frequencies_table})
     templates = [index, sample_frequency_template,
                  feature_frequency_template, overview_template]
-    q2templates.render(templates, output_dir, context=context)
+    styles = ["base.html", "child.html"]
+    q2templates.render(templates, output_dir, context=context, styles=styles)
 
     shutil.copytree(os.path.join(TEMPLATES, 'summarize_assets', 'app'),
                     os.path.join(output_dir, 'app'))
