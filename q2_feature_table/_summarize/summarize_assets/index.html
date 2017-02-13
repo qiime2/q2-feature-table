@@ -1,17 +1,1 @@
-{% extends "base.html" %}
-
-{% block head %}
-  <link rel="stylesheet" href="./app/css/main.css">
-  <script src="./app/js/parent.js"></script>
-{% endblock %}
-
-{% block content %}
-  <div class="row">
-    <ul class="nav nav-tabs">
-      <li id="overview-tab" class="active"><a href="#">Overview</a></li>
-      <li id="sample-detail-tab"><a href="#">Interactive Sample Detail</a></li>
-      <li id="feature-detail-tab"><a href="#">Feature Detail</a></li>
-    </ul>
-  </div>
-  <iframe id="tab-frame" src="./overview.html"></iframe>
-{% endblock %}
+{% extends "tab-parent.html" %}
