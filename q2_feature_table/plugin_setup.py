@@ -25,8 +25,8 @@ plugin = Plugin(
                    'Wilke, Susan Huse, John Hufnagle, Folker Meyer, Rob '
                    'Knight and J Gregory Caporaso. GigaScience 1:7 (2012).'
                    'doi:10.1186/2047-217X-1-7'),
-    short_description=('Basic operations on feature tables.'),
-    description=('Official QIIME 2 plugin supporting basic operations on sample x feature tables.')
+    short_description=('Plugin for working with sample x feature tables.'),
+    description=('This is a QIIME 2 plugin supporting operations on sample x feature tables, such as filtering, merging, and transforming tables.')
 )
 
 plugin.methods.register_function(
