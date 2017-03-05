@@ -27,7 +27,8 @@ plugin = Plugin(
                    'doi:10.1186/2047-217X-1-7'),
     short_description=('Plugin for working with sample x feature tables.'),
     description=('This is a QIIME 2 plugin supporting operations on sample '
-                   'x feature tables, such as filtering, merging, and transforming tables.')
+                 'x feature tables, such as filtering, merging, and '
+                 'transforming tables.')
 )
 
 plugin.methods.register_function(
