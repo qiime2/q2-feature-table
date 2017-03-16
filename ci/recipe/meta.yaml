@@ -1,0 +1,46 @@
+package:
+  name: q2-feature-table
+  version: "2017.3.0.dev0"
+
+source:
+  path: ../..
+build:
+  noarch: python
+  script: python setup.py install
+
+requirements:
+  build:
+    - python 3.5*
+    - setuptools
+    - scikit-bio
+    - biom-format
+    - h5py
+    - seaborn
+    - numpy
+    - ipywidgets
+    - qiime2 2017.3.*
+    - q2templates 2017.3.*
+    - q2-types 2017.3.*
+
+  run:
+    - python 3.5*
+    - setuptools
+    - scikit-bio
+    - biom-format
+    - h5py
+    - seaborn
+    - numpy
+    - ipywidgets
+    - qiime2 2017.3.*
+    - q2templates 2017.3.*
+    - q2-types 2017.3.*
+
+test:
+  imports:
+    - q2_feature_table
+    - qiime2.plugins.feature_table
+
+about:
+  home: https://qiime2.org
+  license: BSD-3-Clause
+  license_family: BSD

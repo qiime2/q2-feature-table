@@ -4,20 +4,43 @@ env:
   - PYTHON_VERSION=3.5
 before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-  - chmod +x miniconda.sh
-  - ./miniconda.sh -b
-  - export PATH=/home/travis/miniconda3/bin:$PATH
+  - export MINICONDA_PREFIX="$HOME/miniconda"
+  - bash miniconda.sh -b -p $MINICONDA_PREFIX
+  - export PATH="$MINICONDA_PREFIX/bin:$PATH"
+  - conda config --set always_yes yes
+  - conda update conda
+  - conda install conda-build
+  - conda info -a
+  - git clone https://github.com/qiime2/q2lint ../q2lint
+  - git clone https://github.com/qiime2/qiime2 ../qiime2
+  - git clone https://github.com/qiime2/q2templates ../q2templates
+  - git clone https://github.com/qiime2/q2-types ../q2-types
 install:
-  - conda create --yes -n test-env python=$PYTHON_VERSION numpy ipywidgets pytest pytest-cov
+  - conda create -n test-env
   - source activate test-env
-  - pip install https://github.com/qiime2/qiime2/archive/master.zip https://github.com/qiime2/q2-types/archive/master.zip https://github.com/qiime2/q2templates/archive/master.zip
+  # Install testing utils
   - pip install flake8 coveralls
-  - pip install .
-  - git clone https://github.com/qiime2/q2lint
+  - conda install pytest-cov
+  # Install qiime2 environment
+  - conda env update -f ../qiime2/ci/environment.yaml
+  - cd ../qiime2 && python setup.py install && cd -
+  # Install q2templates environment
+  - conda env update -f ../q2templates/ci/environment.yaml
+  - cd ../q2templates && python setup.py install && cd -
+  # Install q2-types environment
+  - conda env update -f ../q2-types/ci/environment.yaml
+  - cd ../q2-types && python setup.py install && cd -
+  # Install q2-feature-table environment
+  - conda env update -f ci/environment.yaml
+  - python setup.py install
   - 'echo "backend: Agg" > matplotlibrc'
 script:
-  - py.test --cov=q2_feature_table
   - flake8
-  - python q2lint/q2lint.py
+  - python ../q2lint/q2lint.py
+  - py.test --cov=q2_feature_table
+  - conda build -c qiime2 -c defaults --override-channels --python $PYTHON_VERSION --output-folder ../built-deps ../qiime2/ci/recipe
+  - conda build -c defaults --override-channels --python $PYTHON_VERSION --output-folder ../built-deps ../q2templates/ci/recipe
+  - conda build -c ../built-deps -c qiime2 -c biocore -c defaults --override-channels --python $PYTHON_VERSION --output-folder ../built-deps ../q2-types/ci/recipe
+  - conda build -c ../built-deps -c qiime2 -c biocore -c defaults --override-channels --python $PYTHON_VERSION ci/recipe
 after_success:
   - coveralls
