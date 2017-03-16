@@ -35,5 +35,6 @@ setup(
     entry_points={
         'qiime2.plugins':
         ['q2-feature-table=q2_feature_table.plugin_setup:plugin']
-    }
+    },
+    zip_safe=False,
 )

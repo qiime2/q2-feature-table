@@ -1,0 +1,15 @@
+channels:
+  - qiime2
+  - biocore
+  - defaults
+  - nodefaults
+
+dependencies:
+  - python=3.5*
+  - setuptools
+  - scikit-bio
+  - biom-format>=2.1.5,<2.2.0
+  - h5py
+  - seaborn
+  - numpy
+  - ipywidgets
