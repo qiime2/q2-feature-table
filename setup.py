@@ -14,13 +14,6 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
-    install_requires=['qiime2 == 2017.3.*', 'q2-types == 2017.3.*',
-                      'q2templates == 2017.3.*', 'seaborn', 'numpy',
-                      'biom-format >= 2.1.5, < 2.2.0', 'scikit-bio',
-                      # `ipywidgets` included to avoid ShimWarning from
-                      # `seaborn` imports:
-                      #  https://github.com/mwaskom/seaborn/issues/874
-                      'ipywidgets'],
     package_data={'q2_feature_table._summarize': [
                         'summarize_assets/*.html',
                         'summarize_assets/app/*.js',
