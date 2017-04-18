@@ -111,7 +111,8 @@ def summarize(output_dir: str, table: biom.Table,
         os.path.join(output_dir, 'feature-frequency-detail.csv'))
 
     feature_frequencies_table = _format_html_table(
-        feature_frequencies.to_frame('Frequency'))
+        feature_frequencies.astype(int)
+        .apply('{:,}'.format).to_frame('Frequency'))
     overview_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'overview.html')
     sample_frequency_template = os.path.join(
