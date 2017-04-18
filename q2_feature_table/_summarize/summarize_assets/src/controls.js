@@ -9,15 +9,21 @@
 import * as d3 from 'd3';
 
 
-const calcSampleLoss = (trows, slider) => {
-  const lost = trows.data().reduce((i, j) => i + (j[1] < +slider.node().value ? 1 : 0), 0);
-  return [lost, ((lost / trows.data().length) * 100).toFixed(2)];
+const calcSampleRetainment = (trows, slider) => {
+  const retained = trows.data().reduce((i, j) => i + (+j[1] >= slider.node().value ? 1 : 0), 0);
+  return [((retained / trows.data().length) * 100).toFixed(2), retained.toLocaleString('en-US')];
+};
+
+
+const calcFeatureRetainment = (trows, slider) => {
+  const retained = trows.data().reduce((i, j) => i + (+j[1] >= slider.node().value ? +j[1] : 0), 0);
+  return [((retained / d3.sum(trows.data(), d => d[1])) * 100).toFixed(2), retained.toLocaleString('en-US')];
 };
 
 
 const toggleStyles = (trows, slider) => (
   trows
-    .attr('class', d => (+d[1] < +slider.node().value ? 'alert-danger' : ''))
+    .attr('class', d => (d[1] < slider.node().value ? 'alert-danger' : ''))
 );
 
 
@@ -28,6 +34,13 @@ const initializeControls = () => {
   const formGroup = d3.select('.form-group');
   const hiddenDepth = d3.select('#hidden-depths');
 
+  const updateStats = (trows, slider) => {
+    formGroup.selectAll('span')
+      .data([['Samples Retained: ', `${calcSampleRetainment(trows, slider).join('% (')})`],
+             ['Features Retained: ', `${calcFeatureRetainment(trows, slider).join('% (')})`]])
+      .text(d => d.join(''))
+      .insert('br');
+  };
 
   sliderValue.on('input', () => {
     if (+sliderValue.node().value > +slider.node().max) {
@@ -36,8 +49,9 @@ const initializeControls = () => {
     } else {
       slider.node().value = sliderValue.node().value;
     }
+    updateStats(trows, slider);
     toggleStyles(trows, slider);
-    hiddenDepth.attr('value', +sliderValue.node().value).dispatch('change');
+    hiddenDepth.attr('value', slider.node().value).dispatch('change');
   });
 
   sliderValue.on('change', () => {
@@ -45,6 +59,7 @@ const initializeControls = () => {
       sliderValue.node().value = 0;
       slider.node().value = slider.node().min;
     }
+    updateStats(trows, slider);
     toggleStyles(trows, slider);
     hiddenDepth.attr('value', slider.node().value).dispatch('change');
   });
@@ -52,9 +67,7 @@ const initializeControls = () => {
   slider.on('input', () => {
     sliderValue.node().value = slider.node().value;
     toggleStyles(trows, slider);
-    formGroup.selectAll('span')
-      .data(['Sample Loss: ', `${calcSampleLoss(trows, slider).join(' (')}%)`])
-      .text(d => d);
+    updateStats(trows, slider);
     hiddenDepth.attr('value', slider.node().value).dispatch('change');
   });
 
@@ -63,10 +76,12 @@ const initializeControls = () => {
     .attr('display', 'inline-block')
     .style('padding-top', '10px')
       .selectAll('span')
-    .data(['Sample Loss: ', `${calcSampleLoss(trows, slider).join(' (')}%)`])
+    .data([['Samples Retained: ', `${calcSampleRetainment(trows, slider).join('% (')})`],
+           ['Features Retained: ', `${calcFeatureRetainment(trows, slider).join('% (')})`]])
       .enter()
     .append('span')
-    .text(d => d);
+    .text(d => d.join(''))
+    .insert('br');
 
   sliderValue.node().value = slider.node().value;
 };

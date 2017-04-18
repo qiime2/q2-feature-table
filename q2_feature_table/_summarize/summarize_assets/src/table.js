@@ -14,7 +14,7 @@ const initializeTable = (counts) => {
     .attr('class', 'table table-hover');
 
   const myTableData = [];
-  Object.keys(counts).forEach(key => myTableData.push([key, counts[key].toLocaleString('en-US')]));
+  Object.keys(counts).forEach(key => myTableData.push([key, counts[key]]));
 
   table
     .append('thead')
@@ -37,7 +37,7 @@ const initializeTable = (counts) => {
     .data(d => d)
       .enter()
     .append('td')
-    .text(d => d);
+    .text(d => d.toLocaleString('en-US'));
 };
 
 export default initializeTable;
