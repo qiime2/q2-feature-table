@@ -39,6 +39,16 @@ const buildChart = (svg, props, metadata, counts) => {
 
   categories.sort(naturalSort);
 
+  svg
+    .append('text')
+    .attr('transform', 'rotate(-90)')
+    .attr('x', 0 - (props.height / 2))
+    .attr('y', 15)
+    .attr('dy', '0em')
+    .attr('font-size', '14px')
+    .style('text-anchor', 'middle')
+    .text('Number of Samples');
+
   const g = svg
       .append('g')
     .attr('transform', `translate(${props.margin.left}, ${props.margin.top})`);
@@ -46,7 +56,7 @@ const buildChart = (svg, props, metadata, counts) => {
   const x = d3
     .scaleBand()
     .domain(categories)
-    .range([0, props.width])
+    .range([props.margin.left, props.width])
     .paddingInner([0.1])
     .paddingOuter([0.3]);
 
@@ -74,6 +84,7 @@ const buildChart = (svg, props, metadata, counts) => {
 
   g.append('g')
     .attr('class', 'axis axis--y')
+    .attr('transform', `translate(${props.margin.left}, 0)`)
     .call(d3.axisLeft(y));
 
   const bar = g
