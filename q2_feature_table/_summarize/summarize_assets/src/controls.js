@@ -37,7 +37,7 @@ const initializeControls = () => {
       slider.node().value = sliderValue.node().value;
     }
     toggleStyles(trows, slider);
-    hiddenDepth.attr('value', slider.node().value).dispatch('change');
+    hiddenDepth.attr('value', +sliderValue.node().value).dispatch('change');
   });
 
   sliderValue.on('change', () => {
