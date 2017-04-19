@@ -9,14 +9,19 @@
 import * as d3 from 'd3';
 
 
+const getRetainedSamples = (trows, slider) => (
+  trows.data().reduce((i, j) => i + (+j[1] >= slider.node().value ? 1 : 0), 0)
+);
+
+
 const calcSampleRetainment = (trows, slider) => {
-  const retained = trows.data().reduce((i, j) => i + (+j[1] >= slider.node().value ? 1 : 0), 0);
+  const retained = getRetainedSamples(trows, slider);
   return [retained.toLocaleString('en-US'), ((retained / trows.data().length) * 100).toFixed(2)];
 };
 
 
 const calcFeatureRetainment = (trows, slider) => {
-  const retained = trows.data().reduce((i, j) => i + (+j[1] >= slider.node().value ? +j[1] : 0), 0);
+  const retained = getRetainedSamples(trows, slider) * slider.node().value;
   return [retained.toLocaleString('en-US'), ((retained / d3.sum(trows.data(), d => d[1])) * 100).toFixed(2)];
 };
 
