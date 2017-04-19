@@ -11,13 +11,13 @@ import * as d3 from 'd3';
 
 const calcSampleRetainment = (trows, slider) => {
   const retained = trows.data().reduce((i, j) => i + (+j[1] >= slider.node().value ? 1 : 0), 0);
-  return [((retained / trows.data().length) * 100).toFixed(2), retained.toLocaleString('en-US')];
+  return [retained.toLocaleString('en-US'), ((retained / trows.data().length) * 100).toFixed(2)];
 };
 
 
 const calcFeatureRetainment = (trows, slider) => {
   const retained = trows.data().reduce((i, j) => i + (+j[1] >= slider.node().value ? +j[1] : 0), 0);
-  return [((retained / d3.sum(trows.data(), d => d[1])) * 100).toFixed(2), retained.toLocaleString('en-US')];
+  return [retained.toLocaleString('en-US'), ((retained / d3.sum(trows.data(), d => d[1])) * 100).toFixed(2)];
 };
 
 
@@ -36,8 +36,8 @@ const initializeControls = () => {
 
   const updateStats = (trows, slider) => {
     formGroup.selectAll('span')
-      .data([['Samples Retained: ', `${calcSampleRetainment(trows, slider).join('% (')})`],
-             ['Features Retained: ', `${calcFeatureRetainment(trows, slider).join('% (')})`]])
+      .data([['Samples Retained: ', `${calcSampleRetainment(trows, slider).join(' (')}%)`],
+             ['Sequences Retained: ', `${calcFeatureRetainment(trows, slider).join(' (')}%)`]])
       .text(d => d.join(''))
       .insert('br');
   };
@@ -76,8 +76,8 @@ const initializeControls = () => {
     .attr('display', 'inline-block')
     .style('padding-top', '10px')
       .selectAll('span')
-    .data([['Samples Retained: ', `${calcSampleRetainment(trows, slider).join('% (')})`],
-           ['Features Retained: ', `${calcFeatureRetainment(trows, slider).join('% (')})`]])
+    .data([['Samples Retained: ', `${calcSampleRetainment(trows, slider).join(' (')}%)`],
+           ['Sequences Retained: ', `${calcFeatureRetainment(trows, slider).join(' (')}%)`]])
       .enter()
     .append('span')
     .text(d => d.join(''))

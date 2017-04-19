@@ -20,7 +20,7 @@ const initializeTable = (counts) => {
     .append('thead')
     .append('tr')
       .selectAll('th')
-    .data(['Sample ID', 'Feature Count'])
+    .data(['Sample ID', 'Sequence Count'])
       .enter()
     .append('th')
     .text(d => d);
