@@ -20,7 +20,7 @@ const initializeTable = (counts) => {
     .append('thead')
     .append('tr')
       .selectAll('th')
-    .data(['Sample ID', 'Feature Count'])
+    .data(['Sample ID', 'Sequence Count'])
       .enter()
     .append('th')
     .text(d => d);
@@ -37,7 +37,7 @@ const initializeTable = (counts) => {
     .data(d => d)
       .enter()
     .append('td')
-    .text(d => d);
+    .text(d => d.toLocaleString('en-US'));
 };
 
 export default initializeTable;
