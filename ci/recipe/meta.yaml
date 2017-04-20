@@ -1,39 +1,37 @@
+{% set data = load_setup_py_data() %}
+{% set version = data.get('version') or 'placehold' %}
+{% set release = '.'.join(version.split('.')[:2]) %}
+
 package:
   name: q2-feature-table
-  version: "2017.3.0.dev0"
+  version: {{ version }}
 
 source:
   path: ../..
+
 build:
-  noarch: python
   script: python setup.py install
 
 requirements:
   build:
     - python 3.5*
     - setuptools
-    - scikit-bio
-    - biom-format
-    - h5py
-    - seaborn
-    - numpy
-    - ipywidgets
-    - qiime2 2017.3.*
-    - q2templates 2017.3.*
-    - q2-types 2017.3.*
 
   run:
     - python 3.5*
     - setuptools
     - scikit-bio
-    - biom-format
+    - biom-format >=2.1.5,<2.2.0
     - h5py
     - seaborn
     - numpy
+    # `ipywidgets` included to avoid ShimWarning from
+    # `seaborn` imports:
+    #  https://github.com/mwaskom/seaborn/issues/874
     - ipywidgets
-    - qiime2 2017.3.*
-    - q2templates 2017.3.*
-    - q2-types 2017.3.*
+    - qiime2 {{ release }}.*
+    - q2templates {{ release }}.*
+    - q2-types {{ release }}.*
 
 test:
   imports:
