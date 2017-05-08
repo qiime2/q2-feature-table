@@ -103,6 +103,7 @@ def summarize(output_dir: str, table: biom.Table,
         'feature_summary_table': feature_summary_table,
     }
 
+    feature_qualitative_data = _compute_qualitative_summary(table)
     sample_frequencies.sort_values(inplace=True, ascending=False)
     feature_frequencies.sort_values(inplace=True, ascending=False)
     sample_frequencies.to_csv(
@@ -110,9 +111,11 @@ def summarize(output_dir: str, table: biom.Table,
     feature_frequencies.to_csv(
         os.path.join(output_dir, 'feature-frequency-detail.csv'))
 
-    feature_frequencies_table = _format_html_table(
-        feature_frequencies.astype(int)
-        .apply('{:,}'.format).to_frame('Frequency'))
+    feature_frequencies = feature_frequencies.astype(int) \
+        .apply('{:,}'.format).to_frame('Frequency')
+    feature_frequencies['Qualitative Observations'] = \
+        pd.Series(feature_qualitative_data).astype(int).apply('{:,}'.format)
+    feature_frequencies_table = _format_html_table(feature_frequencies)
     overview_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'overview.html')
     sample_frequency_template = os.path.join(
@@ -122,6 +125,7 @@ def summarize(output_dir: str, table: biom.Table,
 
     context.update({'max_count': sample_frequencies.max(),
                     'feature_frequencies_table': feature_frequencies_table,
+                    'feature_qualitative_data': feature_qualitative_data,
                     'tabs': [{'url': 'overview.html',
                               'title': 'Overview'},
                              {'url': 'sample-frequency-detail.html',
@@ -145,6 +149,14 @@ def summarize(output_dir: str, table: biom.Table,
         fh.write(', ')
         sample_frequencies.to_json(fh)
         fh.write(');')
+
+
+def _compute_qualitative_summary(table):
+    table = table.transpose()
+    sample_count = {}
+    for count_vector, sample_id, metadata in table.iter():
+        sample_count[sample_id] = (count_vector != 0).sum()
+    return sample_count
 
 
 def _format_html_table(df):
