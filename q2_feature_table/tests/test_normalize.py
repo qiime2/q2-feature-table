@@ -27,6 +27,14 @@ class RarefyTests(TestCase):
         self.assertEqual(set(a.ids(axis='observation')), set(['O1', 'O2']))
         npt.assert_array_equal(a.sum(axis='sample'), np.array([2., 2.]))
 
+    def test_rarefy_depth_error(self):
+        t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                  ['O1', 'O2'],
+                  ['S1', 'S2', 'S3'])
+
+        with self.assertRaisesRegex(ValueError, 'shallow enough'):
+            rarefy(t, 50)
+
 
 if __name__ == "__main__":
     main()
