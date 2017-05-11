@@ -113,7 +113,7 @@ def summarize(output_dir: str, table: biom.Table,
 
     feature_frequencies = feature_frequencies.astype(int) \
         .apply('{:,}'.format).to_frame('Frequency')
-    feature_frequencies['Qualitative Observations'] = \
+    feature_frequencies['# of Samples Observed In'] = \
         pd.Series(feature_qualitative_data).astype(int).apply('{:,}'.format)
     feature_frequencies_table = _format_html_table(feature_frequencies)
     overview_template = os.path.join(
@@ -154,8 +154,8 @@ def summarize(output_dir: str, table: biom.Table,
 def _compute_qualitative_summary(table):
     table = table.transpose()
     sample_count = {}
-    for count_vector, sample_id, metadata in table.iter():
-        sample_count[sample_id] = (count_vector != 0).sum()
+    for count_vector, feature_id, metadata in table.iter():
+        sample_count[feature_id] = (count_vector != 0).sum()
     return sample_count
 
 
