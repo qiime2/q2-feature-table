@@ -10,4 +10,11 @@ import biom
 
 
 def rarefy(table: biom.Table, sampling_depth: int) -> biom.Table:
-    return table.subsample(sampling_depth, axis='sample', by_id=False)
+    table = table.subsample(sampling_depth, axis='sample', by_id=False)
+
+    if table.is_empty():
+        raise ValueError('The rarefied table contains no samples or features. '
+                         'Verify your table is valid and that you provided a '
+                         'shallow enough sampling depth.')
+
+    return table
