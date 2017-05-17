@@ -173,7 +173,7 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, sample_metadata=metadata)
+        actual = filter_samples(table, metadata=metadata)
         expected = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                          ['O1', 'O2'],
                          ['S1', 'S2', 'S3'])
@@ -187,7 +187,7 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, sample_metadata=metadata)
+        actual = filter_samples(table, metadata=metadata)
         expected = Table(np.array([[1, 3], [1, 2]]),
                          ['O1', 'O2'],
                          ['S2', 'S3'])
@@ -199,7 +199,7 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, sample_metadata=metadata)
+        actual = filter_samples(table, metadata=metadata)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
@@ -211,7 +211,7 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, sample_metadata=metadata)
+        actual = filter_samples(table, metadata=metadata)
         expected = Table(np.array([[1, 3], [1, 2]]),
                          ['O1', 'O2'],
                          ['S2', 'S3'])
@@ -227,7 +227,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1' OR Subject='subject-2'"
-        actual = filter_samples(table, sample_metadata=metadata, where=where)
+        actual = filter_samples(table, metadata=metadata, where=where)
         expected = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                          ['O1', 'O2'],
                          ['S1', 'S2', 'S3'])
@@ -242,7 +242,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1'"
-        actual = filter_samples(table, sample_metadata=metadata, where=where)
+        actual = filter_samples(table, metadata=metadata, where=where)
         expected = Table(np.array([[0, 1], [1, 1]]),
                          ['O1', 'O2'],
                          ['S1', 'S2'])
@@ -257,7 +257,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1' AND SampleType='gut'"
-        actual = filter_samples(table, sample_metadata=metadata, where=where)
+        actual = filter_samples(table, metadata=metadata, where=where)
         expected = Table(np.array([[1]]),
                          ['O2'],
                          ['S1'])
@@ -272,7 +272,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1' AND Subject='subject-2'"
-        actual = filter_samples(table, sample_metadata=metadata, where=where)
+        actual = filter_samples(table, metadata=metadata, where=where)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
@@ -286,7 +286,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1' OR Subject='subject-2'"
-        actual = filter_samples(table, sample_metadata=metadata, where=where,
+        actual = filter_samples(table, metadata=metadata, where=where,
                                 min_frequency=1)
         expected = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                          ['O1', 'O2'],
@@ -302,7 +302,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1'"
-        actual = filter_samples(table, sample_metadata=metadata, where=where,
+        actual = filter_samples(table, metadata=metadata, where=where,
                                 min_frequency=2)
         expected = Table(np.array([[1], [1]]),
                          ['O1', 'O2'],
@@ -386,7 +386,7 @@ class FilterFeaturesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_features(table, feature_metadata=metadata)
+        actual = filter_features(table, metadata=metadata)
         expected = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                          ['O1', 'O2'],
                          ['S1', 'S2', 'S3'])
@@ -399,7 +399,7 @@ class FilterFeaturesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_features(table, feature_metadata=metadata)
+        actual = filter_features(table, metadata=metadata)
         expected = Table(np.array([[1, 3]]),
                          ['O1'],
                          ['S2', 'S3'])
@@ -411,7 +411,7 @@ class FilterFeaturesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_features(table, feature_metadata=metadata)
+        actual = filter_features(table, metadata=metadata)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
@@ -424,7 +424,7 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "SequencedGenome='yes' OR SequencedGenome='no'"
-        actual = filter_features(table, feature_metadata=metadata, where=where)
+        actual = filter_features(table, metadata=metadata, where=where)
         expected = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                          ['O1', 'O2'],
                          ['S1', 'S2', 'S3'])
@@ -438,7 +438,7 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "SequencedGenome='yes'"
-        actual = filter_features(table, feature_metadata=metadata, where=where)
+        actual = filter_features(table, metadata=metadata, where=where)
         expected = Table(np.array([[1, 3]]),
                          ['O1'],
                          ['S2', 'S3'])
@@ -452,7 +452,7 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "SequencedGenome='yes' AND SequencedGenome='no'"
-        actual = filter_features(table, feature_metadata=metadata, where=where)
+        actual = filter_features(table, metadata=metadata, where=where)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
