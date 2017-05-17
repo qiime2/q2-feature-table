@@ -196,8 +196,8 @@ plugin.methods.register_function(
                     ' to select samples to retain.',
         'where': 'SQLite WHERE clause specifying sample metadata criteria '
                  'that must be met to be included in the filtered feature '
-                 'table. If not provided, all samples in `sample_metadata` '
-                 'that are also in the feature table will be retained.'
+                 'table. If not provided, all samples in `metadata` that are '
+                 'also in the feature table will be retained.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by sample.'
@@ -239,8 +239,8 @@ plugin.methods.register_function(
                     'parameter to select features to retain.',
         'where': 'SQLite WHERE clause specifying feature metadata criteria '
                  'that must be met to be included in the filtered feature '
-                 'table. If not provided, all features in `feature_metadata` '
-                 'that are also in the feature table will be retained.'
+                 'table. If not provided, all features in `metadata` that are '
+                 'also in the feature table will be retained.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'
