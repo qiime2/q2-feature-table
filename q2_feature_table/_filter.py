@@ -58,11 +58,11 @@ def _filter(table, min_frequency, max_frequency, min_nonzero, max_nonzero,
 def filter_samples(table: biom.Table, min_frequency: int=0,
                    max_frequency: int=None, min_features: int=0,
                    max_features: int=None,
-                   sample_metadata: qiime2.Metadata=None, where: str=None)\
+                   metadata: qiime2.Metadata=None, where: str=None)\
                   -> biom.Table:
     _filter(table=table, min_frequency=min_frequency,
             max_frequency=max_frequency, min_nonzero=min_features,
-            max_nonzero=max_features, metadata=sample_metadata,
+            max_nonzero=max_features, metadata=metadata,
             where=where, axis='sample')
 
     return table

@@ -173,7 +173,7 @@ plugin.methods.register_function(
                 'max_frequency': Int,
                 'min_features': Int,
                 'max_features': Int,
-                'sample_metadata': Metadata,
+                'metadata': Metadata,
                 'where': Str},
     outputs=[('filtered_table', FeatureTable[Frequency])],
     input_descriptions={
@@ -192,8 +192,8 @@ plugin.methods.register_function(
                          'have to be retained. If no value is provided '
                          'this will default to infinity (i.e., no maximum '
                          'feature filter will be applied).'),
-        'sample_metadata': 'Sample metadata used in conjuction with `where` '
-                           'parameter to select samples to retain.',
+        'metadata': 'Sample metadata used in conjuction with `where` parameter'
+                    ' to select samples to retain.',
         'where': 'SQLite WHERE clause specifying sample metadata criteria '
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all samples in `sample_metadata` '
