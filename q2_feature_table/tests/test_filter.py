@@ -386,7 +386,7 @@ class FilterFeaturesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_features(table, feature_metadata=metadata)
+        actual = filter_features(table, metadata=metadata)
         expected = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                          ['O1', 'O2'],
                          ['S1', 'S2', 'S3'])
@@ -399,7 +399,7 @@ class FilterFeaturesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_features(table, feature_metadata=metadata)
+        actual = filter_features(table, metadata=metadata)
         expected = Table(np.array([[1, 3]]),
                          ['O1'],
                          ['S2', 'S3'])
@@ -411,7 +411,7 @@ class FilterFeaturesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_features(table, feature_metadata=metadata)
+        actual = filter_features(table, metadata=metadata)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
@@ -424,7 +424,7 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "SequencedGenome='yes' OR SequencedGenome='no'"
-        actual = filter_features(table, feature_metadata=metadata, where=where)
+        actual = filter_features(table, metadata=metadata, where=where)
         expected = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                          ['O1', 'O2'],
                          ['S1', 'S2', 'S3'])
@@ -438,7 +438,7 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "SequencedGenome='yes'"
-        actual = filter_features(table, feature_metadata=metadata, where=where)
+        actual = filter_features(table, metadata=metadata, where=where)
         expected = Table(np.array([[1, 3]]),
                          ['O1'],
                          ['S2', 'S3'])
@@ -452,7 +452,7 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "SequencedGenome='yes' AND SequencedGenome='no'"
-        actual = filter_features(table, feature_metadata=metadata, where=where)
+        actual = filter_features(table, metadata=metadata, where=where)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
