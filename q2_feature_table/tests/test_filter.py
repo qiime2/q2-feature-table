@@ -194,7 +194,7 @@ class FilterSamplesTests(unittest.TestCase):
         self.assertEqual(actual, expected)
 
         # filter all
-        df = pd.DataFrame({})
+        df = pd.DataFrame({}, index=['foo'])
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -406,7 +406,7 @@ class FilterFeaturesTests(unittest.TestCase):
         self.assertEqual(actual, expected)
 
         # filter all
-        df = pd.DataFrame({})
+        df = pd.DataFrame({}, index=['foo'])
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
