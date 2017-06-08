@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Int, Properties, Metadata, Str
+from qiime2.plugin import Plugin, Int, Properties, Metadata, Str, Bool
 
 import q2_feature_table
 from q2_types.feature_table import (
@@ -174,7 +174,8 @@ plugin.methods.register_function(
                 'min_features': Int,
                 'max_features': Int,
                 'metadata': Metadata,
-                'where': Str},
+                'where': Str,
+                'exclude_ids': Bool},
     outputs=[('filtered_table', FeatureTable[Frequency])],
     input_descriptions={
         'table': 'The feature table from which samples should be filtered.'
@@ -197,7 +198,10 @@ plugin.methods.register_function(
         'where': 'SQLite WHERE clause specifying sample metadata criteria '
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all samples in `metadata` that are '
-                 'also in the feature table will be retained.'
+                 'also in the feature table will be retained.',
+        'exclude_ids': 'If `True`, function returns the filtered set of '
+                       'samples which occur in the feature table but not in '
+                       'the metadata. `False` by default.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by sample.'
@@ -217,7 +221,8 @@ plugin.methods.register_function(
                 'min_samples': Int,
                 'max_samples': Int,
                 'metadata': Metadata,
-                'where': Str},
+                'where': Str,
+                'exclude_ids': Bool},
     outputs=[('filtered_table', FeatureTable[Frequency])],
     input_descriptions={
         'table': 'The feature table from which features should be filtered.'
@@ -240,7 +245,10 @@ plugin.methods.register_function(
         'where': 'SQLite WHERE clause specifying feature metadata criteria '
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all features in `metadata` that are '
-                 'also in the feature table will be retained.'
+                 'also in the feature table will be retained.',
+        'exclude_ids': 'If `True`, function returns the filtered set of '
+                       'features which occur in the feature table but not in '
+                       'the metadata. `False` by default.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'

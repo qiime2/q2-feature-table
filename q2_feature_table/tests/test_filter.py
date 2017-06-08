@@ -203,6 +203,44 @@ class FilterSamplesTests(unittest.TestCase):
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
+        # exclude one
+        df = pd.DataFrame({'Subject': ['subject-1'],
+                           'SampleType': ['gut']},
+                          index=['S1'])
+        metadata = qiime2.Metadata(df)
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table, metadata=metadata, exclude_ids=True)
+        expected = Table(np.array([[1, 3], [1, 2]]),
+                         ['O1', 'O2'],
+                         ['S2', 'S3'])
+        self.assertEqual(actual, expected)
+
+        # exclude two
+        df = pd.DataFrame({'Subject': ['subject-1', 'subject-1'],
+                           'SampleType': ['gut', 'tongue']},
+                          index=['S1', 'S2'])
+        metadata = qiime2.Metadata(df)
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table, metadata=metadata, exclude_ids=True)
+        expected = Table(np.array([[3], [2]]),
+                         ['O1', 'O2'],
+                         ['S3'])
+        self.assertEqual(actual, expected)
+
+        # exclude all
+        df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
+                           'SampleType': ['gut', 'tongue', 'gut']},
+                          index=['S1', 'S2', 'S3'])
+        metadata = qiime2.Metadata(df)
+        actual = filter_samples(table, metadata=metadata,
+                                exclude_ids=True)
+        expected = Table(np.array([]), [], [])
+        self.assertEqual(actual, expected)
+
     def test_sample_metadata_extra_ids(self):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
@@ -275,6 +313,11 @@ class FilterSamplesTests(unittest.TestCase):
         actual = filter_samples(table, metadata=metadata, where=where)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
+
+        # exclude all and no metadata
+        with self.assertRaises(ValueError):
+            filter_samples(table, metadata=None, where=where,
+                           exclude_ids=True)
 
     def test_combine_id_and_frequency_filters(self):
         # no filtering
@@ -415,6 +458,32 @@ class FilterFeaturesTests(unittest.TestCase):
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
+        # exclude one
+        df = pd.DataFrame({'SequencedGenome': ['yes']},
+                          index=['O1'])
+        metadata = qiime2.Metadata(df)
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_features(table, metadata=metadata,
+                                 exclude_ids=True)
+        expected = Table(np.array([[1, 1, 2]]),
+                         ['O2'],
+                         ['S1', 'S2', 'S3'])
+        self.assertEqual(actual, expected)
+
+        # exclude all
+        df = pd.DataFrame({'SequencedGenome': ['yes', 'yes']},
+                          index=['O1', 'O2'])
+        metadata = qiime2.Metadata(df)
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_features(table, metadata=metadata,
+                                 exclude_ids=True)
+        expected = Table(np.array([]), [], [])
+        self.assertEqual(actual, expected)
+
     def test_where(self):
         # no filtering
         df = pd.DataFrame({'SequencedGenome': ['yes', 'no']},
@@ -455,6 +524,11 @@ class FilterFeaturesTests(unittest.TestCase):
         actual = filter_features(table, metadata=metadata, where=where)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
+
+        # exclude all and no metadata
+        with self.assertRaises(ValueError):
+            filter_features(table, metadata=None, where=where,
+                            exclude_ids=True)
 
 
 if __name__ == "__main__":
