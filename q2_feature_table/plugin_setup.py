@@ -202,7 +202,9 @@ plugin.methods.register_function(
                  'also in the feature table will be retained.',
         'exclude_ids': 'If `True`, function returns the filtered set of '
                        'samples which occur in the feature table but not in '
-                       'the metadata. `False` by default.'
+                       'the metadata (or not in the metadata which satisfies '
+                       'the `where` parameter, if it is provided). `False` by '
+                       'default.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by sample.'
@@ -250,7 +252,9 @@ plugin.methods.register_function(
                  'also in the feature table will be retained.',
         'exclude_ids': 'If `True`, function returns the filtered set of '
                        'features which occur in the feature table but not in '
-                       'the metadata. `False` by default.'
+                       'the metadata (or not in the metadata which satisfies '
+                       'the `where` parameter, if it is provided). `False` by '
+                       'default.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'
