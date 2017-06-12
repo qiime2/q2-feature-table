@@ -22,11 +22,19 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegex(ValueError,
+                                    "No filtering was requested."):
             filter_samples(table)
 
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegex(ValueError,
+                                    "Metadata must be provided if "
+                                    "'where' is specified."):
             filter_samples(table, where="Subject='subject-1'")
+
+        with self.assertRaisesRegex(ValueError,
+                                    "Metadata must be provided if "
+                                    "'exclude_ids' is true."):
+            filter_samples(table, exclude_ids=True)
 
     def test_min_frequency(self):
         # no filtering
@@ -241,12 +249,6 @@ class FilterSamplesTests(unittest.TestCase):
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
-        # exclude_ids = True, no metadata
-        with self.assertRaisesRegex(ValueError,
-                                    "Metadata must be provided if "
-                                    "'exclude_ids' is true."):
-            filter_samples(table, exclude_ids=True)
-
     def test_sample_metadata_extra_ids(self):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
@@ -320,6 +322,57 @@ class FilterSamplesTests(unittest.TestCase):
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
+        # filter none -> exclude none
+        df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
+                           'SampleType': ['gut', 'tongue', 'gut']},
+                          index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
+        metadata = qiime2.Metadata(df)
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        where = "Subject='subject-1' AND SampleType='elbow'"
+        actual = filter_samples(table,
+                                metadata=metadata,
+                                where=where,
+                                exclude_ids=True)
+        self.assertEqual(actual, table)
+
+        # filter one -> exclude one
+        df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
+                           'SampleType': ['gut', 'tongue', 'gut']},
+                          index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
+        metadata = qiime2.Metadata(df)
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        where = "Subject='subject-1' AND SampleType='gut'"
+        actual = filter_samples(table,
+                                metadata=metadata,
+                                where=where,
+                                exclude_ids=True)
+        expected = Table(np.array([[1, 3], [1, 2]]),
+                         ['O1', 'O2'],
+                         ['S2', 'S3'])
+        self.assertEqual(actual, expected)
+
+        # filter two -> exclude two
+        df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
+                           'SampleType': ['gut', 'tongue', 'gut']},
+                          index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
+        metadata = qiime2.Metadata(df)
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        where = "Subject='subject-1'"
+        actual = filter_samples(table,
+                                metadata=metadata,
+                                where=where,
+                                exclude_ids=True)
+        expected = Table(np.array([[3], [2]]),
+                         ['O1', 'O2'],
+                         ['S3'])
+        self.assertEqual(actual, expected)
+
     def test_combine_id_and_frequency_filters(self):
         # no filtering
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
@@ -384,8 +437,8 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S2'])
         self.assertEqual(actual, expected)
 
-    def test_combine_exclude_ids_and_filters(self):
-        # exclude one, filter none - min_frequency
+    def test_combine_exclude_ids_and_sample_filters(self):
+        # exclude one, min_frequency filter none
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
                           index=['S1'])
@@ -402,7 +455,7 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S2', 'S3'])
         self.assertEqual(actual, expected)
 
-        # exclude one, filter one - min_frequency
+        # exclude one, min_frequency filter one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
                           index=['S1'])
@@ -419,7 +472,7 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S3'])
         self.assertEqual(actual, expected)
 
-        # exclude one, no filtering - max_frequency
+        # exclude one, max_frequency filter none
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
                           index=['S1'])
@@ -436,7 +489,7 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S2', 'S3'])
         self.assertEqual(actual, expected)
 
-        # exclude one, filter one - max_frequency
+        # exclude one, max_frequency filter one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
                           index=['S1'])
@@ -453,7 +506,7 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S2'])
         self.assertEqual(actual, expected)
 
-        # exclude one, no filtering - max&min_frequency
+        # exclude one, max & min_frequency filter none
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
                           index=['S1'])
@@ -471,7 +524,8 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S2', 'S3'])
         self.assertEqual(actual, expected)
 
-        # exclude one, filter one - max&min_frequency
+        # exclude one, min_frequency filter one,
+        # max_frequency filter one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
                           index=['S1'])
@@ -487,7 +541,27 @@ class FilterSamplesTests(unittest.TestCase):
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
-        # exclude one, filter none - min_features
+        # where filter one -> exclude one,
+        # min_frequency filter one,
+        # max_frequency filter one
+        df = pd.DataFrame({'Subject': ['subject-1', 'subject-2'],
+                           'SampleType': ['gut', 'tongue']},
+                          index=['S1', 'S2'])
+        metadata = qiime2.Metadata(df)
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        where = "Subject='subject-1'"
+        actual = filter_samples(table,
+                                metadata=metadata,
+                                exclude_ids=True,
+                                where=where,
+                                max_frequency=4,
+                                min_frequency=3)
+        expected = Table(np.array([]), [], [])
+        self.assertEqual(actual, expected)
+
+        # exclude one, min_features filter none
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
                           index=['S1'])
@@ -504,7 +578,7 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S2', 'S3'])
         self.assertEqual(actual, expected)
 
-        # exclude one, filter two - min_features
+        # exclude one, min_features filter one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
                           index=['S2'])
@@ -521,7 +595,7 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S3'])
         self.assertEqual(actual, expected)
 
-        # exclude one, filter none - max_features
+        # exclude one, max_features filter none
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
                           index=['S1'])
@@ -538,10 +612,10 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S2', 'S3'])
         self.assertEqual(actual, expected)
 
-        # exclude one, filter two - max_features
+        # exclude one, max_features filter one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S1'])
+                          index=['S2'])
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -550,75 +624,64 @@ class FilterSamplesTests(unittest.TestCase):
                                 metadata=metadata,
                                 exclude_ids=True,
                                 max_features=1)
-        expected = Table(np.array([]), [], [])
+        expected = Table(np.array([[1]]), ['O2'], ['S1'])
         self.assertEqual(actual, expected)
 
-        # exclude one, filter none - min&max_features
+        # exclude one, max_features filter none,
+        # min_features filter none
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S1'])
+                          index=['S2'])
         metadata = qiime2.Metadata(df)
-        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+        table = Table(np.array([[0, 1, 3], [0, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table,
+                                metadata=metadata,
+                                exclude_ids=True,
+                                min_features=0,
+                                max_features=5)
+        expected = Table(np.array([[0, 3], [0, 2]]),
+                         ['O1', 'O2'],
+                         ['S1', 'S3'])
+        self.assertEqual(actual, expected)
+
+        # exclude one, max_features filter one,
+        # min_features filter one
+        df = pd.DataFrame({'Subject': ['subject-1'],
+                           'SampleType': ['gut']},
+                          index=['S2'])
+        metadata = qiime2.Metadata(df)
+        table = Table(np.array([[0, 1, 3], [0, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         actual = filter_samples(table,
                                 metadata=metadata,
                                 exclude_ids=True,
                                 min_features=1,
-                                max_features=3)
-        expected = Table(np.array([[1, 3], [1, 2]]),
-                         ['O1', 'O2'],
-                         ['S2', 'S3'])
-        self.assertEqual(actual, expected)
-
-        # exclude one, filter one - min&max_features
-        df = pd.DataFrame({'Subject': ['subject-1'],
-                           'SampleType': ['gut']},
-                          index=['S2'])
-        metadata = qiime2.Metadata(df)
-        table = Table(np.array([[0, 1, 3], [1, 1, 1]]),
-                      ['O1', 'O2'],
-                      ['S1', 'S2', 'S3'])
-        actual = filter_samples(table,
-                                metadata=metadata,
-                                exclude_ids=True,
-                                min_features=2,
-                                max_features=2)
-        expected = Table(np.array([[3], [1]]),
-                         ['O1', 'O2'],
-                         ['S3'])
-        self.assertEqual(actual, expected)
-
-        # exclude one, filter two - min&max_features
-        df = pd.DataFrame({'Subject': ['subject-1'],
-                           'SampleType': ['gut']},
-                          index=['S2'])
-        metadata = qiime2.Metadata(df)
-        table = Table(np.array([[0, 1, 3], [1, 1, 0]]),
-                      ['O1', 'O2'],
-                      ['S1', 'S2', 'S3'])
-        actual = filter_samples(table,
-                                metadata=metadata,
-                                exclude_ids=True,
-                                min_features=2,
-                                max_features=2)
+                                max_features=1)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
-        # exclude one, filter two - where
-        df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
-                           'SampleType': ['gut', 'tongue', 'gut']},
-                          index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
+        # where filter one -> exclude one,
+        # max_features filter one,
+        # min_features filter one
+        df = pd.DataFrame({'Subject': ['subject-1', 'subject-2'],
+                           'SampleType': ['gut', 'tongue']},
+                          index=['S1', 'S2'])
         metadata = qiime2.Metadata(df)
-        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+        table = Table(np.array([[0, 1, 3], [0, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        where = "Subject='subject-1' AND SampleType='gut'"
-        with self.assertRaisesRegex(ValueError,
-                                    "'exclude_ids' must be false if "
-                                    "'where' is specified."):
-            filter_samples(table, metadata=metadata,
-                           where=where, exclude_ids=True)
+        where = "SampleType='tongue'"
+        actual = filter_samples(table,
+                                metadata=metadata,
+                                where=where,
+                                exclude_ids=True,
+                                min_features=1,
+                                max_features=1)
+        expected = Table(np.array([]), [], [])
+        self.assertEqual(actual, expected)
 
 
 class FilterFeaturesTests(unittest.TestCase):
@@ -760,6 +823,23 @@ class FilterFeaturesTests(unittest.TestCase):
         where = "SequencedGenome='yes' AND SequencedGenome='no'"
         actual = filter_features(table, metadata=metadata, where=where)
         expected = Table(np.array([]), [], [])
+        self.assertEqual(actual, expected)
+
+        # filter one -> exclude one
+        df = pd.DataFrame({'SequencedGenome': ['yes', 'no']},
+                          index=pd.Index(['O1', 'O2'], name='feature-id'))
+        metadata = qiime2.Metadata(df)
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        where = "SequencedGenome='yes'"
+        actual = filter_features(table,
+                                 exclude_ids=True,
+                                 metadata=metadata,
+                                 where=where)
+        expected = Table(np.array([[1, 1, 2]]),
+                         ['O2'],
+                         ['S1', 'S2', 'S3'])
         self.assertEqual(actual, expected)
 
 

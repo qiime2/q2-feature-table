@@ -41,10 +41,6 @@ def _filter(table, min_frequency, max_frequency, min_nonzero, max_nonzero,
     if metadata is None and exclude_ids is True:
         raise ValueError("Metadata must be provided if 'exclude_ids' "
                          "is true.")
-    if where is not None and exclude_ids is True:
-        raise ValueError("'exclude_ids' must be false if 'where' is "
-                         "specified.")
-
     if metadata is not None:
         ids_to_keep = metadata.ids(where=where)
     else:
