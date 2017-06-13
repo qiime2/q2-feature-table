@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Int, Properties, Metadata, Str
+from qiime2.plugin import Plugin, Int, Properties, Metadata, Str, Bool
 
 import q2_feature_table
 from q2_types.feature_table import (
@@ -174,7 +174,8 @@ plugin.methods.register_function(
                 'min_features': Int,
                 'max_features': Int,
                 'metadata': Metadata,
-                'where': Str},
+                'where': Str,
+                'exclude_ids': Bool},
     outputs=[('filtered_table', FeatureTable[Frequency])],
     input_descriptions={
         'table': 'The feature table from which samples should be filtered.'
@@ -192,12 +193,16 @@ plugin.methods.register_function(
                          'have to be retained. If no value is provided '
                          'this will default to infinity (i.e., no maximum '
                          'feature filter will be applied).'),
-        'metadata': 'Sample metadata used in conjuction with `where` parameter'
-                    ' to select samples to retain.',
+        'metadata': 'Sample metadata used with `where` parameter when '
+                    'selecting samples to retain, or with `exclude_ids` '
+                    'when selecting samples to discard.',
         'where': 'SQLite WHERE clause specifying sample metadata criteria '
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all samples in `metadata` that are '
-                 'also in the feature table will be retained.'
+                 'also in the feature table will be retained.',
+        'exclude_ids': 'If `True`, the samples selected by `metadata` or '
+                       '`where` parameters will be excluded from the filtered '
+                       'table instead of being retained.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by sample.'
@@ -217,7 +222,8 @@ plugin.methods.register_function(
                 'min_samples': Int,
                 'max_samples': Int,
                 'metadata': Metadata,
-                'where': Str},
+                'where': Str,
+                'exclude_ids': Bool},
     outputs=[('filtered_table', FeatureTable[Frequency])],
     input_descriptions={
         'table': 'The feature table from which features should be filtered.'
@@ -235,12 +241,16 @@ plugin.methods.register_function(
                         'be observed in to be retained. If no value is '
                         'provided this will default to infinity (i.e., no '
                         'maximum sample filter will be applied).'),
-        'metadata': 'Feature metadata used in conjuction with `where` '
-                    'parameter to select features to retain.',
+        'metadata': 'Feature metadata used with `where` parameter when '
+                    'selecting features to retain, or with `exclude_ids` '
+                    'when selecting features to discard.',
         'where': 'SQLite WHERE clause specifying feature metadata criteria '
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all features in `metadata` that are '
-                 'also in the feature table will be retained.'
+                 'also in the feature table will be retained.',
+        'exclude_ids': 'If `True`, the features selected by `metadata` or '
+                       '`where` parameters will be excluded from the filtered '
+                       'table instead of being retained.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'
