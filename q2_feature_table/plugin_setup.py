@@ -200,10 +200,9 @@ plugin.methods.register_function(
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all samples in `metadata` that are '
                  'also in the feature table will be retained.',
-        'exclude_ids': 'If `True`, returns the filtered set of samples '
-                       'which occur in the feature table but not in the '
-                       'metadata (or the filtered metadata, if invoked '
-                       'in conjunction with `where`).'
+        'exclude_ids': 'If `True`, the samples selected by `metadata` or '
+                       '`where` parameters will be excluded from the filtered '
+                       'table instead of being retained.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by sample.'
@@ -249,10 +248,9 @@ plugin.methods.register_function(
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all features in `metadata` that are '
                  'also in the feature table will be retained.',
-        'exclude_ids': 'If `True`, returns the filtered set of features '
-                       'which occur in the feature table but not in the '
-                       'metadata (or the filtered metadata, if invoked '
-                       'in conjunction with `where`).'
+        'exclude_ids': 'If `True`, the features selected by `metadata` or '
+                       '`where` parameters will be excluded from the filtered '
+                       'table instead of being retained.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'
