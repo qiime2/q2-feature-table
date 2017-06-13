@@ -9,9 +9,14 @@
 import * as d3 from 'd3';
 
 
-const getRetainedSamples = (trows, slider) => (
-  trows.data().reduce((i, j) => i + (+j[1] >= slider.node().value ? 1 : 0), 0)
-);
+const getRetainedSamples = (trows, slider) => {
+  if (slider.node().value == 0) {
+    // Explicitly handle 0, as this means no rarefaction (so all samples are retained).
+    return trows.data().length;
+  } else {
+    return trows.data().reduce((i, j) => i + (+j[1] >= slider.node().value ? 1 : 0), 0);
+  }
+};
 
 
 const calcSampleRetainment = (trows, slider) => {
@@ -21,8 +26,14 @@ const calcSampleRetainment = (trows, slider) => {
 
 
 const calcFeatureRetainment = (trows, slider) => {
-  const retained = getRetainedSamples(trows, slider) * slider.node().value;
-  return [retained.toLocaleString('en-US'), ((retained / d3.sum(trows.data(), d => d[1])) * 100).toFixed(2)];
+  if (slider.node().value == 0) {
+    // Explicitly handle 0, as this means no rarefaction (so all sequences are retained).
+    const retained = d3.sum(trows.data(), d => d[1]);
+    return [retained.toLocaleString('en-US'), (100).toFixed(2)];
+  } else {
+    const retained = getRetainedSamples(trows, slider) * slider.node().value;
+    return [retained.toLocaleString('en-US'), ((retained / d3.sum(trows.data(), d => d[1])) * 100).toFixed(2)];
+  }
 };
 
 
@@ -41,8 +52,7 @@ const initializeControls = () => {
 
   const updateStats = (trows, slider) => {
     formGroup.selectAll('span')
-      .data([['Samples Retained: ', `${calcSampleRetainment(trows, slider).join(' (')}%)`],
-             ['Sequences Retained: ', `${calcFeatureRetainment(trows, slider).join(' (')}%)`]])
+      .data([['Retained ', `${calcFeatureRetainment(trows, slider).join(' (')}%)`, ' sequences in ', `${calcSampleRetainment(trows, slider).join(' (')}%)`, ' samples at the specifed sampling depth.']])
       .text(d => d.join(''))
       .insert('br');
   };
@@ -81,8 +91,7 @@ const initializeControls = () => {
     .attr('display', 'inline-block')
     .style('padding-top', '10px')
       .selectAll('span')
-    .data([['Samples Retained: ', `${calcSampleRetainment(trows, slider).join(' (')}%)`],
-           ['Sequences Retained: ', `${calcFeatureRetainment(trows, slider).join(' (')}%)`]])
+      .data([['Retained ', `${calcFeatureRetainment(trows, slider).join(' (')}%)`, ' sequences in ', `${calcSampleRetainment(trows, slider).join(' (')}%)`, ' samples at the specifed sampling depth.']])
       .enter()
     .append('span')
     .text(d => d.join(''))
