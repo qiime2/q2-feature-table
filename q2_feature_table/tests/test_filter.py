@@ -30,7 +30,7 @@ class FilterSamplesTests(unittest.TestCase):
             filter_samples(table, where="Subject='subject-1'")
 
         with self.assertRaisesRegex(ValueError,
-                                    "'exclude_ids' is true."):
+                                    "'exclude_ids' is True."):
             filter_samples(table, exclude_ids=True)
 
     def test_min_frequency(self):
@@ -207,6 +207,17 @@ class FilterSamplesTests(unittest.TestCase):
         actual = filter_samples(table, metadata=metadata)
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
+
+        # exclude none
+        df = pd.DataFrame({'Subject': ['subject-1'],
+                           'SampleType': ['gut']},
+                          index=['S90'])
+        metadata = qiime2.Metadata(df)
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table, metadata=metadata, exclude_ids=True)
+        self.assertEqual(actual, table)
 
         # exclude one
         df = pd.DataFrame({'Subject': ['subject-1'],

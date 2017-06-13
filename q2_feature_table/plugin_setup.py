@@ -243,9 +243,9 @@ plugin.methods.register_function(
                         'be observed in to be retained. If no value is '
                         'provided this will default to infinity (i.e., no '
                         'maximum sample filter will be applied).'),
-        'metadata': 'Sample metadata used with `where` parameter when '
+        'metadata': 'Feature metadata used with `where` parameter when '
                     'selecting features to retain, or with `exclude_ids` '
-                    'when selecting samples to discard.',
+                    'when selecting features to discard.',
         'where': 'SQLite WHERE clause specifying feature metadata criteria '
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all features in `metadata` that are '
