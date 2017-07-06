@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Int, Properties, Metadata, Str, Bool
+from qiime2.plugin import Plugin, Int, Metadata, Str, Bool
 
 import q2_feature_table
 from q2_types.feature_table import (
@@ -35,8 +35,7 @@ plugin.methods.register_function(
     function=q2_feature_table.rarefy,
     inputs={'table': FeatureTable[Frequency]},
     parameters={'sampling_depth': Int},
-    outputs=[('rarefied_table',
-              FeatureTable[Frequency] % Properties('uniform-sampling'))],
+    outputs=[('rarefied_table', FeatureTable[Frequency])],
     input_descriptions={'table': 'The feature table to be rarefied.'},
     parameter_descriptions={
         'sampling_depth': ('The total frequency that each sample should be '
@@ -78,7 +77,7 @@ plugin.methods.register_function(
     parameters={},
     outputs=[
         ('relative_frequency_table',
-         FeatureTable[RelativeFrequency] % Properties('uniform-sampling'))],
+         FeatureTable[RelativeFrequency])],
     input_descriptions={
         'table': 'The feature table to be converted into relative frequencies.'
     },
