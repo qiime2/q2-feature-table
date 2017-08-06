@@ -7,7 +7,7 @@ module.exports = {
     vendor: ['d3', 'javascript-natural-sort']
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('vendor', 'app/vendor.bundle.js'),
+    new webpack.optimize.CommonsChunkPlugin('vendor', 'dist/vendor.bundle.js'),
     new webpack.optimize.UglifyJsPlugin({
       compress: { warnings: false },
       mangle: { except: ['init'] }
@@ -16,7 +16,7 @@ module.exports = {
   ],
   output: {
     path: __dirname,
-    filename: 'app/bundle.js',
+    filename: 'dist/bundle.js',
     libraryTarget: 'var',
     library: 'app'
   },
