@@ -136,8 +136,8 @@ def summarize(output_dir: str, table: biom.Table,
                  feature_frequency_template, overview_template]
     q2templates.render(templates, output_dir, context=context)
 
-    shutil.copytree(os.path.join(TEMPLATES, 'summarize_assets', 'app'),
-                    os.path.join(output_dir, 'app'))
+    shutil.copytree(os.path.join(TEMPLATES, 'summarize_assets', 'dist'),
+                    os.path.join(output_dir, 'dist'))
 
     with open(os.path.join(output_dir, 'data.jsonp'), 'w') as fh:
         fh.write("app.init(")
