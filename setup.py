@@ -16,7 +16,7 @@ setup(
     packages=find_packages(),
     package_data={'q2_feature_table._summarize': [
                         'summarize_assets/*.html',
-                        'summarize_assets/app/*',
+                        'summarize_assets/dist/*',
                         'tabulate_seqs_assets/js/*',
                         'tabulate_seqs_assets/index.html'
                   ]},
