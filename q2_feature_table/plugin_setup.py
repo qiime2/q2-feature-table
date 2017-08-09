@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Int, Metadata, Str, Bool
+from qiime2.plugin import Plugin, Int, Metadata, Str, Bool, Choices
 
 import q2_feature_table
 from q2_types.feature_table import (
@@ -96,17 +96,20 @@ plugin.methods.register_function(
     function=q2_feature_table.merge,
     inputs={'table1': FeatureTable[Frequency],
             'table2': FeatureTable[Frequency]},
-    parameters={},
+    parameters={
+        'overlap_method': Str % Choices(q2_feature_table.overlap_methods()),
+    },
     outputs=[
         ('merged_table', FeatureTable[Frequency])],
     input_descriptions={
         'table1': 'The first feature table to be merged.',
         'table2': 'The second feature table to be merged.',
     },
-    parameter_descriptions={},
+    parameter_descriptions={
+        'overlap_method': 'Method for handling overlapping ids.',
+    },
     output_descriptions={
-        'merged_table': ('The resulting merged feature table containing all '
-                         'features from table1 and table2.')
+        'merged_table': ('The resulting merged feature table.'),
     },
     name="Combine two tables",
     description="Combines a pair of feature tables which contain different "

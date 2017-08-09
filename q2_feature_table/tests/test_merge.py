@@ -16,7 +16,7 @@ import pandas.util.testing as pdt
 
 from q2_feature_table import (merge, merge_seq_data,
                               merge_taxa_data)
-from q2_feature_table._merge import _merge_feature_data
+from q2_feature_table._merge import _merge_feature_data, _get_overlapping
 
 
 class MergeTableTests(unittest.TestCase):
@@ -49,6 +49,30 @@ class MergeTableTests(unittest.TestCase):
                     ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'])
         self.assertEqual(obs, exp)
 
+    def test_invalid_overlapping_feature_ids(self):
+        t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                   ['O1', 'O2'],
+                   ['S1', 'S2', 'S3'])
+        t2 = Table(np.array([[0, 2, 6], [2, 2, 4]]),
+                   ['O1', 'O3'],
+                   ['S4', 'S5', 'S6'])
+        with self.assertRaisesRegex(ValueError, 'features are present'):
+            merge(t1, t2, 'error_on_overlapping_feature')
+
+    def test_valid_overlapping_sample_ids(self):
+        t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                   ['O1', 'O2'],
+                   ['S1', 'S2', 'S3'])
+        t2 = Table(np.array([[0, 2, 6], [2, 2, 4]]),
+                   ['O3', 'O4'],
+                   ['S1', 'S5', 'S6'])
+        obs = merge(t1, t2, 'error_on_overlapping_feature')
+        exp = Table(np.array([[0, 1, 3, 0, 0], [1, 1, 2, 0, 0],
+                              [0, 0, 0, 2, 6], [2, 0, 0, 2, 4]]),
+                    ['O1', 'O2', 'O3', 'O4'],
+                    ['S1', 'S2', 'S3', 'S5', 'S6'])
+        self.assertEqual(obs, exp)
+
     def test_invalid_overlapping_sample_ids(self):
         t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                    ['O1', 'O2'],
@@ -58,6 +82,42 @@ class MergeTableTests(unittest.TestCase):
                    ['S1', 'S5', 'S6'])
         with self.assertRaises(ValueError):
             merge(t1, t2)
+
+    def test_invalid_overlap_method(self):
+        t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                   ['O1', 'O2'],
+                   ['S1', 'S2', 'S3'])
+        t2 = Table(np.array([[0, 2, 6], [2, 2, 4]]),
+                   ['O1', 'O3'],
+                   ['S1', 'S5', 'S6'])
+        with self.assertRaisesRegex(ValueError, 'overlap method'):
+            merge(t1, t2, 'peanut')
+
+    def test_get_overlapping(self):
+        t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                   ['O1', 'O2'], ['S1', 'S2', 'S3'])
+        t2 = Table(np.array([[0, 2, 6], [2, 2, 4]]),
+                   ['O1', 'O3'], ['S1', 'S5', 'S6'])
+        # samples
+        obs = _get_overlapping(t1, t2, 'sample')
+        self.assertEqual(set(['S1']), obs)
+
+        # features
+        obs = _get_overlapping(t1, t2, 'observation')
+        self.assertEqual(set(['O1']), obs)
+
+    def test_get_overlapping_no_overlap(self):
+        t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                   ['O1', 'O2'], ['S1', 'S2', 'S3'])
+        t2 = Table(np.array([[0, 2, 6], [2, 2, 4]]),
+                   ['O3', 'O4'], ['S4', 'S5', 'S6'])
+        # samples
+        obs = _get_overlapping(t1, t2, 'sample')
+        self.assertEqual(set(), obs)
+
+        # features
+        obs = _get_overlapping(t1, t2, 'observation')
+        self.assertEqual(set(), obs)
 
 
 class MergeFeatureDataTests(unittest.TestCase):
