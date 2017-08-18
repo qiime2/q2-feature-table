@@ -6,7 +6,8 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import Plugin, Int, Metadata, Str, Bool, Choices
+from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
+                           Choices)
 
 import q2_feature_table
 from q2_types.feature_table import (
@@ -209,7 +210,7 @@ plugin.methods.register_function(
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by sample.'
     },
-    name="Filter samples from table.",
+    name="Filter samples from table",
     description="Filter samples from table based on frequency and/or "
                 "metadata. Any features with a frequency of zero after sample "
                 "filtering will also be removed. See the filtering tutorial "
@@ -257,7 +258,7 @@ plugin.methods.register_function(
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'
     },
-    name="Filter features from table.",
+    name="Filter features from table",
     description="Filter features from table based on frequency and/or "
                 "metadata. Any samples with a frequency of zero after feature "
                 "filtering will also be removed. See the filtering tutorial "
@@ -285,4 +286,38 @@ plugin.visualizers.register_function(
     description="Generate tabular view of feature identifier to sequence "
                 "mapping, including links to BLAST each sequence against "
                 "the NCBI nt database."
+)
+
+plugin.visualizers.register_function(
+    function=q2_feature_table.core_features,
+    inputs={
+        'table': FeatureTable[Frequency]
+    },
+    parameters={
+        'min_fraction': Float % Range(0.0, 1.0, inclusive_start=False),
+        'max_fraction': Float % Range(0.0, 1.0, inclusive_end=True),
+        'steps': Int % Range(2, None)
+    },
+    name='Identify core features in table',
+    description=('Identify "core" features, which are features observed in a '
+                 'user-defined fraction of the samples. Since the core '
+                 'features are a function of the fraction of samples that the '
+                 'feature must be observed in to be considered core, this is '
+                 'computed over a range of fractions defined by the '
+                 '`min_fraction`, `max_fraction`, and `steps` parameters.'),
+    input_descriptions={
+        'table': 'The feature table to use in core features calculations.'
+    },
+    parameter_descriptions={
+        'min_fraction': 'The minimum fraction of samples that a feature must '
+                        'be observed in for that feature to be considered a '
+                        'core feature.',
+        'max_fraction': 'The maximum fraction of samples that a feature must '
+                        'be observed in for that feature to be considered a '
+                        'core feature.',
+        'steps': 'The number of steps to take between `min_fraction` and '
+                 '`max_fraction` for core features calculations. This '
+                 'parameter has no effect if `min_fraction` and '
+                 '`max_fraction` are the same value.'
+    }
 )
