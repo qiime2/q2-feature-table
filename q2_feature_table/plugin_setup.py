@@ -299,13 +299,12 @@ plugin.visualizers.register_function(
         'steps': Int % Range(2, None)
     },
     name='Identify core features in table',
-    description=('Identify "core" features, which are features observed more '
-                 'than zero times in a user-defined fraction of the samples. '
-                 'Since the core features are a function of the fraction of '
-                 'samples that the feature must be observed in to be '
-                 'considered core, this is computed over a range of fractions '
-                 'defined by the `min_fraction`, `max_fraction`, and `steps` '
-                 'parameters.'),
+    description=('Identify "core" features, which are features observed in a '
+                 'user-defined fraction of the samples. Since the core '
+                 'features are a function of the fraction of samples that the '
+                 'feature must be observed in to be considered core, this is '
+                 'computed over a range of fractions defined by the '
+                 '`min_fraction`, `max_fraction`, and `steps` parameters.'),
     input_descriptions={
         'table': 'The feature table to use in core features calculations.'
     },

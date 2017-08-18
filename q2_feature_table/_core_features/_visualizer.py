@@ -98,10 +98,6 @@ def _get_core_features(table, fraction):
 
 
 def _get_filter_to_core_f(table, fraction):
-    if not (0.0 <= fraction <= 1.0):
-        raise ValueError("Invalid fraction passed to core filter: %r is "
-                         "outside of range [0,1]." % fraction)
-
     # determine the number of samples that must have a non-zero value for a
     # feature to be considered part of the core
     min_count = fraction * table.shape[1]

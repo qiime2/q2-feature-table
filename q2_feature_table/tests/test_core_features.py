@@ -165,12 +165,6 @@ class TestCoreFeatures(unittest.TestCase):
             core_features(self.output_dir, self.table, min_fraction=0.75,
                           max_fraction=0.5)
 
-        with self.assertRaisesRegex(ValueError, 'Invalid fraction'):
-            core_features(self.output_dir, self.table, min_fraction=-0.01)
-
-        with self.assertRaisesRegex(ValueError, 'Invalid fraction'):
-            core_features(self.output_dir, self.table, max_fraction=1.01)
-
 
 class TestCoreFeaturesPrivateFunctions(unittest.TestCase):
     # Most of the work happens in private functions for this visualizer,
