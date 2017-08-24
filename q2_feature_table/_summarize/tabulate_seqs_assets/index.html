@@ -9,7 +9,7 @@
         button on the resulting page.
       <p>
         To download a raw FASTA file of your sequences, click
-        <a href="sequences.fasta" download="sequences.fasta">here</a>.
+        <a href="sequences.fasta" target="_blank" rel="noopener noreferrer">here</a>.
       </p>
       <p>
         <i>Click on a Column header to sort the table.</i>
@@ -25,7 +25,7 @@
         {% for sequence in data %}
           <tr>
             <td>{{ sequence.id }}</td>
-            <td><a target="_blank" href="{{ sequence.url }}">{{ sequence.seq }}</a></td>
+            <td><a target="_blank" href="{{ sequence.url }}" rel="noopener noreferrer">{{ sequence.seq }}</a></td>
           </tr>
         {% endfor %}
         </tbody>
