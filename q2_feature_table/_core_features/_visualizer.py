@@ -74,9 +74,8 @@ def core_features(output_dir, table: biom.Table, min_fraction: float=0.5,
     ax.get_figure().savefig(
         os.path.join(output_dir, 'core-feature-counts.svg'))
 
-    table_html = _df_to_html(df, index=False, escape=False, border=0,
-                             classes=("table table-striped table-hover"))
-    context['table_html'] = table_html
+    context['table_html'] = q2templates.df_to_html(df, index=False,
+                                                   escape=False)
 
     q2templates.render(index_fp, output_dir, context=context)
 
@@ -116,31 +115,6 @@ def _seven_number_summary(a):
     drop_cols = stats.index.isin(['std', 'mean', 'min', 'max', 'count'])
     stats = stats[~drop_cols]
     return stats
-
-
-# TODO move this function into a util package somewhere that's accessible to
-# QIIME 2 packages.
-def _df_to_html(df, **kwargs):
-    """Convert a dataframe to HTML without truncating contents.
-
-    pandas will truncate cell contents that exceed 50 characters by default.
-    Use this function to avoid this truncation behavior.
-
-    Details:
-
-    https://stackoverflow.com/q/26277757/3776794
-    https://github.com/pandas-dev/pandas/issues/1852
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        DataFrame to convert to HTML.
-    kwargs : dict
-        Parameters passed through to `pd.DataFrame.to_html`.
-
-    """
-    with pd.option_context('display.max_colwidth', -1):
-        return df.to_html(**kwargs)
 
 
 def _round_fractions(fractions):

@@ -89,9 +89,9 @@ def summarize(output_dir: str, table: biom.Table,
         feature_frequencies_ax.get_figure().savefig(
             os.path.join(output_dir, 'feature-frequencies.png'))
 
-    sample_summary_table = _format_html_table(
+    sample_summary_table = q2templates.df_to_html(
         sample_summary.apply('{:,}'.format).to_frame('Frequency'))
-    feature_summary_table = _format_html_table(
+    feature_summary_table = q2templates.df_to_html(
         feature_summary.apply('{:,}'.format).to_frame('Frequency'))
 
     index = os.path.join(TEMPLATES, 'summarize_assets', 'index.html')
@@ -115,7 +115,7 @@ def summarize(output_dir: str, table: biom.Table,
         .apply('{:,}'.format).to_frame('Frequency')
     feature_frequencies['# of Samples Observed In'] = \
         pd.Series(feature_qualitative_data).astype(int).apply('{:,}'.format)
-    feature_frequencies_table = _format_html_table(feature_frequencies)
+    feature_frequencies_table = q2templates.df_to_html(feature_frequencies)
     overview_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'overview.html')
     sample_frequency_template = os.path.join(
@@ -157,11 +157,6 @@ def _compute_qualitative_summary(table):
     for count_vector, feature_id, metadata in table.iter():
         sample_count[feature_id] = (count_vector != 0).sum()
     return sample_count
-
-
-def _format_html_table(df):
-    table = df.to_html(classes="table table-striped table-hover")
-    return table.replace('border="1"', 'border="0"')
 
 
 def _frequencies(table, axis):
