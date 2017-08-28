@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
-                           Choices)
+                           Choices, MetadataCategory)
 
 import q2_feature_table
 from q2_types.feature_table import (
@@ -91,6 +91,37 @@ plugin.methods.register_function(
     description="Convert frequencies to relative frequencies by dividing each "
                 "frequency in a sample by the sum of frequencies in that "
                 "sample."
+)
+
+plugin.methods.register_function(
+    function=q2_feature_table.group,
+    inputs={'table': FeatureTable[Frequency]},
+    parameters={
+        'mode': Str % Choices({'sum', 'median-ceiling', 'mean-ceiling'}),
+        'metadata': MetadataCategory,
+        'axis': Str % Choices({'sample', 'feature'})
+    },
+    outputs=[
+        ('grouped_table', FeatureTable[Frequency])
+    ],
+    input_descriptions={
+        'table': 'The table to group samples or features on.'
+    },
+    parameter_descriptions={
+        'mode': 'How to combine observation frequencies within group.',
+        'metadata': ('A category defining the groups. Each unique value will '
+                     'become a new ID for the table on the given `axis`.'),
+        'axis': ('Along which axis to group. Each ID in the given axis must '
+                 'exist in `metadata`.')
+    },
+    output_descriptions={
+        'grouped_table': ('A table that has been grouped along the given '
+                          '`axis`. IDs on that axis are replaced by values in '
+                          'the `metadata` category.')
+    },
+    name="Group a feature table by a metadata category",
+    description="Group a feature table along a given axis using metadata to "
+                "define the mapping of IDs to a group."
 )
 
 plugin.methods.register_function(
