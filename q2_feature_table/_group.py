@@ -56,6 +56,9 @@ def _munge_metadata_category(mc, ids):
 
 def group(table: biom.Table, axis: str, metadata: qiime2.MetadataCategory,
           mode: str) -> biom.Table:
+    if table.is_empty():
+        raise ValueError("Cannot group an empty table.")
+
     if axis == 'feature':
         axis = 'observation'
 

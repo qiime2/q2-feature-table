@@ -196,6 +196,21 @@ class TestGroup(unittest.TestCase):
         result = group(table, axis='sample', metadata=sample_mc, mode='sum')
         self.assertEqual(expected, result)
 
+    def test_group_to_single_id(self):
+        sample_mc = qiime2.MetadataCategory(
+            pd.Series(['all_samples', 'all_samples', 'all_samples'],
+                      index=['a', 'b', 'c']))
+
+        data = np.array([[1, 2, 3], [30, 20, 10]])
+        table = biom.Table(data, sample_ids=['a', 'b', 'c'],
+                           observation_ids=['x', 'y'])
+
+        expected = biom.Table(np.array([[6], [60]]),
+                              sample_ids=['all_samples'],
+                              observation_ids=['x', 'y'])
+        result = group(table, axis='sample', metadata=sample_mc, mode='sum')
+        self.assertEqual(expected, result)
+
     def test_empty(self):
         # Trusting that the code is sane enough to not invent a distinction
         # between feature and sample metadata where there is none
@@ -250,6 +265,18 @@ class TestGroup(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, 'numeric'):
             group(table, axis='sample', metadata=sample_mc, mode='sum')
+
+    def test_empty_table(self):
+        mc = qiime2.MetadataCategory(
+            pd.Series(['a_new', 'b_new'], index=['a', 'b']))
+
+        table = biom.Table(np.array([[]]), sample_ids=[], observation_ids=[])
+
+        with self.assertRaisesRegex(ValueError, 'empty table'):
+            group(table, axis='sample', metadata=mc, mode='sum')
+
+        with self.assertRaisesRegex(ValueError, 'empty table'):
+            group(table, axis='feature', metadata=mc, mode='sum')
 
     def _shared_setup(self):
         sample_mc = qiime2.MetadataCategory(
