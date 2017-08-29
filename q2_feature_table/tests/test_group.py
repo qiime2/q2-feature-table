@@ -290,8 +290,8 @@ class TestGroup(unittest.TestCase):
                       index=['v', 'w', 'x', 'y', 'z']))
 
         data = np.array([
-            # t   t   c    o     c    o   o
-            # a   b   c    d     e    f   g
+            # t  t   c   o    c     o    o
+            # a  b   c   d    e     f    g
             [0,  0,  0,  0,   1,    0,   2],    # v  g0
             [10, 10, 10, 10,  10,   100, 1],    # w  g1
             [12, 3,  14, 0,   0,    3,   34],   # x  g1
