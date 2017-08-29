@@ -211,7 +211,7 @@ class TestGroup(unittest.TestCase):
         result = group(table, axis='sample', metadata=sample_mc, mode='sum')
         self.assertEqual(expected, result)
 
-    def test_empty(self):
+    def test_empty_metadata_values(self):
         # Trusting that the code is sane enough to not invent a distinction
         # between feature and sample metadata where there is none
         sample_mc = qiime2.MetadataCategory(
