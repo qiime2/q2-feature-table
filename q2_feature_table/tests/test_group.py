@@ -222,19 +222,19 @@ class TestGroup(unittest.TestCase):
         table = biom.Table(data, sample_ids=sample_ids,
                            observation_ids=['x', 'y'])
 
-        with self.assertRaisesRegex(ValueError, 'missing value.*{\'c\'}'):
+        with self.assertRaisesRegex(ValueError, 'missing.*value.*{\'c\'}'):
             group(table, axis='sample', metadata=sample_mc, mode='sum')
 
         nan_mc = qiime2.MetadataCategory(
             pd.Series(['a_new', float('nan'), 'a_new'], index=['a', 'b', 'c']))
 
-        with self.assertRaisesRegex(ValueError, 'missing value.*{\'b\'}'):
+        with self.assertRaisesRegex(ValueError, 'missing.*value.*{\'b\'}'):
             group(table, axis='sample', metadata=nan_mc, mode='sum')
 
         empty_str = qiime2.MetadataCategory(
             pd.Series(['', 'y_new'], index=['x', 'y']))
 
-        with self.assertRaisesRegex(ValueError, 'missing value.*{\'x\'}'):
+        with self.assertRaisesRegex(ValueError, 'missing.*value.*{\'x\'}'):
             group(table, axis='feature', metadata=empty_str,
                   mode='median-ceiling')
 
@@ -256,12 +256,27 @@ class TestGroup(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_numeric(self):
-        sample_mc = qiime2.MetadataCategory(
-            pd.Series(['1', '2', '3'], index=['a', 'b', 'c']))
-
         data = np.array([[1, 2, 3], [30, 20, 10]])
         table = biom.Table(data, sample_ids=['a', 'b', 'c'],
                            observation_ids=['x', 'y'])
+
+        # ints
+        sample_mc = qiime2.MetadataCategory(
+            pd.Series(['1', '2', '3'], index=['a', 'b', 'c']))
+
+        with self.assertRaisesRegex(ValueError, 'numeric'):
+            group(table, axis='sample', metadata=sample_mc, mode='sum')
+
+        # floats
+        sample_mc = qiime2.MetadataCategory(
+            pd.Series(['1.1', '2.2', '3.3333'], index=['a', 'b', 'c']))
+
+        with self.assertRaisesRegex(ValueError, 'numeric'):
+            group(table, axis='sample', metadata=sample_mc, mode='sum')
+
+        # mixed
+        sample_mc = qiime2.MetadataCategory(
+            pd.Series(['0', '42', '4.2'], index=['a', 'b', 'c']))
 
         with self.assertRaisesRegex(ValueError, 'numeric'):
             group(table, axis='sample', metadata=sample_mc, mode='sum')

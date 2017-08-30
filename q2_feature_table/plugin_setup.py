@@ -108,20 +108,24 @@ plugin.methods.register_function(
         'table': 'The table to group samples or features on.'
     },
     parameter_descriptions={
-        'mode': 'How to combine observation frequencies within group.',
-        'metadata': ('A category defining the groups. Each unique value will '
-                     'become a new ID for the table on the given `axis`.'),
-        'axis': ('Along which axis to group. Each ID in the given axis must '
-                 'exist in `metadata`.')
+        'mode': 'How to combine samples or features within a group. `sum` '
+                'will sum the frequencies across all samples or features '
+                'within a group; `mean-ceiling` will take the ceiling of the '
+                'mean of these frequencies; `median-ceiling` will take the '
+                'ceiling of the median of these frequencies.',
+        'metadata': 'A category defining the groups. Each unique value will '
+                    'become a new ID for the table on the given `axis`.',
+        'axis': 'Along which axis to group. Each ID in the given axis must '
+                'exist in `metadata`.'
     },
     output_descriptions={
-        'grouped_table': ('A table that has been grouped along the given '
-                          '`axis`. IDs on that axis are replaced by values in '
-                          'the `metadata` category.')
+        'grouped_table': 'A table that has been grouped along the given '
+                         '`axis`. IDs on that axis are replaced by values in '
+                         'the `metadata` category.'
     },
-    name="Group a feature table by a metadata category",
-    description="Group a feature table along a given axis using metadata to "
-                "define the mapping of IDs to a group."
+    name="Group samples or features by a metadata category",
+    description="Group samples or features in a feature table using metadata "
+                "to define the mapping of IDs to a group."
 )
 
 plugin.methods.register_function(

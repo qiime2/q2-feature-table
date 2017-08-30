@@ -26,7 +26,7 @@ _mode_lookup = {
 }
 
 
-def _munge_metadata_category(mc, ids):
+def _munge_metadata_category(mc, ids, axis):
     # TODO: centralize these ideas in MetadataCategory somehow
     series = mc.to_series()
     table_ids = set(ids)
@@ -39,8 +39,9 @@ def _munge_metadata_category(mc, ids):
     # Check missing
     missing_ids = table_ids - series_ids
     if missing_ids:
-        raise ValueError("All IDs must be present in metadata category, but "
-                         " the following are missing: %r" % missing_ids)
+        raise ValueError("All %s IDs in the feature table must be present in "
+                         "the metadata category, but the following are "
+                         "missing: %r" % (axis, missing_ids))
 
     # While preserving order, get rid of any IDs found only in the metadata
     series = series.drop(series_ids - table_ids)
@@ -49,7 +50,8 @@ def _munge_metadata_category(mc, ids):
     missing_values = series.isnull() | (series == '')
     if missing_values.any():
         missing = set(series[missing_values].index)
-        raise ValueError("There are missing value(s) for ID(s): %r" % missing)
+        raise ValueError("There are missing metadata category value(s) for %s "
+                         "ID(s): %r" % (axis, missing))
 
     return series
 
@@ -60,15 +62,18 @@ def group(table: biom.Table, axis: str, metadata: qiime2.MetadataCategory,
         raise ValueError("Cannot group an empty table.")
 
     if axis == 'feature':
-        axis = 'observation'
+        biom_axis = 'observation'
+    else:
+        biom_axis = axis
 
-    series = _munge_metadata_category(metadata, ids=table.ids(axis=axis))
+    series = _munge_metadata_category(metadata, table.ids(axis=biom_axis),
+                                      axis)
 
     grouped_table = table.collapse(lambda axis_id, _: series.loc[axis_id],
                                    collapse_f=_mode_lookup[mode],
-                                   axis=axis,
+                                   axis=biom_axis,
                                    norm=False,
                                    include_collapsed_metadata=False)
     # Reorder axis by first unique appearance of each group value in metadata
     # (makes it stable for identity mappings and easier to test)
-    return grouped_table.sort_order(series.unique(), axis=axis)
+    return grouped_table.sort_order(series.unique(), axis=biom_axis)
