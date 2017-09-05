@@ -16,7 +16,7 @@ q2_feature_table/_summarize/summarize_assets/dist:
 	cd q2_feature_table/_summarize/summarize_assets && \
 	npm install && \
 	npm run build && \
-	cp licenses/* dist
+	cp licenses/* dist/
 
 viz-summarize: q2_feature_table/_summarize/summarize_assets/dist
 

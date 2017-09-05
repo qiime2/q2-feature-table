@@ -28,7 +28,7 @@
   "scripts": {
     "test": "eslint src/",
     "start": "webpack-dev-server --inline",
-    "build": "webpack"
+    "build": "webpack --bail"
   },
   "repository": {
     "type": "git",
