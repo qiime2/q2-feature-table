@@ -70,6 +70,7 @@ def summarize(output_dir: str, table: biom.Table,
         sample_frequencies_ax.get_xaxis().set_major_formatter(
             matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
         sample_frequencies_ax.set_xlabel('Frequency per sample')
+        sample_frequencies_ax.set_ylabel('Number of samples')
         sample_frequencies_ax.get_figure().savefig(
             os.path.join(output_dir, 'sample-frequencies.pdf'))
         sample_frequencies_ax.get_figure().savefig(
@@ -82,6 +83,7 @@ def summarize(output_dir: str, table: biom.Table,
         feature_frequencies_ax = sns.distplot(feature_frequencies, kde=False,
                                               rug=True)
         feature_frequencies_ax.set_xlabel('Frequency per feature')
+        feature_frequencies_ax.set_ylabel('Number of features')
         feature_frequencies_ax.set_xscale('log')
         feature_frequencies_ax.set_yscale('log')
         feature_frequencies_ax.get_figure().savefig(
