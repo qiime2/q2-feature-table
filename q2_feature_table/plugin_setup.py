@@ -300,6 +300,41 @@ plugin.methods.register_function(
                 "on https://docs.qiime2.org for additional details."
 )
 
+plugin.methods.register_function(
+    function=q2_feature_table.filter_seqs,
+    inputs={
+        'data': FeatureData[Sequence],
+    },
+    parameters={
+        'metadata': Metadata,
+        'where': Str,
+        'exclude_ids': Bool
+    },
+    outputs=[('filtered_data', FeatureData[Sequence])],
+    input_descriptions={
+        'data': 'The sequences from which features should be filtered.',
+    },
+    parameter_descriptions={
+        'metadata': 'Feature metadata used for id-based filtering, with '
+                    '`where` parameter when selecting features to retain, or '
+                    'with `exclude_ids` when selecting features to discard.',
+        'where': 'SQLite WHERE clause specifying feature metadata criteria '
+                 'that must be met to be included in the filtered feature '
+                 'table. If not provided, all features in `metadata` that are '
+                 'also in the sequences will be retained.',
+        'exclude_ids': 'If `True`, the features selected by `metadata` or '
+                       '`where` parameters will be excluded from the filtered '
+                       'sequences instead of being retained.'
+    },
+    output_descriptions={
+        'filtered_data': 'The resulting filtered sequences.'
+    },
+    name="Filter features from sequences",
+    description="Filter features from sequences based on ids or metadata. See "
+                "the filtering tutorial on https://docs.qiime2.org for "
+                "additional details."
+)
+
 plugin.visualizers.register_function(
     function=q2_feature_table.summarize,
     inputs={'table': FeatureTable[Frequency | RelativeFrequency |

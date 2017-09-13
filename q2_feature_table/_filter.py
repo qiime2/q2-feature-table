@@ -9,6 +9,7 @@
 import biom
 import qiime2
 import numpy as np
+import pandas as pd
 
 
 def _get_biom_filter_function(ids_to_keep, min_frequency, max_frequency,
@@ -29,8 +30,8 @@ def _get_biom_filter_function(ids_to_keep, min_frequency, max_frequency,
 _other_axis_map = {'sample': 'observation', 'observation': 'sample'}
 
 
-def _filter(table, min_frequency, max_frequency, min_nonzero, max_nonzero,
-            metadata, where, axis, exclude_ids=False):
+def _filter_table(table, min_frequency, max_frequency, min_nonzero,
+                  max_nonzero, metadata, where, axis, exclude_ids=False):
     if min_frequency == 0 and max_frequency is None and min_nonzero == 0 and\
        max_nonzero is None and metadata is None and where is None and\
        exclude_ids is False:
@@ -66,10 +67,10 @@ def filter_samples(table: biom.Table, min_frequency: int=0,
                    metadata: qiime2.Metadata=None, where: str=None,
                    exclude_ids: bool=False)\
                   -> biom.Table:
-    _filter(table=table, min_frequency=min_frequency,
-            max_frequency=max_frequency, min_nonzero=min_features,
-            max_nonzero=max_features, metadata=metadata,
-            where=where, axis='sample', exclude_ids=exclude_ids)
+    _filter_table(table=table, min_frequency=min_frequency,
+                  max_frequency=max_frequency, min_nonzero=min_features,
+                  max_nonzero=max_features, metadata=metadata,
+                  where=where, axis='sample', exclude_ids=exclude_ids)
 
     return table
 
@@ -80,9 +81,19 @@ def filter_features(table: biom.Table, min_frequency: int=0,
                     metadata: qiime2.Metadata=None, where: str=None,
                     exclude_ids: bool=False)\
                    -> biom.Table:
-    _filter(table=table, min_frequency=min_frequency,
-            max_frequency=max_frequency, min_nonzero=min_samples,
-            max_nonzero=max_samples, metadata=metadata,
-            where=where, axis='observation', exclude_ids=exclude_ids)
+    _filter_table(table=table, min_frequency=min_frequency,
+                  max_frequency=max_frequency, min_nonzero=min_samples,
+                  max_nonzero=max_samples, metadata=metadata,
+                  where=where, axis='observation', exclude_ids=exclude_ids)
 
     return table
+
+
+def filter_seqs(data: pd.Series, metadata: qiime2.Metadata, where: str=None,
+                exclude_ids: bool=False) -> pd.Series:
+    # Note, no need to check for missing feature IDs in the metadata, because
+    # that is basically the point of this method.
+    ids_to_keep = metadata.ids(where=where)
+    if exclude_ids is True:
+        ids_to_keep = set(data.index) - set(ids_to_keep)
+    return data[data.index.isin(ids_to_keep)]
