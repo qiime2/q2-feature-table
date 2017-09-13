@@ -15,13 +15,15 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
     package_data={'q2_feature_table._summarize': [
-                        'summarize_assets/*.html',
-                        'summarize_assets/dist/*',
-                        'tabulate_seqs_assets/js/*',
-                        'tabulate_seqs_assets/index.html'],
+                      'summarize_assets/*.html',
+                      'summarize_assets/dist/*',
+                      'tabulate_seqs_assets/js/*',
+                      'tabulate_seqs_assets/index.html'],
                   'q2_feature_table._core_features': [
-                        'core_features_assets/index.html'
-                  ]},
+                      'core_features_assets/index.html'],
+                  'q2_feature_table._heatmap': [
+                      'assets/index.html'],
+                  },
     author="Greg Caporaso",
     author_email="gregcaporaso@gmail.com",
     description="Functionality for working with sample by feature tables.",
