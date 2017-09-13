@@ -238,7 +238,7 @@ plugin.methods.register_function(
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all samples in `metadata` that are '
                  'also in the feature table will be retained.',
-        'exclude_ids': 'If `True`, the samples selected by `metadata` or '
+        'exclude_ids': 'If true, the samples selected by `metadata` or '
                        '`where` parameters will be excluded from the filtered '
                        'table instead of being retained.'
     },
@@ -286,7 +286,7 @@ plugin.methods.register_function(
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all features in `metadata` that are '
                  'also in the feature table will be retained.',
-        'exclude_ids': 'If `True`, the features selected by `metadata` or '
+        'exclude_ids': 'If true, the features selected by `metadata` or '
                        '`where` parameters will be excluded from the filtered '
                        'table instead of being retained.'
     },
@@ -322,7 +322,7 @@ plugin.methods.register_function(
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all features in `metadata` that are '
                  'also in the sequences will be retained.',
-        'exclude_ids': 'If `True`, the features selected by `metadata` or '
+        'exclude_ids': 'If true, the features selected by `metadata` or '
                        '`where` parameters will be excluded from the filtered '
                        'sequences instead of being retained.'
     },

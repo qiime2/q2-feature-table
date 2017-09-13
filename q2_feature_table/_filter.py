@@ -96,4 +96,7 @@ def filter_seqs(data: pd.Series, metadata: qiime2.Metadata, where: str=None,
     ids_to_keep = metadata.ids(where=where)
     if exclude_ids is True:
         ids_to_keep = set(data.index) - set(ids_to_keep)
-    return data[data.index.isin(ids_to_keep)]
+    filtered = data[data.index.isin(ids_to_keep)]
+    if filtered.empty is True:
+        raise ValueError('All features were filtered out of the data.')
+    return filtered
