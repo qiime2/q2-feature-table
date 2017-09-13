@@ -104,15 +104,21 @@ class TestPrivateHelpers(unittest.TestCase):
         self.table = pd.DataFrame(data=[[0, 10], [10, 12], [10, 11]],
                                   columns=['O1', 'O2'],
                                   index=['S1', 'S2', 'S3'])
-        self.output_dir_obj = tempfile.TemporaryDirectory(
-                prefix='q2-feature-table-test-temp-')
-
-    def tearDown(self):
-        self.output_dir_obj.cleanup()
 
     def test_munge_metadata_simple(self):
         md = pd.Series(['milo', 'russ', 'russ'], name='pet',
                        index=['S1', 'S2', 'S3'])
+        obs = _munge_metadata(md, self.table, 'both')
+
+        exp_idx = pd.Index(['milo | S1', 'russ | S2', 'russ | S3'],
+                           name='pet | None')
+        exp = pd.DataFrame([[0, 10], [10, 12], [10, 11]], columns=['O1', 'O2'],
+                           index=exp_idx)
+        assert_frame_equal(exp, obs)
+
+    def test_munge_metadata_ids_different_order(self):
+        md = pd.Series(['russ', 'milo', 'russ'], name='pet',
+                       index=['S2', 'S1', 'S3'])
         obs = _munge_metadata(md, self.table, 'both')
 
         exp_idx = pd.Index(['milo | S1', 'russ | S2', 'russ | S3'],

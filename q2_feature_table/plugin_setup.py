@@ -374,26 +374,29 @@ plugin.visualizers.register_function(
             q2_feature_table.heatmap_choices['color_scheme']),
     },
     name='Generate a heatmap representation of a feature table',
-    description=('Generate a heatmap representation of a feature table with '
-                 'optional clustering on both the sample and feature axes.'),
+    description='Generate a heatmap representation of a feature table with '
+                'optional clustering on both the sample and feature axes.\n\n'
+                'Tip: To generate a heatmap containing taxonomic annotations, '
+                'use `qiime taxa collapse` to collapse the feature table at '
+                'the desired taxonomic level.',
     input_descriptions={
         'table': 'The feature table to visualize.'
     },
     parameter_descriptions={
-        'metadata': ('Annotate the sample IDs with these metadata values. '
-                     'When metadata is present and `cluster`=\'feature\', '
-                     'samples will be sorted by the metadata values.'),
-        'normalize': ('Normalize the feature table by adding a psuedocount '
-                      'of 1 and then taking the log10 of the table.'),
+        'metadata': 'Annotate the sample IDs with these metadata values. '
+                    'When metadata is present and `cluster`=\'feature\', '
+                    'samples will be sorted by the metadata values.',
+        'normalize': 'Normalize the feature table by adding a psuedocount '
+                     'of 1 and then taking the log10 of the table.',
         'title': 'Optional custom plot title.',
-        'metric': ('Metrics exposed by seaborn (see http://seaborn.pydata.org/'
-                   'generated/seaborn.clustermap.html#seaborn.clustermap for '
-                   'more detail).'),
-        'method': ('Clustering methods exposed by seaborn (see http://seaborn.'
-                   'pydata.org/generated/seaborn.clustermap.html#seaborn.clust'
-                   'ermap for more detail).'),
+        'metric': 'Metrics exposed by seaborn (see http://seaborn.pydata.org/'
+                  'generated/seaborn.clustermap.html#seaborn.clustermap for '
+                  'more detail).',
+        'method': 'Clustering methods exposed by seaborn (see http://seaborn.'
+                  'pydata.org/generated/seaborn.clustermap.html#seaborn.clust'
+                  'ermap for more detail).',
         'cluster': 'Specify which axes to cluster.',
-        'color_scheme': ('The matplotlib colorscheme to generate the heatmap '
-                         'with.'),
+        'color_scheme': 'The matplotlib colorscheme to generate the heatmap '
+                        'with.',
     }
 )

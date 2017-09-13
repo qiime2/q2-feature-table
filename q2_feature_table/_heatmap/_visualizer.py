@@ -12,6 +12,7 @@ import pkg_resources
 import q2templates
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import seaborn as sns
 import qiime2
 
@@ -109,15 +110,13 @@ def heatmap(output_dir, table: pd.DataFrame,
     if table.empty:
         raise ValueError('Cannot visualize an empty table.')
 
-    category = metadata.to_series() if metadata is not None else None
-
     # Validation
-    if category is not None:
-        table = _munge_metadata(category, table, cluster)
+    if metadata is not None:
+        table = _munge_metadata(metadata.to_series(), table, cluster)
 
     cbar_label = 'frequency'
     if normalize:
-        table = table.apply(lambda x: np.log(x + 1))
+        table = table.apply(lambda x: np.log10(x + 1))
         cbar_label = 'log10 frequency'
 
     # Hard-coded values for reasonable plots
@@ -147,6 +146,10 @@ def heatmap(output_dir, table: pd.DataFrame,
                                                  height])
     heatmap_plot.ax_col_dendrogram.set_position([col.x0, hm.y0 + height, width,
                                                  col.height])
+
+    # https://stackoverflow.com/a/34697479/3776794
+    plt.setp(heatmap_plot.ax_heatmap.xaxis.get_majorticklabels(), rotation=90)
+    plt.setp(heatmap_plot.ax_heatmap.yaxis.get_majorticklabels(), rotation=0)
 
     for ext in ['png', 'svg']:
         img_fp = os.path.join(output_dir, 'feature-table-heatmap.%s' % ext)
