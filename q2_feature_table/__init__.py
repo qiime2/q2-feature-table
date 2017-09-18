@@ -10,7 +10,7 @@ from ._normalize import rarefy
 from ._transform import (presence_absence, relative_frequency)
 from ._summarize import (summarize, tabulate_seqs)
 from ._merge import (merge, merge_seq_data, merge_taxa_data, overlap_methods)
-from ._filter import (filter_samples, filter_features)
+from ._filter import (filter_samples, filter_features, filter_seqs)
 from ._core_features import core_features
 from ._group import group
 from ._heatmap import (heatmap, heatmap_choices)
@@ -22,4 +22,5 @@ del get_versions
 __all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'summarize',
            'merge', 'merge_seq_data', 'filter_samples', 'filter_features',
            'merge_taxa_data', 'tabulate_seqs', 'overlap_methods',
-           'core_features', 'group', 'heatmap', 'heatmap_choices']
+           'core_features', 'group', 'heatmap', 'heatmap_choices',
+           'filter_seqs']
