@@ -35,7 +35,7 @@ plugin = Plugin(
 plugin.methods.register_function(
     function=q2_feature_table.rarefy,
     inputs={'table': FeatureTable[Frequency]},
-    parameters={'sampling_depth': Int},
+    parameters={'sampling_depth': Int % Range(1, None)},
     outputs=[('rarefied_table', FeatureTable[Frequency])],
     input_descriptions={'table': 'The feature table to be rarefied.'},
     parameter_descriptions={
