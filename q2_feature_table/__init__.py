@@ -7,6 +7,7 @@
 # ----------------------------------------------------------------------------
 
 from ._normalize import rarefy
+from ._sample import sample
 from ._transform import (presence_absence, relative_frequency)
 from ._summarize import (summarize, tabulate_seqs)
 from ._merge import (merge, merge_seq_data, merge_taxa_data, overlap_methods)
@@ -23,4 +24,4 @@ __all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'summarize',
            'merge', 'merge_seq_data', 'filter_samples', 'filter_features',
            'merge_taxa_data', 'tabulate_seqs', 'overlap_methods',
            'core_features', 'group', 'heatmap', 'heatmap_choices',
-           'filter_seqs']
+           'filter_seqs', 'sample']
