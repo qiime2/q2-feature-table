@@ -11,7 +11,8 @@ import pandas as pd
 
 
 def overlap_methods():
-    return ('error_on_overlapping_sample', 'error_on_overlapping_feature')
+    return ('error_on_overlapping_sample', 'error_on_overlapping_feature',
+            'sum')
 
 
 def _get_overlapping(table1, table2, axis):
@@ -33,6 +34,9 @@ def merge(table1: biom.Table, table2: biom.Table,
         if len(overlapping_ids) > 0:
             raise ValueError('Some features are present in both tables: %s' %
                              ', '.join(overlapping_ids))
+    elif overlap_method == 'sum':
+        # This is the default behavior for biom.Table.merge
+        pass
     else:
         raise ValueError('Invalid overlap method: %s. Please provide one of '
                          'the following methods: %s.' %

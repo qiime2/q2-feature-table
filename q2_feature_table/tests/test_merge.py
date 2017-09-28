@@ -93,6 +93,67 @@ class MergeTableTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'overlap method'):
             merge(t1, t2, 'peanut')
 
+    def test_sum_full_overlap(self):
+        t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                   ['O1', 'O2'],
+                   ['S1', 'S2', 'S3'])
+        t2 = Table(np.array([[0, 2, 6], [2, 2, 4]]),
+                   ['O1', 'O2'],
+                   ['S1', 'S2', 'S3'])
+        obs = merge(t1, t2, 'sum')
+        exp = Table(np.array([[0, 3, 9], [3, 3, 6]]),
+                    ['O1', 'O2'],
+                    ['S1', 'S2', 'S3'])
+        self.assertEqual(obs, exp)
+
+    def test_sum_some_overlap(self):
+        # Did I stutter?
+        t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                   ['O1', 'O2'],
+                   ['S1', 'S2', 'S3'])
+        t2 = Table(np.array([[0, 2, 6], [2, 2, 4]]),
+                   ['O1', 'O3'],
+                   ['S4', 'S2', 'S5'])
+        obs = merge(t1, t2, 'sum')
+        exp = Table(np.array([[0, 3, 3, 0, 6], [1, 1, 2, 0, 0],
+                              [0, 2, 0, 2, 4]]),
+                    ['O1', 'O2', 'O3'],
+                    ['S1', 'S2', 'S3', 'S4', 'S5'])
+        self.assertEqual(obs, exp)
+
+    def test_sum_overlapping_sample_ids(self):
+        # This should produce the same result as `error_on_overlapping_feature`
+        t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                   ['O1', 'O2'],
+                   ['S1', 'S2', 'S3'])
+        t2 = Table(np.array([[0, 2, 6], [2, 2, 4]]),
+                   ['O3', 'O4'],
+                   ['S1', 'S5', 'S6'])
+        obs = merge(t1, t2, 'sum')
+        exp = Table(np.array([[0, 1, 3, 0, 0], [1, 1, 2, 0, 0],
+                              [0, 0, 0, 2, 6], [2, 0, 0, 2, 4]]),
+                    ['O1', 'O2', 'O3', 'O4'],
+                    ['S1', 'S2', 'S3', 'S5', 'S6'])
+        self.assertEqual(obs, exp)
+
+    def test_sum_overlapping_feature_ids(self):
+        # This should produce the same result as `error_on_overlapping_sample`
+        t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                   ['O1', 'O2'],
+                   ['S1', 'S2', 'S3'])
+        t2 = Table(np.array([[0, 2, 6], [2, 2, 4]]),
+                   ['O1', 'O3'],
+                   ['S4', 'S5', 'S6'])
+        obs = merge(t1, t2, 'sum')
+        exp = Table(np.array([[0, 1, 3, 0, 2, 6], [1, 1, 2, 0, 0, 0],
+                              [0, 0, 0, 2, 2, 4]]),
+                    ['O1', 'O2', 'O3'],
+                    ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'])
+        self.assertEqual(obs, exp)
+
+
+class UtilTests(unittest.TestCase):
+
     def test_get_overlapping(self):
         t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                    ['O1', 'O2'], ['S1', 'S2', 'S3'])
