@@ -56,15 +56,15 @@ plugin.methods.register_function(
 plugin.methods.register_function(
     function=q2_feature_table.sample,
     inputs={'table': FeatureTable[Frequency]},
-    parameters={'sampling_depth': Int, 'axis': Str % Choices(['sample',
-                                                              'feature']),
+    parameters={'sampling_depth': Int,
+                'axis': Str % Choices(['sample', 'feature'])},
     outputs=[('sampled_table', FeatureTable[Frequency])],
     input_descriptions={'table': 'The feature table to be sampled.'},
     parameter_descriptions={
         'sampled_depth': ('The total number of samples or features to be '
-                           'randomly sampled. Samples or features that are '
-                           'reduced to a zero sum will not be included in the '
-                           'resulting table.'),
+                          'randomly sampled. Samples or features that are '
+                          'reduced to a zero sum will not be included in the '
+                          'resulting table.'),
         'axis': ('The axis to sample over. If "sample" then samples will be '
                  'randomly selected to be retained. If "feature" then '
                  'a random set of features will be selected to be retained.')

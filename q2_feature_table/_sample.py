@@ -26,4 +26,3 @@ def sample(table: biom.Table, sampling_depth: int, axis: str) -> biom.Table:
         table = table.transpose()
 
     return table
-
