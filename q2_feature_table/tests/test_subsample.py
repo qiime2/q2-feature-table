@@ -12,16 +12,16 @@ import numpy as np
 import numpy.testing as npt
 from biom.table import Table
 
-from q2_feature_table import sample
+from q2_feature_table import subsample
 
 
-class SampleTests(TestCase):
+class SubsampleTests(TestCase):
 
-    def test_sample_samples(self):
+    def test_subsample_samples(self):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                   ['O1', 'O2'],
                   ['S1', 'S2', 'S3'])
-        a = sample(t, 2, 'sample')
+        a = subsample(t, 2, 'sample')
         self.assertEqual(a.shape, (2, 2))
 
         sample_ids = frozenset(a.ids(axis='sample'))
@@ -34,11 +34,11 @@ class SampleTests(TestCase):
             npt.assert_equal(t.data(i, axis='sample'),
                              a.data(i, axis='sample'))
 
-    def test_sample_features(self):
+    def test_subsample_features(self):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]).T,
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
-        a = sample(t, 2, 'feature')
+        a = subsample(t, 2, 'feature')
         self.assertEqual(a.shape, (2, 2))
 
         sample_ids = frozenset(a.ids(axis='observation'))
