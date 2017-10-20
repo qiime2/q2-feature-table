@@ -55,17 +55,30 @@ class SubsampleTests(TestCase):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]).T,
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
-        a = subsample(t, 10, 'sample')
-        a = a.sort_order(t.ids())
-        self.assertEqual(a, t)
+        with self.assertRaisesRegex(ValueError, "depth exceeds"):
+            a = subsample(t, 10, 'sample')
 
     def test_subsample_features_oversample(self):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]).T,
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
-        a = subsample(t, 10, 'feature')
-        a = a.sort_order(t.ids(axis='observation'), axis='observation')
-        self.assertEqual(a, t)
+        with self.assertRaisesRegex(ValueError, "depth exceeds"):
+            a = subsample(t, 10, 'feature')
+
+    def test_subsample_samples_empty(self):
+        t = Table(np.array([[0, 0, 0], [0, 0, 0]]).T,
+                  ['O1', 'O2', 'O3'],
+                  ['S1', 'S2'])
+        with self.assertRaisesRegex(ValueError, "contains no"):
+            a = subsample(t, 2, 'sample')
+
+    def test_subsample_features_empty(self):
+        t = Table(np.array([[0, 0, 0], [0, 0, 0]]).T,
+                  ['O1', 'O2', 'O3'],
+                  ['S1', 'S2'])
+        with self.assertRaisesRegex(ValueError, "contains no"):
+            a = subsample(t, 2, 'feature')
+
 
 
 if __name__ == "__main__":

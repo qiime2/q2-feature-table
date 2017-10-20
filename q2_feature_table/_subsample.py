@@ -15,6 +15,11 @@ def subsample(table: biom.Table, subsampling_depth: int,
         # we are transposing the table due to biocore/biom-format#759
         table = table.transpose()
 
+    if len(table.ids()) < subsampling_depth:
+        raise ValueError('The subsampling depth exceeds the number of '
+                         'elements on the desired axis. The maximum depth '
+                         'is: %d.' % len(table.ids()))
+
     # the axis is always 'sample' due to the above transpose
     table = table.subsample(subsampling_depth, axis='sample', by_id=True)
 
@@ -25,5 +30,10 @@ def subsample(table: biom.Table, subsampling_depth: int,
     if axis == 'feature':
         # reverse the transpose necessary due to biocore/biom-format#759
         table = table.transpose()
+
+    if table.is_empty():
+        raise ValueError('The subsampled table contains no samples or '
+                         'features. Verify your table is valid and that you '
+                         'provided a shallow enough subsampling depth.')
 
     return table
