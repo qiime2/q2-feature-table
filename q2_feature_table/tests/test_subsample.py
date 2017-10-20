@@ -51,6 +51,22 @@ class SubsampleTests(TestCase):
             npt.assert_equal(t.data(i, axis='observation'),
                              a.data(i, axis='observation'))
 
+    def test_subsample_samples_oversample(self):
+        t = Table(np.array([[0, 1, 3], [1, 1, 2]]).T,
+                  ['O1', 'O2', 'O3'],
+                  ['S1', 'S2'])
+        a = subsample(t, 10, 'sample')
+        a = a.sort_order(t.ids())
+        self.assertEqual(a, t)
+
+    def test_subsample_features_oversample(self):
+        t = Table(np.array([[0, 1, 3], [1, 1, 2]]).T,
+                  ['O1', 'O2', 'O3'],
+                  ['S1', 'S2'])
+        a = subsample(t, 10, 'feature')
+        a = a.sort_order(t.ids(axis='observation'), axis='observation')
+        self.assertEqual(a, t)
+
 
 if __name__ == "__main__":
     main()
