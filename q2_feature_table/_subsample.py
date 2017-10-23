@@ -32,8 +32,9 @@ def subsample(table: biom.Table, subsampling_depth: int,
         table = table.transpose()
 
     if table.is_empty():
-        raise ValueError('The subsampled table contains no samples or '
-                         'features. Verify your table is valid and that you '
-                         'provided a shallow enough subsampling depth.')
+        raise ValueError('The subsampled table contains no samples or features'
+                         ' (samples/features that sum to zero after filtering'
+                         ' are automatically removed). It may be a good idea'
+                         ' to double check that your table is valid/nonempty.')
 
     return table
