@@ -54,6 +54,30 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
+    function=q2_feature_table.subsample,
+    inputs={'table': FeatureTable[Frequency]},
+    parameters={'subsampling_depth': Int % Range(1, None),
+                'axis': Str % Choices(['sample', 'feature'])},
+    outputs=[('sampled_table', FeatureTable[Frequency])],
+    input_descriptions={'table': 'The feature table to be sampled.'},
+    parameter_descriptions={
+        'subsampling_depth': ('The total number of samples or features to be '
+                              'randomly sampled. Samples or features that are '
+                              'reduced to a zero sum will not be included in '
+                              'the resulting table.'),
+        'axis': ('The axis to sample over. If "sample" then samples will be '
+                 'randomly selected to be retained. If "feature" then '
+                 'a random set of features will be selected to be retained.')
+    },
+    output_descriptions={
+        'sampled_table': 'The resulting subsampled feature table.'
+    },
+    name='Subsample table',
+    description=("Randomly pick samples or features, without replacement, "
+                 "from the table.")
+)
+
+plugin.methods.register_function(
     function=q2_feature_table.presence_absence,
     inputs={'table': FeatureTable[Frequency | RelativeFrequency]},
     parameters={},
