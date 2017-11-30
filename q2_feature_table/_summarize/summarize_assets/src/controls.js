@@ -70,7 +70,7 @@ const initializeControls = () => {
   });
 
   sliderValue.on('change', () => {
-    if (!sliderValue.node().value) {
+    if (!sliderValue.node().value || sliderValue.node().value < 0) {
       sliderValue.node().value = 0;
       slider.node().value = slider.node().min;
     }
