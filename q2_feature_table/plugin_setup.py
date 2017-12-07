@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
-                           Choices, MetadataCategory, Set, List)
+                           Choices, MetadataCategory, List)
 
 import q2_feature_table
 from q2_types.feature_table import (
@@ -154,7 +154,7 @@ plugin.methods.register_function(
 
 plugin.methods.register_function(
     function=q2_feature_table.merge,
-    inputs={'tables': Set[FeatureTable[Frequency]]},
+    inputs={'tables': List[FeatureTable[Frequency]]},
     parameters={
         'overlap_method': Str % Choices(q2_feature_table.overlap_methods()),
     },
