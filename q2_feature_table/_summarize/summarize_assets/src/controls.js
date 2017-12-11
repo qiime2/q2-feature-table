@@ -64,13 +64,19 @@ const initializeControls = () => {
     } else {
       slider.node().value = sliderValue.node().value;
     }
+
+    if (sliderValue.node().value < 0) {
+      sliderValue.node().value = 0;
+      slider.node().value = slider.node().min;
+    }
+
     updateStats(trows, slider);
     toggleStyles(trows, slider);
     hiddenDepth.attr('value', slider.node().value).dispatch('change');
   });
 
   sliderValue.on('change', () => {
-    if (!sliderValue.node().value || sliderValue.node().value < 0) {
+    if (!sliderValue.node().value) {
       sliderValue.node().value = 0;
       slider.node().value = slider.node().min;
     }
