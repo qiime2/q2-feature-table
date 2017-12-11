@@ -61,7 +61,12 @@ const initializeControls = () => {
     if (+sliderValue.node().value > +slider.node().max) {
       sliderValue.node().value = slider.node().max;
       slider.node().value = slider.node().max;
-    } else {
+    }
+    else if (sliderValue.node().value < 0) {
+      sliderValue.node().value = 0;
+      slider.node().value = slider.node().min;
+    }
+    else {
       slider.node().value = sliderValue.node().value;
     }
     updateStats(trows, slider);
