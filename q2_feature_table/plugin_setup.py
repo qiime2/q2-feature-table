@@ -161,7 +161,7 @@ plugin.methods.register_function(
     outputs=[
         ('merged_table', FeatureTable[Frequency])],
     input_descriptions={
-        'tables': 'The tables to be merged together.',
+        'tables': 'The collection of feature tables to be merged.',
     },
     parameter_descriptions={
         'overlap_method': 'Method for handling overlapping ids.',
@@ -191,7 +191,7 @@ plugin.methods.register_function(
     name="Combine collections of feature sequences",
     description="Combines feature data objects which may or may not "
                 "contain data for the same features. If different feature "
-                "data is present for the same feature id in the two inputs, "
+                "data is present for the same feature id in the inputs, "
                 "the data from the first will be propagated to the result."
 )
 
@@ -213,8 +213,8 @@ plugin.methods.register_function(
     name="Combine collections of feature taxonomies",
     description="Combines a pair of feature data objects which may or may not "
                 "contain data for the same features. If different feature "
-                "data is present for the same feature id in the two inputs, "
-                "the data from the first  will be propagated to the result."
+                "data is present for the same feature id in the inputs, "
+                "the data from the first will be propagated to the result."
 )
 
 plugin.methods.register_function(
