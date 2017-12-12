@@ -19,6 +19,13 @@ from q2_feature_table._merge import _merge_feature_data, _get_overlapping
 
 
 class MergeTableTests(unittest.TestCase):
+    def test_single_table(self):
+        t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                  ['O1', 'O2'],
+                  ['S1', 'S2', 'S3'])
+        obs = merge([t])
+
+        self.assertEqual(t, obs)
 
     def test_valid_overlapping_feature_ids(self):
         t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
@@ -79,8 +86,8 @@ class MergeTableTests(unittest.TestCase):
         t2 = Table(np.array([[0, 2, 6], [2, 2, 4]]),
                    ['O1', 'O3'],
                    ['S1', 'S5', 'S6'])
-        with self.assertRaises(ValueError):
-            merge(t1, t2)
+        with self.assertRaisesRegex(ValueError, 'samples.*S1'):
+            merge([t1, t2])
 
     def test_invalid_overlap_method(self):
         t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
@@ -101,6 +108,16 @@ class MergeTableTests(unittest.TestCase):
                    ['S1', 'S2', 'S3'])
         obs = merge([t1, t2], 'sum')
         exp = Table(np.array([[0, 3, 9], [3, 3, 6]]),
+                    ['O1', 'O2'],
+                    ['S1', 'S2', 'S3'])
+        self.assertEqual(obs, exp)
+
+    def test_sum_triple_overlap(self):
+        t1 = Table(np.array([[1, 1, 1], [1, 1, 1]]),
+                   ['O1', 'O2'],
+                   ['S1', 'S2', 'S3'])
+        obs = merge([t1] * 3, 'sum')
+        exp = Table(np.array([[3, 3, 3], [3, 3, 3]]),
                     ['O1', 'O2'],
                     ['S1', 'S2', 'S3'])
         self.assertEqual(obs, exp)
@@ -179,8 +196,28 @@ class UtilTests(unittest.TestCase):
         obs = _get_overlapping([t1, t2], 'observation')
         self.assertEqual(set(), obs)
 
+    def test_get_overlapping_multiple(self):
+        t1 = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                   ['O1', 'O2'], ['S1', 'S2', 'S3'])
+        t2 = Table(np.array([[0, 2, 6], [2, 2, 4]]),
+                   ['O1', 'O3'], ['S1', 'S5', 'S6'])
+        t3 = Table(np.array([[3, 3, 1], [0, 2, 1]]),
+                   ['O1', 'O2'], ['S1', 'S3', 'S6'])
+
+        # samples
+        obs = _get_overlapping([t1, t2, t3], 'sample')
+        self.assertEqual({'S1', 'S3', 'S6'}, obs)
+
+        # features
+        obs = _get_overlapping([t1, t2, t3], 'observation')
+        self.assertEqual({'O1', 'O2'}, obs)
+
 
 class MergeFeatureDataTests(unittest.TestCase):
+    def test_merge_single(self):
+        d = pd.Series(['ACGT', 'ACCT'], index=['f1', 'f2'])
+        obs = _merge_feature_data([d])
+        pdt.assert_series_equal(obs, d)
 
     def test_valid_overlapping_feature_ids(self):
         d1 = pd.Series(['ACGT', 'ACCT'], index=['f1', 'f2'])
@@ -200,6 +237,22 @@ class MergeFeatureDataTests(unittest.TestCase):
         # swapping input order changes f1 data
         obs = _merge_feature_data([d2, d1])
         exp = pd.Series(['ACGAAA', 'ACCT', 'ACCA'], index=['f1', 'f2', 'f3'])
+        pdt.assert_series_equal(obs, exp)
+
+    def test_multiple_overlapping_feature_ids_order_maintained(self):
+        d1 = pd.Series(['ACGT', 'ACCT'], index=['f1', 'f2'])
+        d2 = pd.Series(['ACGAAA', 'ACCA'], index=['f1', 'f3'])
+        d3 = pd.Series(['AGGA', 'ATAT'], index=['f3', 'f4'])
+
+        obs = _merge_feature_data([d1, d2, d3])
+        exp = pd.Series(['ACGT', 'ACCT', 'ACCA', 'ATAT'],
+                        index=['f1', 'f2', 'f3', 'f4'])
+        pdt.assert_series_equal(obs, exp)
+
+        # swapping input order changes f1 and f3
+        obs = _merge_feature_data([d3, d2, d1])
+        exp = pd.Series(['ACGAAA', 'ACCT', 'AGGA', 'ATAT'],
+                        index=['f1', 'f2', 'f3', 'f4'])
         pdt.assert_series_equal(obs, exp)
 
     def test_valid_non_overlapping_feature_ids(self):
