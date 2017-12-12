@@ -186,7 +186,7 @@ plugin.methods.register_function(
     parameter_descriptions={},
     output_descriptions={
         'merged_data': ('The resulting collection of feature sequences '
-                        'containing all feature sequences provided to `data`')
+                        'containing all feature sequences provided.')
     },
     name="Combine collections of feature sequences",
     description="Combines feature data objects which may or may not "
@@ -208,7 +208,7 @@ plugin.methods.register_function(
     parameter_descriptions={},
     output_descriptions={
         'merged_data': ('The resulting collection of feature taxonomies '
-                        'containing all feature taxonomies from data.')
+                        'containing all feature taxonomies provided.')
     },
     name="Combine collections of feature taxonomies",
     description="Combines a pair of feature data objects which may or may not "
