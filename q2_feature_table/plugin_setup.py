@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
-                           Choices, MetadataCategory)
+                           Choices, MetadataCategory, List)
 
 import q2_feature_table
 from q2_types.feature_table import (
@@ -154,16 +154,14 @@ plugin.methods.register_function(
 
 plugin.methods.register_function(
     function=q2_feature_table.merge,
-    inputs={'table1': FeatureTable[Frequency],
-            'table2': FeatureTable[Frequency]},
+    inputs={'tables': List[FeatureTable[Frequency]]},
     parameters={
         'overlap_method': Str % Choices(q2_feature_table.overlap_methods()),
     },
     outputs=[
         ('merged_table', FeatureTable[Frequency])],
     input_descriptions={
-        'table1': 'The first feature table to be merged.',
-        'table2': 'The second feature table to be merged.',
+        'tables': 'The collection of feature tables to be merged.',
     },
     parameter_descriptions={
         'overlap_method': 'Method for handling overlapping ids.',
@@ -171,61 +169,52 @@ plugin.methods.register_function(
     output_descriptions={
         'merged_table': ('The resulting merged feature table.'),
     },
-    name="Combine two tables",
-    description="Combines a pair of feature tables which contain different "
-                "samples, and which may or may not contain the same features."
+    name="Combine multiple tables",
+    description="Combines feature tables using the `overlap_method` provided."
 )
 
 
 plugin.methods.register_function(
-    function=q2_feature_table.merge_seq_data,
-    inputs={'data1': FeatureData[Sequence],
-            'data2': FeatureData[Sequence]},
+    function=q2_feature_table.merge_seqs,
+    inputs={'data': List[FeatureData[Sequence]]},
     parameters={},
     outputs=[
         ('merged_data', FeatureData[Sequence])],
     input_descriptions={
-        'data1': 'The first collection of feature sequences to be merged.',
-        'data2': 'The second collection of feature sequences to be merged.',
+        'data': 'The collection of feature sequences to be merged.',
     },
     parameter_descriptions={},
     output_descriptions={
         'merged_data': ('The resulting collection of feature sequences '
-                        'containing all feature sequences from data1 and '
-                        'data2.')
+                        'containing all feature sequences provided.')
     },
-    name="Combine two collections of feature sequences",
-    description="Combines a pair of feature data objects which may or may not "
+    name="Combine collections of feature sequences",
+    description="Combines feature data objects which may or may not "
                 "contain data for the same features. If different feature "
-                "data is present for the same feature id in the two inputs, "
-                "the data from the first (data1) will be propagated to the "
-                "result."
+                "data is present for the same feature id in the inputs, "
+                "the data from the first will be propagated to the result."
 )
 
 
 plugin.methods.register_function(
-    function=q2_feature_table.merge_taxa_data,
-    inputs={'data1': FeatureData[Taxonomy],
-            'data2': FeatureData[Taxonomy]},
+    function=q2_feature_table.merge_taxa,
+    inputs={'data': List[FeatureData[Taxonomy]]},
     parameters={},
     outputs=[
         ('merged_data', FeatureData[Taxonomy])],
     input_descriptions={
-        'data1': 'The first collection of feature taxonomies to be merged.',
-        'data2': 'The second collection of feature taxonomies to be merged.',
+        'data': 'The collection of feature taxonomies to be merged.',
     },
     parameter_descriptions={},
     output_descriptions={
         'merged_data': ('The resulting collection of feature taxonomies '
-                        'containing all feature taxonomies from data1 and '
-                        'data2.')
+                        'containing all feature taxonomies provided.')
     },
-    name="Combine two collections of feature taxonomies",
+    name="Combine collections of feature taxonomies",
     description="Combines a pair of feature data objects which may or may not "
                 "contain data for the same features. If different feature "
-                "data is present for the same feature id in the two inputs, "
-                "the data from the first (data1) will be propagated to the "
-                "result."
+                "data is present for the same feature id in the inputs, "
+                "the data from the first will be propagated to the result."
 )
 
 plugin.methods.register_function(
