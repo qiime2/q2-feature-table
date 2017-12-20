@@ -81,7 +81,7 @@ def summarize(output_dir: str, table: biom.Table,
         table, axis='observation')
     if number_of_features > 1:
         feature_frequencies_ax = sns.distplot(feature_frequencies, kde=False,
-                                              rug=True)
+                                              rug=False)
         feature_frequencies_ax.set_xlabel('Frequency per feature')
         feature_frequencies_ax.set_ylabel('Number of features')
         feature_frequencies_ax.set_xscale('log')
