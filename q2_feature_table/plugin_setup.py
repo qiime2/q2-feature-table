@@ -327,7 +327,7 @@ plugin.methods.register_function(
     outputs=[('filtered_data', FeatureData[Sequence])],
     input_descriptions={
         'data': 'The sequences from which features should be filtered.',
-        'table': 'Table containing feature ids that should be retained.'
+        'table': 'Table containing feature ids used for id-based filtering.'
     },
     parameter_descriptions={
         'metadata': 'Feature metadata used for id-based filtering, with '
@@ -337,19 +337,20 @@ plugin.methods.register_function(
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all features in `metadata` that are '
                  'also in the sequences will be retained.',
-        'exclude_ids': 'If true, the features selected by `metadata`, `table`,'
-                       ' or `where` parameters will be excluded from the '
-                       'filtered sequences instead of being retained.'
+        'exclude_ids': 'If true, the features selected by the `metadata` '
+                       '(with or without the `where` parameter) or `table` '
+                       'parameter will be excluded from the filtered '
+                       'sequences instead of being retained.'
     },
     output_descriptions={
         'filtered_data': 'The resulting filtered sequences.'
     },
     name="Filter features from sequences",
-    description="Filter features from sequences based on feature table or "
+    description="Filter features from sequences based on a feature table or "
                 "metadata. See the filtering tutorial on "
                 "https://docs.qiime2.org for additional details. This method "
                 "can filter based on ids in a table or a metadata file, but "
-                "not both (i.e., the table and metadata options are mututally "
+                "not both (i.e., the table and metadata options are mutually "
                 "exclusive)."
 )
 

@@ -34,7 +34,8 @@ class FilterSeqsTests(unittest.TestCase):
                                where=None):
         if md is None:
             md = self.md_full
-        obs = filter_seqs(self.seqs, md, exclude_ids=exclude_ids, where=where)
+        obs = filter_seqs(self.seqs, metadata=md,
+                          exclude_ids=exclude_ids, where=where)
         assert_series_equal(exp, obs)
 
     def test_id_based_filtering(self):
@@ -50,7 +51,7 @@ class FilterSeqsTests(unittest.TestCase):
         # filter all
         md = qiime2.Metadata(pd.DataFrame({}, index=['foo']))
         with self.assertRaisesRegex(ValueError, 'All.*filtered'):
-            filter_seqs(self.seqs, md)
+            filter_seqs(self.seqs, metadata=md)
 
         # exclude none
         md = qiime2.Metadata(pd.DataFrame({}, index=['foo']))
@@ -64,7 +65,7 @@ class FilterSeqsTests(unittest.TestCase):
         # exclude all
         md = qiime2.Metadata(self.df_lite)
         with self.assertRaisesRegex(ValueError, 'All.*filtered'):
-            filter_seqs(self.seqs, md, exclude_ids=True)
+            filter_seqs(self.seqs, metadata=md, exclude_ids=True)
 
     def test_id_based_filtering_with_extra_ids(self):
         md = qiime2.Metadata(pd.DataFrame([], index=['O1', 'O3', 'foo']))
@@ -84,7 +85,7 @@ class FilterSeqsTests(unittest.TestCase):
         # filter all
         where = "stuff='boo'"
         with self.assertRaisesRegex(ValueError, 'All.*filtered'):
-            filter_seqs(self.seqs, self.md_full, where=where)
+            filter_seqs(self.seqs, metadata=self.md_full, where=where)
 
         # exclude none
         where = 'CAST(some_numbers AS INTEGER) < 0'
@@ -98,7 +99,8 @@ class FilterSeqsTests(unittest.TestCase):
         # exclude all
         where = 'CAST(some_numbers AS INTEGER) BETWEEN 0 AND 5'
         with self.assertRaisesRegex(ValueError, 'All.*filtered'):
-            filter_seqs(self.seqs, self.md_full, where=where, exclude_ids=True)
+            filter_seqs(self.seqs, metadata=self.md_full, where=where,
+                        exclude_ids=True)
 
     def test_table_based_filtering(self):
         # filter none
@@ -171,8 +173,8 @@ class FilterSeqsTests(unittest.TestCase):
         # isn't clear right now, so we're just not going to support it (and
         # it could always be achieved with two calls to this method as a
         # work-around)
-        with self.assertRaisesRegex(ValueError, 'mututally exclusive'):
-            filter_seqs(self.seqs, self.md_full, table=table)
+        with self.assertRaisesRegex(ValueError, 'mutually exclusive'):
+            filter_seqs(self.seqs, metadata=self.md_full, table=table)
 
     def test_no_filter(self):
         with self.assertRaisesRegex(ValueError, 'either table or metadata.'):

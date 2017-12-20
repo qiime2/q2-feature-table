@@ -89,12 +89,12 @@ def filter_features(table: biom.Table, min_frequency: int=0,
     return table
 
 
-def filter_seqs(data: pd.Series, metadata: qiime2.Metadata=None,
-                where: str=None, table: biom.Table=None,
+def filter_seqs(data: pd.Series, table: biom.Table=None,
+                metadata: qiime2.Metadata=None, where: str=None,
                 exclude_ids: bool=False) -> pd.Series:
     if table is not None and metadata is not None:
         raise ValueError('Filtering with metadata and filtering with a table '
-                         'are mututally exclusive.')
+                         'are mutually exclusive.')
     elif table is None and metadata is None:
         raise ValueError('No filtering requested. Must provide either table '
                          'or metadata.')
