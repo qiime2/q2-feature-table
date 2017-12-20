@@ -89,11 +89,22 @@ def filter_features(table: biom.Table, min_frequency: int=0,
     return table
 
 
-def filter_seqs(data: pd.Series, metadata: qiime2.Metadata, where: str=None,
+def filter_seqs(data: pd.Series, metadata: qiime2.Metadata=None,
+                where: str=None, table: biom.Table=None,
                 exclude_ids: bool=False) -> pd.Series:
-    # Note, no need to check for missing feature IDs in the metadata, because
-    # that is basically the point of this method.
-    ids_to_keep = metadata.ids(where=where)
+    if table is not None and metadata is not None:
+        raise ValueError('Filtering with metadata and filtering with a table '
+                         'are mututally exclusive.')
+    elif table is None and metadata is None:
+        raise ValueError('No filtering requested. Must provide either table '
+                         'or metadata.')
+    elif table is not None:
+        ids_to_keep = table.ids(axis='observation')
+    else:
+        # Note, no need to check for missing feature IDs in the metadata,
+        # because that is basically the point of this method.
+        ids_to_keep = metadata.ids(where=where)
+
     if exclude_ids is True:
         ids_to_keep = set(data.index) - set(ids_to_keep)
     filtered = data[data.index.isin(ids_to_keep)]
