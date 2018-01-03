@@ -22,7 +22,8 @@ class FilterSeqsTests(unittest.TestCase):
         self.seqs = pd.Series(['ACGT', 'GCTA', 'CCCC', 'TGTT'],
                               index=['O1', 'O2', 'O3', 'O4'])
         self.df_lite = pd.DataFrame(
-            [['A'], ['C'], ['G'], ['T']], index=['O1', 'O2', 'O3', 'O4'],
+            [['A'], ['C'], ['G'], ['T']],
+            index=pd.Index(['O1', 'O2', 'O3', 'O4'], name='id'),
             columns=['seq'])
         md_full = pd.DataFrame(
             [['foo', '1'], ['bar', '2'], ['baz', '3'], ['foo', '4']],
@@ -49,12 +50,14 @@ class FilterSeqsTests(unittest.TestCase):
         self.filter_and_assertEqual(exp, md=md)
 
         # filter all
-        md = qiime2.Metadata(pd.DataFrame({}, index=['foo']))
+        md = qiime2.Metadata(pd.DataFrame({},
+                                          index=pd.Index(['foo'], name='id')))
         with self.assertRaisesRegex(ValueError, 'All.*filtered'):
             filter_seqs(self.seqs, metadata=md)
 
         # exclude none
-        md = qiime2.Metadata(pd.DataFrame({}, index=['foo']))
+        md = qiime2.Metadata(pd.DataFrame({},
+                                          index=pd.Index(['foo'], name='id')))
         self.filter_and_assertEqual(self.seqs, md=md, exclude_ids=True)
 
         # exclude one
@@ -68,7 +71,8 @@ class FilterSeqsTests(unittest.TestCase):
             filter_seqs(self.seqs, metadata=md, exclude_ids=True)
 
     def test_id_based_filtering_with_extra_ids(self):
-        md = qiime2.Metadata(pd.DataFrame([], index=['O1', 'O3', 'foo']))
+        md = qiime2.Metadata(pd.DataFrame([],
+                             index=pd.Index(['O1', 'O3', 'foo'], name='id')))
         exp = pd.Series(['ACGT', 'CCCC'], index=['O1', 'O3'])
         self.filter_and_assertEqual(exp, md=md)
 
