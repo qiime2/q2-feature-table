@@ -16,25 +16,20 @@ def overlap_methods():
             'sum')
 
 
-def _get_overlapping(tables, axis):
-    ids = collections.Counter()
-    for table in tables:
-        ids.update(table.ids(axis=axis))
-    return {e for e, c in ids.items() if c > 1}
-
-
 def merge(tables: biom.Table,
           overlap_method: str='error_on_overlapping_sample') -> biom.Table:
-    if overlap_method == 'error_on_overlapping_sample':
-        overlapping_ids = _get_overlapping(tables, 'sample')
-        if len(overlapping_ids) > 0:
-            raise ValueError('Same samples are present in provided tables: %s'
-                             % ', '.join(overlapping_ids))
-    elif overlap_method == 'error_on_overlapping_feature':
-        overlapping_ids = _get_overlapping(tables, 'observation')
-        if len(overlapping_ids) > 0:
-            raise ValueError('Same features are present in provided tables: %s'
-                             % ', '.join(overlapping_ids))
+    if len(tables) == 1:
+        return tables[0]
+
+    if overlap_method.startswith('error_on_overlapping'):
+        if overlap_method == 'error_on_overlapping_sample':
+            return tables[0].concat(tables[1:], 'sample')
+        elif overlap_method == 'error_on_overlapping_feature':
+            return tables[0].concat(tables[1:], 'observation')
+        else:
+            raise ValueError('Invalid overlap method: %s. Please provide one of '
+                             'the following methods: %s.' %
+                             (overlap_method, ', '.join(overlap_methods())))
     elif overlap_method == 'sum':
         # This is the default behavior for biom.Table.merge
         pass
@@ -42,6 +37,7 @@ def merge(tables: biom.Table,
         raise ValueError('Invalid overlap method: %s. Please provide one of '
                          'the following methods: %s.' %
                          (overlap_method, ', '.join(overlap_methods())))
+
     tables = iter(tables)
     result = next(tables)  # There is always at least 1
     for table in tables:
