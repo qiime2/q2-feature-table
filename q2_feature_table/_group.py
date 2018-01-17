@@ -29,7 +29,7 @@ def _munge_metadata_column(mc, ids, axis):
     mc = mc.filter_ids(ids)
 
     # Check for empty values only after filtering down to relevant IDs.
-    missing = mc.get_ids(with_missing_value=True)
+    missing = mc.get_ids(where_values_missing=True)
     if missing:
         raise ValueError("There are missing metadata column value(s) for "
                          "these %s ID(s): %s" %
