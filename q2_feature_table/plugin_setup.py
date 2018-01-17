@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
-                           Choices, MetadataCategory, List)
+                           Choices, MetadataColumn, Categorical, List)
 
 import q2_feature_table
 from q2_types.feature_table import (
@@ -122,7 +122,7 @@ plugin.methods.register_function(
     inputs={'table': FeatureTable[Frequency]},
     parameters={
         'mode': Str % Choices({'sum', 'median-ceiling', 'mean-ceiling'}),
-        'metadata': MetadataCategory,
+        'metadata': MetadataColumn[Categorical],
         'axis': Str % Choices({'sample', 'feature'})
     },
     outputs=[
@@ -137,7 +137,7 @@ plugin.methods.register_function(
                 'within a group; `mean-ceiling` will take the ceiling of the '
                 'mean of these frequencies; `median-ceiling` will take the '
                 'ceiling of the median of these frequencies.',
-        'metadata': 'A category defining the groups. Each unique value will '
+        'metadata': 'A column defining the groups. Each unique value will '
                     'become a new ID for the table on the given `axis`.',
         'axis': 'Along which axis to group. Each ID in the given axis must '
                 'exist in `metadata`.'
@@ -145,9 +145,9 @@ plugin.methods.register_function(
     output_descriptions={
         'grouped_table': 'A table that has been grouped along the given '
                          '`axis`. IDs on that axis are replaced by values in '
-                         'the `metadata` category.'
+                         'the `metadata` column.'
     },
-    name="Group samples or features by a metadata category",
+    name="Group samples or features by a metadata column",
     description="Group samples or features in a feature table using metadata "
                 "to define the mapping of IDs to a group."
 )
@@ -418,7 +418,7 @@ plugin.visualizers.register_function(
         'table': FeatureTable[Frequency]
     },
     parameters={
-        'metadata': MetadataCategory,
+        'metadata': MetadataColumn[Categorical],
         'normalize': Bool,
         'title': Str,
         'metric': Str % Choices(q2_feature_table.heatmap_choices['metric']),
