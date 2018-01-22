@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2017, QIIME 2 development team.
+# Copyright (c) 2016-2018, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -56,7 +56,7 @@ class FilterFeaturesTests(unittest.TestCase):
     def test_feature_metadata(self):
         # no filtering
         df = pd.DataFrame({'SequencedGenome': ['yes', 'yes']},
-                          index=['O1', 'O2'])
+                          index=pd.Index(['O1', 'O2'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -69,7 +69,7 @@ class FilterFeaturesTests(unittest.TestCase):
 
         # filter one
         df = pd.DataFrame({'SequencedGenome': ['yes']},
-                          index=['O1'])
+                          index=pd.Index(['O1'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -81,7 +81,7 @@ class FilterFeaturesTests(unittest.TestCase):
         self.assertEqual(actual, expected)
 
         # filter all
-        df = pd.DataFrame({}, index=['foo'])
+        df = pd.DataFrame({}, index=pd.Index(['foo'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -92,7 +92,7 @@ class FilterFeaturesTests(unittest.TestCase):
 
         # exclude one
         df = pd.DataFrame({'SequencedGenome': ['yes']},
-                          index=['O1'])
+                          index=pd.Index(['O1'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -106,7 +106,7 @@ class FilterFeaturesTests(unittest.TestCase):
 
         # exclude all
         df = pd.DataFrame({'SequencedGenome': ['yes', 'yes']},
-                          index=['O1', 'O2'])
+                          index=pd.Index(['O1', 'O2'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],

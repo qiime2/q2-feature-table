@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2017, QIIME 2 development team.
+# Copyright (c) 2016-2018, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -19,10 +19,12 @@ from q2_feature_table import group
 class TestGroup(unittest.TestCase):
     def test_identity_groups(self):
         # These map to the same values as before
-        sample_mc = qiime2.MetadataCategory(
-            pd.Series(['a', 'b', 'c'], index=['a', 'b', 'c']))
-        feature_mc = qiime2.MetadataCategory(
-            pd.Series(['x', 'y'], index=['x', 'y']))
+        sample_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['a', 'b', 'c'], name='foo',
+                      index=pd.Index(['a', 'b', 'c'], name='sampleid')))
+        feature_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['x', 'y'], name='foo',
+                      index=pd.Index(['x', 'y'], name='featureid')))
         table = biom.Table(np.array([[1, 2, 3], [30, 20, 10]]),
                            sample_ids=sample_mc.to_series().index,
                            observation_ids=feature_mc.to_series().index)
@@ -56,13 +58,15 @@ class TestGroup(unittest.TestCase):
         self.assertEqual(table, result)
 
     def test_one_to_one_rename(self):
-        sample_mc = qiime2.MetadataCategory(
-            pd.Series(['a_new', 'b_new', 'c_new'], index=['a', 'b', 'c']))
+        sample_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['a_new', 'b_new', 'c_new'], name='foo',
+                      index=pd.Index(['a', 'b', 'c'], name='sampleid')))
         original_sample_ids = sample_mc.to_series().index
         new_sample_ids = list(sample_mc.to_series())
 
-        feature_mc = qiime2.MetadataCategory(
-            pd.Series(['x_new', 'y_new'], index=['x', 'y']))
+        feature_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['x_new', 'y_new'], name='foo',
+                      index=pd.Index(['x', 'y'], name='featureid')))
         original_feature_ids = feature_mc.to_series().index
         new_feature_ids = list(feature_mc.to_series())
 
@@ -107,9 +111,11 @@ class TestGroup(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_superset_feature_group(self):
-        feature_mc = qiime2.MetadataCategory(
-            pd.Series(['g0', 'g0', 'g1', 'g2', 'g1', 'g2', 'extra'],
-                      index=['a', 'b', 'c', 'd', 'e', 'f', 'g']))
+        feature_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(
+                ['g0', 'g0', 'g1', 'g2', 'g1', 'g2', 'extra'], name='foo',
+                index=pd.Index(['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+                               name='featureid')))
         data = np.array([
             [1, 0, 0],
             [1, 10, 10],
@@ -129,9 +135,10 @@ class TestGroup(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_superset_sample_group(self):
-        sample_mc = qiime2.MetadataCategory(
-            pd.Series(['g0', 'g1', 'g2', 'g0', 'g1', 'g2'],
-                      index=['s1', 's2', 's3', 's4', 's5', 's6']))
+        sample_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['g0', 'g1', 'g2', 'g0', 'g1', 'g2'], name='foo',
+                      index=pd.Index(['s1', 's2', 's3', 's4', 's5', 's6'],
+                                     name='sampleid')))
         data = np.array([
             [0, 1, 2, 3],
             [10, 11, 12, 13],
@@ -148,9 +155,10 @@ class TestGroup(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_missing_feature_ids(self):
-        feature_mc = qiime2.MetadataCategory(
-            pd.Series(['g0', 'g1', 'g2', 'g1', 'g2', 'extra'],
-                      index=['a', 'c', 'd', 'e', 'f', 'g']))
+        feature_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['g0', 'g1', 'g2', 'g1', 'g2', 'extra'], name='foo',
+                      index=pd.Index(['a', 'c', 'd', 'e', 'f', 'g'],
+                                     name='featureid')))
         data = np.array([
             [1, 0, 0],
             [1, 10, 10],
@@ -162,13 +170,14 @@ class TestGroup(unittest.TestCase):
         table = biom.Table(data, sample_ids=['s1', 's2', 's3'],
                            observation_ids=['a', 'b', 'c', 'd', 'e', 'f'])
 
-        with self.assertRaisesRegex(ValueError, 'metadata.*missing: {\'b\'}'):
+        with self.assertRaisesRegex(ValueError, "not present.*'b'"):
             group(table, axis='feature', metadata=feature_mc, mode='sum')
 
     def test_missing_sample_ids(self):
-        sample_mc = qiime2.MetadataCategory(
-            pd.Series(['g0', 'g2', 'g0', 'g2'],
-                      index=['s1', 's3', 's4', 's6']))
+        sample_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['g0', 'g2', 'g0', 'g2'], name='foo',
+                      index=pd.Index(['s1', 's3', 's4', 's6'],
+                                     name='sampleid')))
         data = np.array([
             [0, 1, 2, 3],
             [10, 11, 12, 13],
@@ -176,15 +185,16 @@ class TestGroup(unittest.TestCase):
         table = biom.Table(data, sample_ids=['s1', 's2', 's4', 's5'],
                            observation_ids=['x', 'y', 'z'])
 
-        with self.assertRaisesRegex(ValueError, 'metadata.*missing:') as e:
+        with self.assertRaisesRegex(ValueError, 'not present.*s2.*s5') as e:
             group(table, axis='sample', metadata=sample_mc, mode='sum')
 
         self.assertIn('s2', str(e.exception))
         self.assertIn('s5', str(e.exception))
 
     def test_reorder(self):
-        sample_mc = qiime2.MetadataCategory(
-            pd.Series(['c', 'b', 'a'], index=['c', 'b', 'a']))
+        sample_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['c', 'b', 'a'], name='foo',
+                      index=pd.Index(['c', 'b', 'a'], name='sampleid')))
 
         data = np.array([[1, 2, 3], [30, 20, 10]])
         table = biom.Table(data, sample_ids=['a', 'b', 'c'],
@@ -197,9 +207,10 @@ class TestGroup(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_group_to_single_id(self):
-        sample_mc = qiime2.MetadataCategory(
+        sample_mc = qiime2.CategoricalMetadataColumn(
             pd.Series(['all_samples', 'all_samples', 'all_samples'],
-                      index=['a', 'b', 'c']))
+                      name='foo', index=pd.Index(['a', 'b', 'c'],
+                                                 name='sampleid')))
 
         data = np.array([[1, 2, 3], [30, 20, 10]])
         table = biom.Table(data, sample_ids=['a', 'b', 'c'],
@@ -214,36 +225,31 @@ class TestGroup(unittest.TestCase):
     def test_empty_metadata_values(self):
         # Trusting that the code is sane enough to not invent a distinction
         # between feature and sample metadata where there is none
-        sample_mc = qiime2.MetadataCategory(
-            pd.Series(['a_new', 'a_new', None], index=['a', 'b', 'c']))
+        sample_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['a_new', 'a_new', None], name='foo',
+                      index=pd.Index(['a', 'b', 'c'], name='sampleid')))
         sample_ids = sample_mc.to_series().index
 
         data = np.array([[1, 2, 3], [30, 20, 10]])
         table = biom.Table(data, sample_ids=sample_ids,
                            observation_ids=['x', 'y'])
 
-        with self.assertRaisesRegex(ValueError, 'missing.*value.*{\'c\'}'):
+        with self.assertRaisesRegex(ValueError, "missing.*value.*'c'"):
             group(table, axis='sample', metadata=sample_mc, mode='sum')
 
-        nan_mc = qiime2.MetadataCategory(
-            pd.Series(['a_new', float('nan'), 'a_new'], index=['a', 'b', 'c']))
+        nan_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['a_new', float('nan'), 'a_new'], name='foo',
+                      index=pd.Index(['a', 'b', 'c'], name='id')))
 
-        with self.assertRaisesRegex(ValueError, 'missing.*value.*{\'b\'}'):
+        with self.assertRaisesRegex(ValueError, "missing.*value.*'b'"):
             group(table, axis='sample', metadata=nan_mc, mode='sum')
-
-        empty_str = qiime2.MetadataCategory(
-            pd.Series(['', 'y_new'], index=['x', 'y']))
-
-        with self.assertRaisesRegex(ValueError, 'missing.*value.*{\'x\'}'):
-            group(table, axis='feature', metadata=empty_str,
-                  mode='median-ceiling')
 
     def test_empty_only_in_superset(self):
         # Trusting that the code is sane enough to not invent a distinction
         # between feature and sample metadata where there is none
-        sample_mc = qiime2.MetadataCategory(
-            pd.Series(['a_new', 'a_new', 'b_new', None],
-                      index=['a', 'b', 'c', 'd']))
+        sample_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['a_new', 'a_new', 'b_new', None], name='foo',
+                      index=pd.Index(['a', 'b', 'c', 'd'], name='sampleid')))
 
         data = np.array([[1, 2, 3], [30, 20, 10]])
         table = biom.Table(data, sample_ids=['a', 'b', 'c'],
@@ -255,35 +261,25 @@ class TestGroup(unittest.TestCase):
                        mode='mean-ceiling')
         self.assertEqual(expected, result)
 
-    def test_numeric(self):
+    def test_numeric_strings(self):
         data = np.array([[1, 2, 3], [30, 20, 10]])
         table = biom.Table(data, sample_ids=['a', 'b', 'c'],
                            observation_ids=['x', 'y'])
 
-        # ints
-        sample_mc = qiime2.MetadataCategory(
-            pd.Series(['1', '2', '3'], index=['a', 'b', 'c']))
+        sample_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['-4.2', '-4.2', '-4.2'], name='foo',
+                      index=pd.Index(['a', 'b', 'c'], name='sampleid')))
 
-        with self.assertRaisesRegex(ValueError, 'numeric'):
-            group(table, axis='sample', metadata=sample_mc, mode='sum')
-
-        # floats
-        sample_mc = qiime2.MetadataCategory(
-            pd.Series(['1.1', '2.2', '3.3333'], index=['a', 'b', 'c']))
-
-        with self.assertRaisesRegex(ValueError, 'numeric'):
-            group(table, axis='sample', metadata=sample_mc, mode='sum')
-
-        # mixed
-        sample_mc = qiime2.MetadataCategory(
-            pd.Series(['0', '42', '4.2'], index=['a', 'b', 'c']))
-
-        with self.assertRaisesRegex(ValueError, 'numeric'):
-            group(table, axis='sample', metadata=sample_mc, mode='sum')
+        expected = biom.Table(np.array([[6], [60]]),
+                              sample_ids=['-4.2'],
+                              observation_ids=['x', 'y'])
+        result = group(table, axis='sample', metadata=sample_mc, mode='sum')
+        self.assertEqual(expected, result)
 
     def test_empty_table(self):
-        mc = qiime2.MetadataCategory(
-            pd.Series(['a_new', 'b_new'], index=['a', 'b']))
+        mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['a_new', 'b_new'], name='foo',
+                      index=pd.Index(['a', 'b'], name='id')))
 
         table = biom.Table(np.array([[]]), sample_ids=[], observation_ids=[])
 
@@ -294,15 +290,16 @@ class TestGroup(unittest.TestCase):
             group(table, axis='feature', metadata=mc, mode='sum')
 
     def _shared_setup(self):
-        sample_mc = qiime2.MetadataCategory(
+        sample_mc = qiime2.CategoricalMetadataColumn(
             pd.Series(['treatment', 'treatment', 'control', 'other',
-                       'control', 'other', 'other'],
-                      index=['a', 'b', 'c', 'd',
-                             'e', 'f', 'g']))
+                       'control', 'other', 'other'], name='foo',
+                      index=pd.Index(['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+                                     name='sampleid')))
 
-        feature_mc = qiime2.MetadataCategory(
-            pd.Series(['g0', 'g1', 'g1', 'g1', 'g0'],
-                      index=['v', 'w', 'x', 'y', 'z']))
+        feature_mc = qiime2.CategoricalMetadataColumn(
+            pd.Series(['g0', 'g1', 'g1', 'g1', 'g0'], name='foo',
+                      index=pd.Index(['v', 'w', 'x', 'y', 'z'],
+                                     name='featureid')))
 
         data = np.array([
             # t  t   c   o    c     o    o

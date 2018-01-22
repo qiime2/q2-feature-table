@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2017, QIIME 2 development team.
+# Copyright (c) 2016-2018, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -141,7 +141,7 @@ class SummarizeTests(TestCase):
     def test_w_sample_metadata(self):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
-                          index=['S1', 'S2', 'S3'])
+                          index=pd.Index(['S1', 'S2', 'S3'], name='id'))
         metadata = qiime2.Metadata(df)
         table = biom.Table(np.array([[0, 1, 3], [1, 1, 2]]),
                            ['O1', 'O2'],

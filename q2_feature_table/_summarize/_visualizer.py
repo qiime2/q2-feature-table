@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2017, QIIME 2 development team.
+# Copyright (c) 2016-2018, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -144,8 +144,10 @@ def summarize(output_dir: str, table: biom.Table,
     with open(os.path.join(output_dir, 'data.jsonp'), 'w') as fh:
         fh.write("app.init(")
         if sample_metadata:
-            df = sample_metadata.to_dataframe()
-            df.loc[sample_frequencies.index].to_json(fh)
+            sample_metadata = sample_metadata.filter_ids(
+                sample_frequencies.index)
+            # TODO use Metadata.to_json() API if/when it exists in the future.
+            sample_metadata.to_dataframe().to_json(fh)
         else:
             fh.write('{}')
         fh.write(', ')
@@ -156,7 +158,7 @@ def summarize(output_dir: str, table: biom.Table,
 def _compute_qualitative_summary(table):
     table = table.transpose()
     sample_count = {}
-    for count_vector, feature_id, metadata in table.iter():
+    for count_vector, feature_id, _ in table.iter():
         sample_count[feature_id] = (count_vector != 0).sum()
     return sample_count
 

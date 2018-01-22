@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2017, QIIME 2 development team.
+# Copyright (c) 2016-2018, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -10,6 +10,7 @@ import unittest
 import tempfile
 import os.path
 
+import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 import qiime2
@@ -55,9 +56,9 @@ class TestHeatmap(unittest.TestCase):
         self.assertBasicVizValidity(self.output_dir)
 
     def test_with_metadata(self):
-        md = qiime2.MetadataCategory(pd.Series(['milo', 'summer', 'russ'],
-                                               name='pet',
-                                               index=['S1', 'S2', 'S3']))
+        md = qiime2.CategoricalMetadataColumn(
+            pd.Series(['milo', 'summer', 'russ'], name='pet',
+                      index=pd.Index(['S1', 'S2', 'S3'], name='id')))
         heatmap(self.output_dir, self.table, metadata=md)
 
         self.assertBasicVizValidity(self.output_dir)
@@ -69,16 +70,17 @@ class TestHeatmap(unittest.TestCase):
             heatmap(self.output_dir, empty_table)
 
     def test_table_ids_are_subset_of_metadata_ids(self):
-        md = qiime2.MetadataCategory(pd.Series(['milo', 'russ'],
-                                               name='pet', index=['S1', 'S3']))
+        md = qiime2.CategoricalMetadataColumn(
+            pd.Series(['milo', 'russ'], name='pet',
+                      index=pd.Index(['S1', 'S3'], name='id')))
 
-        with self.assertRaisesRegex(ValueError, 'Missing'):
+        with self.assertRaisesRegex(ValueError, 'not present.*S2'):
             heatmap(self.output_dir, self.table, metadata=md)
 
     def test_extra_metadata_ids(self):
-        md = qiime2.MetadataCategory(
-            pd.Series(['milo', 'summer', 'russ', 'peanut'],
-                      name='pet', index=['S1', 'S2', 'S3', 'S4']))
+        md = qiime2.CategoricalMetadataColumn(
+            pd.Series(['milo', 'summer', 'russ', 'peanut'], name='pet',
+                      index=pd.Index(['S1', 'S2', 'S3', 'S4'], name='id')))
 
         heatmap(self.output_dir, self.table, metadata=md)
 
@@ -90,9 +92,9 @@ class TestHeatmap(unittest.TestCase):
         self.assertBasicVizValidity(self.output_dir, normalize=False)
 
     def test_no_sample_cluster(self):
-        md = qiime2.MetadataCategory(pd.Series(['milo', 'summer', 'russ'],
-                                               name='pet',
-                                               index=['S1', 'S2', 'S3']))
+        md = qiime2.CategoricalMetadataColumn(
+            pd.Series(['milo', 'summer', 'russ'], name='pet',
+                      index=pd.Index(['S1', 'S2', 'S3'], name='id')))
 
         heatmap(self.output_dir, self.table, metadata=md, cluster='features')
 
@@ -106,50 +108,56 @@ class TestPrivateHelpers(unittest.TestCase):
                                   index=['S1', 'S2', 'S3'])
 
     def test_munge_metadata_simple(self):
-        md = pd.Series(['milo', 'russ', 'russ'], name='pet',
-                       index=['S1', 'S2', 'S3'])
+        md = qiime2.CategoricalMetadataColumn(
+            pd.Series(['milo', 'russ', 'russ'], name='pet',
+                      index=pd.Index(['S1', 'S2', 'S3'], name='id')))
         obs = _munge_metadata(md, self.table, 'both')
 
         exp_idx = pd.Index(['milo | S1', 'russ | S2', 'russ | S3'],
-                           name='pet | None')
+                           name='pet | id')
         exp = pd.DataFrame([[0, 10], [10, 12], [10, 11]], columns=['O1', 'O2'],
                            index=exp_idx)
         assert_frame_equal(exp, obs)
 
     def test_munge_metadata_ids_different_order(self):
-        md = pd.Series(['russ', 'milo', 'russ'], name='pet',
-                       index=['S2', 'S1', 'S3'])
+        md = qiime2.CategoricalMetadataColumn(
+            pd.Series(['russ', 'milo', 'russ'], name='pet',
+                      index=pd.Index(['S2', 'S1', 'S3'], name='id')))
         obs = _munge_metadata(md, self.table, 'both')
 
         exp_idx = pd.Index(['milo | S1', 'russ | S2', 'russ | S3'],
-                           name='pet | None')
+                           name='pet | id')
         exp = pd.DataFrame([[0, 10], [10, 12], [10, 11]], columns=['O1', 'O2'],
                            index=exp_idx)
         assert_frame_equal(exp, obs)
 
     def test_munge_metadata_missing_samples(self):
-        md = pd.Series(['milo', 'russ'], name='pet', index=['S1', 'S3'])
-        with self.assertRaisesRegex(ValueError, 'Missing.*S2'):
+        md = qiime2.CategoricalMetadataColumn(
+            pd.Series(['milo', 'russ'], name='pet',
+                      index=pd.Index(['S1', 'S3'], name='id')))
+        with self.assertRaisesRegex(ValueError, 'not present.*S2'):
             _munge_metadata(md, self.table, 'both')
 
     def test_munge_metadata_empty_values(self):
-        md = pd.Series([None, 'russ', ''], name='pet',
-                       index=['S1', 'S2', 'S3'])
+        md = qiime2.CategoricalMetadataColumn(
+            pd.Series([None, 'russ', np.nan], name='pet',
+                      index=pd.Index(['S1', 'S2', 'S3'], name='id')))
         obs = _munge_metadata(md, self.table, 'both')
 
         exp_idx = pd.Index(['[No Value] | S1', 'russ | S2', '[No Value] | S3'],
-                           name='pet | None')
+                           name='pet | id')
         exp = pd.DataFrame([[0, 10], [10, 12], [10, 11]], columns=['O1', 'O2'],
                            index=exp_idx)
         assert_frame_equal(exp, obs)
 
     def test_munge_metadata_sort_samples(self):
-        md = pd.Series(['peanut', 'milo', 'russ'], name='pet',
-                       index=['S1', 'S2', 'S3'])
+        md = qiime2.CategoricalMetadataColumn(
+            pd.Series(['peanut', 'milo', 'russ'], name='pet',
+                      index=pd.Index(['S1', 'S2', 'S3'], name='id')))
         obs = _munge_metadata(md, self.table, 'features')
 
         exp_idx = pd.Index(['milo | S2', 'peanut | S1', 'russ | S3'],
-                           name='pet | None')
+                           name='pet | id')
         exp = pd.DataFrame([[10, 12], [0, 10], [10, 11]], columns=['O1', 'O2'],
                            index=exp_idx)
         assert_frame_equal(exp, obs)

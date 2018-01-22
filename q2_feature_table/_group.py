@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2017, QIIME 2 development team.
+# Copyright (c) 2016-2018, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -9,7 +9,6 @@
 import biom
 import qiime2
 import numpy as np
-import pandas as pd
 
 
 def _collapse_factory(function):
@@ -26,38 +25,20 @@ _mode_lookup = {
 }
 
 
-def _munge_metadata_category(mc, ids, axis):
-    # TODO: centralize these ideas in MetadataCategory somehow
-    series = mc.to_series()
-    table_ids = set(ids)
-    series_ids = set(series.index)
+def _munge_metadata_column(mc, ids, axis):
+    mc = mc.filter_ids(ids)
 
-    # Check numeric
-    if pd.api.types.is_numeric_dtype(pd.to_numeric(series, errors='ignore')):
-        raise ValueError("Cannot group by a numeric metadata category.")
-
-    # Check missing
-    missing_ids = table_ids - series_ids
-    if missing_ids:
-        raise ValueError("All %s IDs in the feature table must be present in "
-                         "the metadata category, but the following are "
-                         "missing: %r" % (axis, missing_ids))
-
-    # While preserving order, get rid of any IDs found only in the metadata
-    series = series.drop(series_ids - table_ids)
-
-    # Check for empty values only after filtering down to relevant IDs
-    missing_values = series.isnull() | (series == '')
-    if missing_values.any():
-        missing = set(series[missing_values].index)
-        raise ValueError("There are missing metadata category value(s) for %s "
-                         "ID(s): %r" % (axis, missing))
-
-    return series
+    # Check for empty values only after filtering down to relevant IDs.
+    missing = mc.get_ids(where_values_missing=True)
+    if missing:
+        raise ValueError("There are missing metadata column value(s) for "
+                         "these %s ID(s): %s" %
+                         (axis, ', '.join(repr(e) for e in sorted(missing))))
+    return mc
 
 
-def group(table: biom.Table, axis: str, metadata: qiime2.MetadataCategory,
-          mode: str) -> biom.Table:
+def group(table: biom.Table, axis: str,
+          metadata: qiime2.CategoricalMetadataColumn, mode: str) -> biom.Table:
     if table.is_empty():
         raise ValueError("Cannot group an empty table.")
 
@@ -66,14 +47,18 @@ def group(table: biom.Table, axis: str, metadata: qiime2.MetadataCategory,
     else:
         biom_axis = axis
 
-    series = _munge_metadata_category(metadata, table.ids(axis=biom_axis),
+    metadata = _munge_metadata_column(metadata, table.ids(axis=biom_axis),
                                       axis)
 
-    grouped_table = table.collapse(lambda axis_id, _: series.loc[axis_id],
-                                   collapse_f=_mode_lookup[mode],
-                                   axis=biom_axis,
-                                   norm=False,
-                                   include_collapsed_metadata=False)
+    grouped_table = table.collapse(
+        lambda axis_id, _: metadata.get_value(axis_id),
+        collapse_f=_mode_lookup[mode],
+        axis=biom_axis,
+        norm=False,
+        include_collapsed_metadata=False)
     # Reorder axis by first unique appearance of each group value in metadata
     # (makes it stable for identity mappings and easier to test)
+    # TODO use CategoricalMetadataColumn API for retrieving categories/groups,
+    # when the API exists.
+    series = metadata.to_series()
     return grouped_table.sort_order(series.unique(), axis=biom_axis)

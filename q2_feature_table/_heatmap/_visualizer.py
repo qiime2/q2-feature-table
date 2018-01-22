@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2017, QIIME 2 development team.
+# Copyright (c) 2016-2018, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -74,45 +74,38 @@ _clustering_map = {'both': {'col_cluster': True, 'row_cluster': True},
                    'features': {'col_cluster': True, 'row_cluster': False}}
 
 
-def _munge_metadata(category, table, cluster):
-    metadata_ids = set(category.index.tolist())
-    table_ids = set(table.index.tolist())
-    if not table_ids.issubset(metadata_ids):
-        raise ValueError('Missing samples in metadata: %r' %
-                         table_ids.difference(metadata_ids))
-    metadata_category = category.name
-    category = category.to_frame()
-    category = category.replace('', np.nan)
-    category = category.fillna('[No Value]')
-    # TODO: Drop the `str` casts once we guarantee metadata is all strings
-    # https://github.com/qiime2/qiime2/issues/298
-    category['merged-id'] = (category[metadata_category].astype(str).str
-                             .cat(category.index.astype(str), sep=' | '))
-    # Inner join here because we have already validated sample IDs, and
-    # we don't care about any extra sample IDs that might be present in
-    # the metadata (what is there to visualize for those IDs?).
-    table = table.join(category, how='inner')
+def _munge_metadata(metadata, table, cluster):
+    metadata = metadata.filter_ids(table.index)
+    column_name = metadata.name
+
+    metadata_df = metadata.to_dataframe()
+    metadata_df = metadata_df.fillna('[No Value]')
+    metadata_df['merged-id'] = metadata_df[column_name].str.cat(
+        metadata_df.index, sep=' | ')
+    # Inner join here because we have already validated that all sample IDs in
+    # the table are present in the metadata, and the metadata has been filtered
+    # to only include the table's IDs.
+    table = table.join(metadata_df, how='inner')
     # It doesn't make sense to sort the samples if clustering is enabled on
     # the sample axis (e.g. `both` or `samples`).
     if cluster == 'features':
-        table.sort_values(metadata_category, axis=0, ascending=True,
-                          inplace=True)
+        table.sort_values(column_name, axis=0, ascending=True, inplace=True)
     table.set_index('merged-id', inplace=True)
-    table.index.name = '%s | %s' % (metadata_category, category.index.name)
-    table.drop([metadata_category], axis=1, inplace=True)
+    table.index.name = '%s | %s' % (column_name, metadata_df.index.name)
+    table.drop([column_name], axis=1, inplace=True)
     return table
 
 
 def heatmap(output_dir, table: pd.DataFrame,
-            metadata: qiime2.MetadataCategory=None, normalize: bool=True,
-            title: str=None, metric: str='euclidean', method: str='average',
-            cluster: str='both', color_scheme: str='rocket') -> None:
+            metadata: qiime2.CategoricalMetadataColumn=None,
+            normalize: bool=True, title: str=None, metric: str='euclidean',
+            method: str='average', cluster: str='both',
+            color_scheme: str='rocket') -> None:
     if table.empty:
         raise ValueError('Cannot visualize an empty table.')
 
-    # Validation
     if metadata is not None:
-        table = _munge_metadata(metadata.to_series(), table, cluster)
+        table = _munge_metadata(metadata, table, cluster)
 
     cbar_label = 'frequency'
     if normalize:

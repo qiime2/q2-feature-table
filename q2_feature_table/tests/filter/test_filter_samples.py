@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2017, QIIME 2 development team.
+# Copyright (c) 2016-2018, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -173,7 +173,7 @@ class FilterSamplesTests(unittest.TestCase):
         # no filtering
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
-                          index=['S1', 'S2', 'S3'])
+                          index=pd.Index(['S1', 'S2', 'S3'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -187,7 +187,7 @@ class FilterSamplesTests(unittest.TestCase):
         # filter one
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-2'],
                            'SampleType': ['tongue', 'gut']},
-                          index=['S2', 'S3'])
+                          index=pd.Index(['S2', 'S3'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -199,7 +199,7 @@ class FilterSamplesTests(unittest.TestCase):
         self.assertEqual(actual, expected)
 
         # filter all
-        df = pd.DataFrame({}, index=['foo'])
+        df = pd.DataFrame({}, index=pd.Index(['foo'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -211,7 +211,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude none
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S90'])
+                          index=pd.Index(['S90'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -222,7 +222,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S1'])
+                          index=pd.Index(['S1'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -236,7 +236,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude two
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1'],
                            'SampleType': ['gut', 'tongue']},
-                          index=['S1', 'S2'])
+                          index=pd.Index(['S1', 'S2'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -250,7 +250,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude all
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
-                          index=['S1', 'S2', 'S3'])
+                          index=pd.Index(['S1', 'S2', 'S3'], name='id'))
         metadata = qiime2.Metadata(df)
         actual = filter_samples(table, metadata=metadata,
                                 exclude_ids=True)
@@ -260,7 +260,8 @@ class FilterSamplesTests(unittest.TestCase):
     def test_sample_metadata_extra_ids(self):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
-                          index=['S-not-in-table', 'S2', 'S3'])
+                          index=pd.Index(['S-not-in-table', 'S2', 'S3'],
+                                         name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -465,7 +466,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one, min_frequency filter none
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S1'])
+                          index=pd.Index(['S1'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -482,7 +483,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one, min_frequency filter one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S1'])
+                          index=pd.Index(['S1'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -499,7 +500,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one, min_frequency filter for same one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S1'])
+                          index=pd.Index(['S1'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [0, 1, 2]]),
                       ['O1', 'O2'],
@@ -516,7 +517,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one, max_frequency filter none
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S1'])
+                          index=pd.Index(['S1'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -533,7 +534,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one, max_frequency filter one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S1'])
+                          index=pd.Index(['S1'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -550,7 +551,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one, max_frequency filter for same one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S1'])
+                          index=pd.Index(['S1'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[5, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -567,7 +568,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one, max & min_frequency filter none
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S1'])
+                          index=pd.Index(['S1'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -586,7 +587,7 @@ class FilterSamplesTests(unittest.TestCase):
         # max_frequency filter one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S1'])
+                          index=pd.Index(['S1'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -604,7 +605,7 @@ class FilterSamplesTests(unittest.TestCase):
         # max_frequency filter one
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue']},
-                          index=['S1', 'S2'])
+                          index=pd.Index(['S1', 'S2'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -623,7 +624,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one, min_features filter none
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S1'])
+                          index=pd.Index(['S1'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -640,7 +641,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one, min_features filter one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S2'])
+                          index=pd.Index(['S2'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -657,7 +658,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one, min_features filter for same one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S2'])
+                          index=pd.Index(['S2'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[4, 1, 3], [6, 0, 2]]),
                       ['O1', 'O2'],
@@ -674,7 +675,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one, max_features filter none
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S1'])
+                          index=pd.Index(['S1'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -691,7 +692,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one, max_features filter one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S2'])
+                          index=pd.Index(['S2'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
@@ -706,7 +707,7 @@ class FilterSamplesTests(unittest.TestCase):
         # exclude one, max_features filter for same one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S2'])
+                          index=pd.Index(['S2'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 10, 2]]),
                       ['O1', 'O2'],
@@ -724,7 +725,7 @@ class FilterSamplesTests(unittest.TestCase):
         # min_features filter none
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S2'])
+                          index=pd.Index(['S2'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [0, 1, 2]]),
                       ['O1', 'O2'],
@@ -743,7 +744,7 @@ class FilterSamplesTests(unittest.TestCase):
         # min_features filter one
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
-                          index=['S2'])
+                          index=pd.Index(['S2'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [0, 1, 2]]),
                       ['O1', 'O2'],
@@ -761,7 +762,7 @@ class FilterSamplesTests(unittest.TestCase):
         # min_features filter one
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue']},
-                          index=['S1', 'S2'])
+                          index=pd.Index(['S1', 'S2'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [0, 1, 2]]),
                       ['O1', 'O2'],

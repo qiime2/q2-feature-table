@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2017, QIIME 2 development team.
+# Copyright (c) 2016-2018, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -43,7 +43,7 @@ def _filter_table(table, min_frequency, max_frequency, min_nonzero,
         raise ValueError("Metadata must be provided if 'exclude_ids' "
                          "is True.")
     if metadata is not None:
-        ids_to_keep = metadata.ids(where=where)
+        ids_to_keep = metadata.get_ids(where=where)
     else:
         ids_to_keep = table.ids(axis=axis)
     if exclude_ids is True:
@@ -103,7 +103,7 @@ def filter_seqs(data: pd.Series, table: biom.Table=None,
     else:
         # Note, no need to check for missing feature IDs in the metadata,
         # because that is basically the point of this method.
-        ids_to_keep = metadata.ids(where=where)
+        ids_to_keep = metadata.get_ids(where=where)
 
     if exclude_ids is True:
         ids_to_keep = set(data.index) - set(ids_to_keep)
