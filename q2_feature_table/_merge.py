@@ -11,6 +11,13 @@ import pandas as pd
 import collections
 
 
+def _get_overlapping(tables, axis):
+    ids = collections.Counter()
+    for table in tables:
+        ids.update(table.ids(axis=axis))
+    return {e for e, c in ids.items() if c > 1}
+
+
 def overlap_methods():
     return ('error_on_overlapping_sample', 'error_on_overlapping_feature',
             'sum')
@@ -21,29 +28,30 @@ def merge(tables: biom.Table,
     if len(tables) == 1:
         return tables[0]
 
-    if overlap_method.startswith('error_on_overlapping'):
-        if overlap_method == 'error_on_overlapping_sample':
+    if overlap_method == 'error_on_overlapping_sample':
+        try:
             return tables[0].concat(tables[1:], 'sample')
-        elif overlap_method == 'error_on_overlapping_feature':
+        except biom.DisjointIDError:
+            overlapping = _get_overlapping(tables, 'sample')
+            raise ValueError('Same samples are present in some of the '
+                             'provided tables: %s' % ', '.join(overlapping))
+    elif overlap_method == 'error_on_overlapping_feature':
+        try:
             return tables[0].concat(tables[1:], 'observation')
-        else:
-            raise ValueError('Invalid overlap method: %s. Please provide one of '
-                             'the following methods: %s.' %
-                             (overlap_method, ', '.join(overlap_methods())))
+        except biom.DisjointIDError:
+            overlapping = _get_overlapping(tables, 'observation')
+            raise ValueError('Same features are present in some of the '
+                             'provided tables: %s' % ', '.join(overlapping))
     elif overlap_method == 'sum':
-        # This is the default behavior for biom.Table.merge
-        pass
+        tables = iter(tables)
+        result = next(tables)  # There is always at least 1
+        for table in tables:
+            result = result.merge(table)
+        return result
     else:
         raise ValueError('Invalid overlap method: %s. Please provide one of '
                          'the following methods: %s.' %
                          (overlap_method, ', '.join(overlap_methods())))
-
-    tables = iter(tables)
-    result = next(tables)  # There is always at least 1
-    for table in tables:
-        result = result.merge(table)
-
-    return result
 
 
 def _merge_feature_data(data: pd.Series) -> pd.Series:
