@@ -11,16 +11,16 @@ import pandas as pd
 import collections
 
 
+def overlap_methods():
+    return ('error_on_overlapping_sample', 'error_on_overlapping_feature',
+            'sum')
+
+
 def _get_overlapping(tables, axis):
     ids = collections.Counter()
     for table in tables:
         ids.update(table.ids(axis=axis))
     return {e for e, c in ids.items() if c > 1}
-
-
-def overlap_methods():
-    return ('error_on_overlapping_sample', 'error_on_overlapping_feature',
-            'sum')
 
 
 def merge(tables: biom.Table,
