@@ -31,14 +31,14 @@ def merge(tables: biom.Table,
     if overlap_method == 'error_on_overlapping_sample':
         try:
             return tables[0].concat(tables[1:], 'sample')
-        except biom.DisjointIDError:
+        except biom.exception.DisjointIDError:
             overlapping = _get_overlapping(tables, 'sample')
             raise ValueError('Same samples are present in some of the '
                              'provided tables: %s' % ', '.join(overlapping))
     elif overlap_method == 'error_on_overlapping_feature':
         try:
             return tables[0].concat(tables[1:], 'observation')
-        except biom.DisjointIDError:
+        except biom.exception.DisjointIDError:
             overlapping = _get_overlapping(tables, 'observation')
             raise ValueError('Same features are present in some of the '
                              'provided tables: %s' % ', '.join(overlapping))
