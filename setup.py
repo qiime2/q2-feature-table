@@ -14,7 +14,8 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
-    package_data={'q2_feature_table._summarize': [
+    package_data={'q2_feature_table': ['citations.bib'],
+                  'q2_feature_table._summarize': [
                       'summarize_assets/*.html',
                       'summarize_assets/dist/*',
                       'tabulate_seqs_assets/js/*',
