@@ -7,25 +7,20 @@
 # ----------------------------------------------------------------------------
 
 from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
-                           Choices, MetadataColumn, Categorical, List)
+                           Choices, MetadataColumn, Categorical, List,
+                           Citations)
 
 import q2_feature_table
 from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence)
 from q2_types.feature_data import FeatureData, Sequence, Taxonomy
 
+citations = Citations.load('citations.bib', package='q2_feature_table')
 plugin = Plugin(
     name='feature-table',
     version=q2_feature_table.__version__,
     website='https://github.com/qiime2/q2-feature-table',
     package='q2_feature_table',
-    citation_text=('The Biological Observation Matrix (BIOM) format or: how '
-                   'I learned to stop worrying and love the ome-ome. '
-                   'Daniel McDonald, Jose C Clemente, Justin Kuczynski, '
-                   'Jai Ram Rideout, Jesse Stombaugh, Doug Wendel, Andreas '
-                   'Wilke, Susan Huse, John Hufnagle, Folker Meyer, Rob '
-                   'Knight and J Gregory Caporaso. GigaScience 1:7 (2012).'
-                   'doi:10.1186/2047-217X-1-7'),
     short_description=('Plugin for working with sample by feature tables.'),
     description=('This is a QIIME 2 plugin supporting operations on sample '
                  'by feature tables, such as filtering, merging, and '
@@ -50,7 +45,8 @@ plugin.methods.register_function(
     name='Rarefy table',
     description=("Subsample frequencies from all samples without replacement "
                  "so that the sum of frequencies in each sample is equal to "
-                 "sampling-depth.")
+                 "sampling-depth."),
+    citations=[citations['Weiss2017']]
 )
 
 plugin.methods.register_function(
@@ -374,7 +370,8 @@ plugin.visualizers.register_function(
     name='View sequence associated with each feature',
     description="Generate tabular view of feature identifier to sequence "
                 "mapping, including links to BLAST each sequence against "
-                "the NCBI nt database."
+                "the NCBI nt database.",
+    citations=[citations['NCBI'], citations['NCBI-BLAST']]
 )
 
 plugin.visualizers.register_function(
@@ -452,5 +449,6 @@ plugin.visualizers.register_function(
         'cluster': 'Specify which axes to cluster.',
         'color_scheme': 'The matplotlib colorscheme to generate the heatmap '
                         'with.',
-    }
+    },
+    citations=[citations['Hunter2007Matplotlib']]
 )
