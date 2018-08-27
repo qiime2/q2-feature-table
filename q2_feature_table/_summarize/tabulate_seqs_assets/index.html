@@ -18,6 +18,7 @@
         <thead>
           <tr>
             <th>Feature ID</th>
+            <th>Sequence Length</th>
             <th>Sequence</th>
           </tr>
         </thead>
@@ -25,6 +26,7 @@
         {% for sequence in data %}
           <tr>
             <td>{{ sequence.id }}</td>
+            <td>{{ sequence.len}}</td>
             <td><a target="_blank" href="{{ sequence.url }}" rel="noopener noreferrer">{{ sequence.seq }}</a></td>
           </tr>
         {% endfor %}

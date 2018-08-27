@@ -34,7 +34,9 @@ def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
         for sequence in data:
             skbio.io.write(sequence, format='fasta', into=fh)
             str_seq = str(sequence)
+            seq_len = len(str_seq)
             sequences.append({'id': sequence.metadata['id'],
+                              'len': seq_len,
                               'url': _blast_url_template % str_seq,
                               'seq': str_seq})
 
