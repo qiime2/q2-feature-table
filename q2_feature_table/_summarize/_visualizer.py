@@ -30,6 +30,7 @@ TEMPLATES = pkg_resources.resource_filename('q2_feature_table', '_summarize')
 
 def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
     sequences = []
+    seq_lengths = []
     with open(os.path.join(output_dir, 'sequences.fasta'), 'w') as fh:
         for sequence in data:
             skbio.io.write(sequence, format='fasta', into=fh)
@@ -39,9 +40,12 @@ def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
                               'len': seq_len,
                               'url': _blast_url_template % str_seq,
                               'seq': str_seq})
+            seq_lengths.append(seq_len)
+    seq_len_stats = _compute_descriptive_stats(seq_lengths)
 
     index = os.path.join(TEMPLATES, 'tabulate_seqs_assets', 'index.html')
-    q2templates.render(index, output_dir, context={'data': sequences})
+    q2templates.render(index, output_dir, context={'data': sequences,
+                                                   'stats': seq_len_stats})
 
     js = os.path.join(
         TEMPLATES, 'tabulate_seqs_assets', 'js', 'tsorter.min.js')
@@ -155,6 +159,18 @@ def summarize(output_dir: str, table: biom.Table,
         fh.write(', ')
         sample_frequencies.to_json(fh)
         fh.write(');')
+
+
+def _compute_descriptive_stats(lst):
+    count = len(lst)
+    minimum = min(lst)
+    maximum = max(lst)
+    mean = np.mean(lst)
+    seven_number_array = np.percentile(
+        lst, [2.0, 9.0, 25.0, 50.0, 75.0, 91.0, 98.0])
+    seven_number_list = seven_number_array.tolist()
+    return {'count': count, 'min': minimum, 'max': maximum, 'mean': mean,
+            'seven_num_summ': seven_number_list}
 
 
 def _compute_qualitative_summary(table):
