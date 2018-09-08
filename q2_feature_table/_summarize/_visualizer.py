@@ -162,6 +162,10 @@ def summarize(output_dir: str, table: biom.Table,
 
 
 def _compute_descriptive_stats(lst):
+    # TODO: document the structure of the input (numpy docstring)
+    # NOTE: function may not handle NaN values
+    if len(lst) == 0:
+        raise ValueError('No sequences provided.')
     count = len(lst)
     minimum = min(lst)
     maximum = max(lst)

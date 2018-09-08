@@ -18,11 +18,11 @@
             <td>{{ stats.count }}</td>
             <td>{{ stats.min }}</td>
             <td>{{ stats.max }}</td>
-            <td>{{ stats.mean }}</td>
+            <td>{{ stats.mean | round(2) }}</td>
           </tr>
         </tbody>
       </table>
-      <h4>Seven-Number Summary Statistics: </h4>
+      <h4>Seven-Number Summary of Sequence Lengths: </h4>
       <table class="table table-striped table-hover" id="table">
         <thead>
           <tr>
@@ -38,7 +38,7 @@
         <tbody>
           <tr>
           {% for percentile in stats.seven_num_summ %}
-            <td>{{ percentile }}</td>
+            <td>{{ percentile | round(2) }}</td>
         {% endfor %}
           </tr>
         </tbody>
