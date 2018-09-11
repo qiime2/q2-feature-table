@@ -42,11 +42,12 @@ class TabulateSeqsTests(TestCase):
         exp_stats = {
             'mean': 5.0, 'min': 2,
             'seven_num_summ': [2.0, 2.0, 2.0, 5.0, 6.0, 8.56, 9.68],
-            'max': 10, 'count': 5}
+            'max': 10, 'count': 5, 'range': 8}
         rendered_stats = _compute_descriptive_stats(seq_lengths)
         self.assertEqual(exp_stats['count'], rendered_stats['count'])
         self.assertEqual(exp_stats['min'], rendered_stats['min'])
         self.assertEqual(exp_stats['max'], rendered_stats['max'])
+        self.assertEqual(exp_stats['range'], rendered_stats['range'])
         self.assertAlmostEqual(exp_stats['mean'], rendered_stats['mean'])
         for expected, rendered in zip(exp_stats['seven_num_summ'],
                                       rendered_stats['seven_num_summ']):
@@ -57,11 +58,12 @@ class TabulateSeqsTests(TestCase):
         exp_stats = {
             'mean': 5.0, 'min': 5,
             'seven_num_summ': [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],
-            'max': 5, 'count': 5}
+            'max': 5, 'count': 5, 'range': 0}
         rendered_stats = _compute_descriptive_stats(seq_lengths)
         self.assertEqual(exp_stats['count'], rendered_stats['count'])
         self.assertEqual(exp_stats['min'], rendered_stats['min'])
         self.assertEqual(exp_stats['max'], rendered_stats['max'])
+        self.assertEqual(exp_stats['range'], rendered_stats['range'])
         self.assertAlmostEqual(exp_stats['mean'], rendered_stats['mean'])
         for expected, rendered in zip(exp_stats['seven_num_summ'],
                                       rendered_stats['seven_num_summ']):
@@ -69,7 +71,7 @@ class TabulateSeqsTests(TestCase):
 
     def test_no_sequences(self):
         seq_lengths = []
-        with self.assertRaisesRegex(ValueError, 'No sequences provided.'):
+        with self.assertRaisesRegex(ValueError, 'No values provided.'):
             _compute_descriptive_stats(seq_lengths)
 
     def test_descriptive_stats_integration(self):
@@ -93,6 +95,7 @@ class TabulateSeqsTests(TestCase):
             self.assertTrue('<td>8</td>' in open(expected_fp).read())
             self.assertTrue('<td>1</td>' in open(expected_fp).read())
             self.assertTrue('<td>10</td>' in open(expected_fp).read())
+            self.assertTrue('<td>9</td>' in open(expected_fp).read())
             self.assertTrue('<td>3.62</td>' in open(expected_fp).read())
             self.assertTrue('<td>1.14</td>' in open(expected_fp).read())
             self.assertTrue('<td>1.63</td>' in open(expected_fp).read())

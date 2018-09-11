@@ -162,19 +162,49 @@ def summarize(output_dir: str, table: biom.Table,
 
 
 def _compute_descriptive_stats(lst):
-    # TODO: document the structure of the input (numpy docstring)
-    # NOTE: function may not handle NaN values
+    """Basic descriptive statistics and a (parametric) seven-number summary.
+
+    Calculates descriptive statistics for a list of numerical values, including
+    count, min, max, mean, and a parametric seven-number-summary. This summary
+    includes values for the lower quartile, median, upper quartile, and
+    percentiles 2, 9, 91, and 98. If the data is normally distributed, these
+    seven percentiles will be equally spaced when plotted.
+
+    Parameters
+    ----------
+    lst : list of int or float values
+
+    Returns
+    -------
+    dict
+        a dictionary containing the following descriptive statistics:
+
+        count
+            int: the number of items in `lst`
+        min
+            int or float: the smallest number in `lst`
+        max
+            int or float: the largest number in `lst`
+        mean
+            float: the mean of `lst`
+        seven_num_summ
+            list of floats: percentiles 2, 9, 25, 50, 75, 91, 98 of `lst`
+
+    """
+    # NOTE: Not built to handle 'lst's containing non-numerical values
+
     if len(lst) == 0:
-        raise ValueError('No sequences provided.')
+        raise ValueError('No values provided.')
     count = len(lst)
     minimum = min(lst)
     maximum = max(lst)
+    range = maximum-minimum
     mean = np.mean(lst)
     seven_number_array = np.percentile(
         lst, [2.0, 9.0, 25.0, 50.0, 75.0, 91.0, 98.0])
     seven_number_list = seven_number_array.tolist()
-    return {'count': count, 'min': minimum, 'max': maximum, 'mean': mean,
-            'seven_num_summ': seven_number_list}
+    return {'count': count, 'min': minimum, 'max': maximum, 'range': range,
+            'mean': mean, 'seven_num_summ': seven_number_list}
 
 
 def _compute_qualitative_summary(table):

@@ -10,6 +10,7 @@
             <th>Sequence Count</th>
             <th>Shortest Sequence</th>
             <th>Longest Sequence</th>
+            <th>Range of Lengths</th>
             <th>Mean Sequence Length</th>
           </tr>
         </thead>
@@ -18,6 +19,7 @@
             <td>{{ stats.count }}</td>
             <td>{{ stats.min }}</td>
             <td>{{ stats.max }}</td>
+            <td>{{ stats.range }}</td>
             <td>{{ stats.mean | round(2) }}</td>
           </tr>
         </tbody>
