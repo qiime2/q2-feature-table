@@ -34,9 +34,11 @@ class TabulateSeqsTests(TestCase):
 
             expected_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(expected_fp))
-            self.assertTrue('ACGT</a>' in open(expected_fp).read())
-            self.assertTrue('<td>4</td>' in open(expected_fp).read())
-            self.assertTrue('<td>seq2</td>' in open(expected_fp).read())
+            with open(expected_fp) as fh:
+                file_text = fh.read()
+                self.assertTrue('ACGT</a>' in file_text)
+                self.assertTrue('<td>4</td>' in file_text)
+                self.assertTrue('<td>seq2</td>' in file_text)
 
     def test_descriptive_stats(self):
         seq_lengths = [2, 2, 5, 6, 10]
@@ -93,18 +95,20 @@ class TabulateSeqsTests(TestCase):
 
         # all expected values are unique. If they all render in index.html, our
         # function likely worked as expected.
-            self.assertTrue('<td>8</td>' in open(expected_fp).read())
-            self.assertTrue('<td>1</td>' in open(expected_fp).read())
-            self.assertTrue('<td>10</td>' in open(expected_fp).read())
-            self.assertTrue('<td>3.62</td>' in open(expected_fp).read())
-            self.assertTrue('<td>9</td>' in open(expected_fp).read())
-            self.assertTrue('<td>1.14</td>' in open(expected_fp).read())
-            self.assertTrue('<td>1.63</td>' in open(expected_fp).read())
-            self.assertTrue('<td>2</td>' in open(expected_fp).read())
-            self.assertTrue('<td>3</td>' in open(expected_fp).read())
-            self.assertTrue('<td>4</td>' in open(expected_fp).read())
-            self.assertTrue('<td>6.22</td>' in open(expected_fp).read())
-            self.assertTrue('<td>9.16</td>' in open(expected_fp).read())
+            with open(expected_fp) as fh:
+                file_text = fh.read()
+                self.assertTrue('<td>8</td>' in file_text)
+                self.assertTrue('<td>1</td>' in file_text)
+                self.assertTrue('<td>10</td>' in file_text)
+                self.assertTrue('<td>3.62</td>' in file_text)
+                self.assertTrue('<td>9</td>' in file_text)
+                self.assertTrue('<td>1.14</td>' in file_text)
+                self.assertTrue('<td>1.63</td>' in file_text)
+                self.assertTrue('<td>2</td>' in file_text)
+                self.assertTrue('<td>3</td>' in file_text)
+                self.assertTrue('<td>4</td>' in file_text)
+                self.assertTrue('<td>6.22</td>' in file_text)
+                self.assertTrue('<td>9.16</td>' in file_text)
 
     def test_tsv_builder(self):
         seqs = DNAIterator(
@@ -137,8 +141,8 @@ class TabulateSeqsTests(TestCase):
 
             # Does link html generate correctly?
             expected_index_fp = os.path.join(output_dir, 'index.html')
-            self.assertTrue(
-                '<a href="stats.tsv"' in open(expected_index_fp).read())
+            with open(expected_index_fp) as fh:
+                self.assertTrue('<a href="stats.tsv"' in fh.read())
 
 
 class SummarizeTests(TestCase):
