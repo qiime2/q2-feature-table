@@ -16,6 +16,7 @@ import pandas as pd
 import numpy as np
 import qiime2
 from q2_types.feature_data import DNAIterator
+import csv
 
 from q2_feature_table import tabulate_seqs, summarize
 from q2_feature_table._summarize._visualizer import _compute_descriptive_stats
@@ -90,13 +91,13 @@ class TabulateSeqsTests(TestCase):
 
             expected_fp = os.path.join(output_dir, 'index.html')
 
-# all expected summary values are unique.
-# if they all render in index.html, our function likely worked as expected
+        # all expected values are unique. If they all render in index.html, our
+        # function likely worked as expected.
             self.assertTrue('<td>8</td>' in open(expected_fp).read())
             self.assertTrue('<td>1</td>' in open(expected_fp).read())
             self.assertTrue('<td>10</td>' in open(expected_fp).read())
-            self.assertTrue('<td>9</td>' in open(expected_fp).read())
             self.assertTrue('<td>3.62</td>' in open(expected_fp).read())
+            self.assertTrue('<td>9</td>' in open(expected_fp).read())
             self.assertTrue('<td>1.14</td>' in open(expected_fp).read())
             self.assertTrue('<td>1.63</td>' in open(expected_fp).read())
             self.assertTrue('<td>2</td>' in open(expected_fp).read())
@@ -104,6 +105,40 @@ class TabulateSeqsTests(TestCase):
             self.assertTrue('<td>4</td>' in open(expected_fp).read())
             self.assertTrue('<td>6.22</td>' in open(expected_fp).read())
             self.assertTrue('<td>9.16</td>' in open(expected_fp).read())
+
+    def test_tsv_builder(self):
+        seqs = DNAIterator(
+            (s for s in (skbio.DNA('A', metadata={'id': 'seq01'}),
+                         skbio.DNA('AA', metadata={'id': 'seq02'}),
+                         skbio.DNA('AAA', metadata={'id': 'seq03'}),
+                         skbio.DNA('AAAA', metadata={'id': 'seq04'}),
+                         skbio.DNA('AAAA', metadata={'id': 'seq05'}),
+                         skbio.DNA('AAA', metadata={'id': 'seq06'}),
+                         skbio.DNA('AA', metadata={'id': 'seq07'}),
+                         skbio.DNA('AAAAAAAAAA', metadata={'id': 'seq08'}))))
+
+        # Does the file exist?
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate_seqs(output_dir, seqs)
+
+            expected_stats_fp = os.path.join(output_dir, 'stats.tsv')
+            self.assertTrue(os.path.exists(expected_stats_fp))
+
+            # Was data written to the file?
+            with open(expected_stats_fp) as stats_tsv:
+                tsv_reader = csv.reader(stats_tsv, dialect="excel-tab")
+                tsv_text = []
+                for row in tsv_reader:
+                    tsv_text.append(row)
+
+            print(tsv_text)
+            self.assertEqual(['Sequence Length', 'Statistics'], tsv_text[0])
+            self.assertEqual(['count', '8'], tsv_text[1])
+
+            # Does link html generate correctly?
+            expected_index_fp = os.path.join(output_dir, 'index.html')
+            self.assertTrue(
+                '<a href="stats.tsv"' in open(expected_index_fp).read())
 
 
 class SummarizeTests(TestCase):
