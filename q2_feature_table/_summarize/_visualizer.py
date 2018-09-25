@@ -20,6 +20,7 @@ from q2_types.feature_data import DNAIterator
 import q2templates
 import skbio
 import qiime2
+import csv
 
 _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
                        "ALIGNMENT_VIEW=Pairwise&PROGRAM=blastn&DATABASE"
@@ -42,6 +43,7 @@ def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
                               'seq': str_seq})
             seq_lengths.append(seq_len)
     seq_len_stats = _compute_descriptive_stats(seq_lengths)
+    _write_tsv_of_descriptive_stats(seq_len_stats, output_dir)
 
     index = os.path.join(TEMPLATES, 'tabulate_seqs_assets', 'index.html')
     q2templates.render(index, output_dir, context={'data': sequences,
@@ -161,7 +163,7 @@ def summarize(output_dir: str, table: biom.Table,
         fh.write(');')
 
 
-def _compute_descriptive_stats(lst):
+def _compute_descriptive_stats(lst: list):
     """Basic descriptive statistics and a (parametric) seven-number summary.
 
     Calculates descriptive statistics for a list of numerical values, including
@@ -187,8 +189,11 @@ def _compute_descriptive_stats(lst):
             int or float: the largest number in `lst`
         mean
             float: the mean of `lst`
-        seven_num_summ
-            list of floats: percentiles 2, 9, 25, 50, 75, 91, 98 of `lst`
+        seven_num_summ_percentiles
+            list of floats: the parameter percentiles used to calculate this
+            seven-number summary: [2, 9, 25, 50, 75, 91, 98]
+        seven_num_summ_values
+            list of floats: the calculated percentile values of the summary
 
     """
     # NOTE: Not built to handle 'lst's containing non-numerical values
@@ -200,11 +205,35 @@ def _compute_descriptive_stats(lst):
     maximum = max(lst)
     range = maximum-minimum
     mean = np.mean(lst)
-    seven_number_array = np.percentile(
-        lst, [2.0, 9.0, 25.0, 50.0, 75.0, 91.0, 98.0])
-    seven_number_list = seven_number_array.tolist()
+
+    seven_num_summ_percentiles = [2.0, 9.0, 25.0, 50.0, 75.0, 91.0, 98.0]
+    seven_num_summ_values = np.percentile(
+        lst, seven_num_summ_percentiles).tolist()
+
     return {'count': count, 'min': minimum, 'max': maximum, 'range': range,
-            'mean': mean, 'seven_num_summ': seven_number_list}
+            'mean': mean,
+            'seven_num_summ_percentiles': seven_num_summ_percentiles,
+            'seven_num_summ_values': seven_num_summ_values}
+
+
+def _write_tsv_of_descriptive_stats(dictionary: dict, output_dir: str):
+    # Capture relevant stats from input dictionary and store as tuples
+    descriptive_stats = ['count', 'min', 'max', 'mean', 'range']
+    stat_list = []
+    for key in descriptive_stats:
+        stat_list.append((key, dictionary[key]))
+
+    with open(os.path.join(output_dir, 'stats.tsv'), 'w') as tsvfile:
+        writer = csv.writer(tsvfile, dialect='excel-tab')
+        writer.writerow(('Sequence Length', 'Statistics'))
+        writer.writerows(stat_list)
+        writer.writerow('')
+
+        # csv.writer iterates singleton tuples one char per column, so add ""
+        writer.writerow(('Seven-Number Summary', ''))
+        writer.writerow(('Percentile', 'Length'))
+        writer.writerows(zip(dictionary['seven_num_summ_percentiles'],
+                             dictionary['seven_num_summ_values']))
 
 
 def _compute_qualitative_summary(table):

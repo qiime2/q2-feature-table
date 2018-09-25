@@ -41,7 +41,7 @@ class TabulateSeqsTests(TestCase):
         seq_lengths = [2, 2, 5, 6, 10]
         exp_stats = {
             'mean': 5.0, 'min': 2,
-            'seven_num_summ': [2.0, 2.0, 2.0, 5.0, 6.0, 8.56, 9.68],
+            'seven_num_summ_values': [2.0, 2.0, 2.0, 5.0, 6.0, 8.56, 9.68],
             'max': 10, 'count': 5, 'range': 8}
         rendered_stats = _compute_descriptive_stats(seq_lengths)
         self.assertEqual(exp_stats['count'], rendered_stats['count'])
@@ -49,15 +49,15 @@ class TabulateSeqsTests(TestCase):
         self.assertEqual(exp_stats['max'], rendered_stats['max'])
         self.assertEqual(exp_stats['range'], rendered_stats['range'])
         self.assertAlmostEqual(exp_stats['mean'], rendered_stats['mean'])
-        for expected, rendered in zip(exp_stats['seven_num_summ'],
-                                      rendered_stats['seven_num_summ']):
+        for expected, rendered in zip(exp_stats['seven_num_summ_values'],
+                                      rendered_stats['seven_num_summ_values']):
             self.assertAlmostEqual(expected, rendered)
 
     def test_lengths_identical(self):
         seq_lengths = [5, 5, 5, 5, 5]
         exp_stats = {
             'mean': 5.0, 'min': 5,
-            'seven_num_summ': [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],
+            'seven_num_summ_values': [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],
             'max': 5, 'count': 5, 'range': 0}
         rendered_stats = _compute_descriptive_stats(seq_lengths)
         self.assertEqual(exp_stats['count'], rendered_stats['count'])
@@ -65,8 +65,8 @@ class TabulateSeqsTests(TestCase):
         self.assertEqual(exp_stats['max'], rendered_stats['max'])
         self.assertEqual(exp_stats['range'], rendered_stats['range'])
         self.assertAlmostEqual(exp_stats['mean'], rendered_stats['mean'])
-        for expected, rendered in zip(exp_stats['seven_num_summ'],
-                                      rendered_stats['seven_num_summ']):
+        for expected, rendered in zip(exp_stats['seven_num_summ_values'],
+                                      rendered_stats['seven_num_summ_values']):
             self.assertAlmostEqual(expected, rendered)
 
     def test_no_sequences(self):
