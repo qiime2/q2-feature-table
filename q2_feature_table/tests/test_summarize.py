@@ -25,9 +25,9 @@ from q2_feature_table._summarize._visualizer import _compute_descriptive_stats
 class TabulateSeqsTests(TestCase):
 
     def test_basic(self):
-        seqs = DNAIterator(
-            (s for s in (skbio.DNA('ACGT', metadata={'id': 'seq1'}),
-                         skbio.DNA('AAAA', metadata={'id': 'seq2'}))))
+        seqs = DNAIterator(skbio.DNA(a, metadata=b) for a, b in(
+            ('ACGT', {'id': 'seq1'}),
+            ('AAAA', {'id': 'seq2'})))
 
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs)
@@ -78,15 +78,15 @@ class TabulateSeqsTests(TestCase):
             _compute_descriptive_stats(seq_lengths)
 
     def test_descriptive_stats_integration(self):
-        seqs = DNAIterator(
-            (s for s in (skbio.DNA('A', metadata={'id': 'seq01'}),
-                         skbio.DNA('AA', metadata={'id': 'seq02'}),
-                         skbio.DNA('AAA', metadata={'id': 'seq03'}),
-                         skbio.DNA('AAAA', metadata={'id': 'seq04'}),
-                         skbio.DNA('AAAA', metadata={'id': 'seq05'}),
-                         skbio.DNA('AAA', metadata={'id': 'seq06'}),
-                         skbio.DNA('AA', metadata={'id': 'seq07'}),
-                         skbio.DNA('AAAAAAAAAA', metadata={'id': 'seq08'}))))
+        seqs = DNAIterator(skbio.DNA(a, metadata=b)for a, b in (
+            ('A', {'id': 'seq01'}),
+            ('AA', {'id': 'seq02'}),
+            ('AAA', {'id': 'seq03'}),
+            ('AAAA', {'id': 'seq04'}),
+            ('AAAA', {'id': 'seq05'}),
+            ('AAA', {'id': 'seq06'}),
+            ('AA', {'id': 'seq07'}),
+            ('AAAAAAAAAA', {'id': 'seq08'})))
 
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs)
@@ -111,15 +111,15 @@ class TabulateSeqsTests(TestCase):
                 self.assertTrue('<td>9.16</td>' in file_text)
 
     def test_tsv_builder(self):
-        seqs = DNAIterator(
-            (s for s in (skbio.DNA('A', metadata={'id': 'seq01'}),
-                         skbio.DNA('AA', metadata={'id': 'seq02'}),
-                         skbio.DNA('AAA', metadata={'id': 'seq03'}),
-                         skbio.DNA('AAAA', metadata={'id': 'seq04'}),
-                         skbio.DNA('AAAA', metadata={'id': 'seq05'}),
-                         skbio.DNA('AAA', metadata={'id': 'seq06'}),
-                         skbio.DNA('AA', metadata={'id': 'seq07'}),
-                         skbio.DNA('AAAAAAAAAA', metadata={'id': 'seq08'}))))
+        seqs = DNAIterator(skbio.DNA(a, metadata=b)for a, b in (
+            ('A', {'id': 'seq01'}),
+            ('AA', {'id': 'seq02'}),
+            ('AAA', {'id': 'seq03'}),
+            ('AAAA', {'id': 'seq04'}),
+            ('AAAA', {'id': 'seq05'}),
+            ('AAA', {'id': 'seq06'}),
+            ('AA', {'id': 'seq07'}),
+            ('AAAAAAAAAA', {'id': 'seq08'})))
 
         # Does the file exist?
         with tempfile.TemporaryDirectory() as output_dir:
