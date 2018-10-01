@@ -9,7 +9,7 @@
 import biom
 
 
-def rarefy(table: biom.Table, sampling_depth: int, 
+def rarefy(table: biom.Table, sampling_depth: int,
            with_replacement: bool=False) -> biom.Table:
     table = table.subsample(sampling_depth, axis='sample', by_id=False,
                             with_replacement=with_replacement)
