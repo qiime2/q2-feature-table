@@ -30,22 +30,25 @@ plugin = Plugin(
 plugin.methods.register_function(
     function=q2_feature_table.rarefy,
     inputs={'table': FeatureTable[Frequency]},
-    parameters={'sampling_depth': Int % Range(1, None)},
+    parameters={'sampling_depth': Int % Range(1, None),
+                'with_replacement': Bool},
     outputs=[('rarefied_table', FeatureTable[Frequency])],
     input_descriptions={'table': 'The feature table to be rarefied.'},
     parameter_descriptions={
         'sampling_depth': ('The total frequency that each sample should be '
                            'rarefied to. Samples where the sum of frequencies '
                            'is less than the sampling depth will be not be '
-                           'included in the resulting table.')
+                           'included in the resulting table.'),
+        'with_replacement': ('Rarefy with replacement by sampling from the '
+                             'multinomial distribution instead of rarefying '
+                             'without replacement.')
     },
     output_descriptions={
         'rarefied_table': 'The resulting rarefied feature table.'
     },
     name='Rarefy table',
-    description=("Subsample frequencies from all samples without replacement "
-                 "so that the sum of frequencies in each sample is equal to "
-                 "sampling-depth."),
+    description=("Subsample frequencies from all samples so that the sum of "
+                 "frequencies in each sample is equal to sampling-depth."),
     citations=[citations['Weiss2017']]
 )
 
