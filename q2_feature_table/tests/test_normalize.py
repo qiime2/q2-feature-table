@@ -31,7 +31,7 @@ class RarefyTests(TestCase):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                   ['O1', 'O2'],
                   ['S1', 'S2', 'S3'])
-         rt = rarefy(t, 3, with_replacement=True)
+        rt = rarefy(t, 3, with_replacement=True)
         self.assertEqual(rt.shape, (2, 3))
 
     def test_rarefy_depth_error(self):
