@@ -38,7 +38,7 @@ plugin.methods.register_function(
         'sampling_depth': ('The total frequency that each sample should be '
                            'rarefied to. Samples where the sum of frequencies '
                            'is less than the sampling depth will be not be '
-                           'included in the resulting table.')
+                           'included in the resulting table.'),
         'with_replacement': ('Rarefy with replacement by sampling from the '
                              'multinomial distribution instead of rarefying '
                              'without replacement.')
