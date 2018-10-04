@@ -34,6 +34,11 @@ class RarefyTests(TestCase):
         rt = rarefy(t, 3, with_replacement=True)
         self.assertEqual(rt.shape, (2, 3))
 
+        for n_draws in range(5, 100, 5):
+            rt = rarefy(t, n_draws, with_replacement=True)
+            npt.assert_array_equal(rt.sum('sample'),
+                                   np.array([n_draws] * 3))
+
     def test_rarefy_depth_error(self):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                   ['O1', 'O2'],
