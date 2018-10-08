@@ -20,6 +20,7 @@ from q2_types.feature_data import DNAIterator
 import q2templates
 import skbio
 import qiime2
+import json
 
 _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
                        "ALIGNMENT_VIEW=Pairwise&PROGRAM=blastn&DATABASE"
@@ -148,18 +149,28 @@ def summarize(output_dir: str, table: biom.Table,
     shutil.copytree(os.path.join(TEMPLATES, 'summarize_assets', 'dist'),
                     os.path.join(output_dir, 'dist'))
 
-    with open(os.path.join(output_dir, 'data.jsonp'), 'w') as fh:
-        fh.write("app.init(")
+    with open(os.path.join(output_dir, 'data.json'), 'w') as fh:
+        json_values = []
         if sample_metadata:
             sample_metadata = sample_metadata.filter_ids(
                 sample_frequencies.index)
-            # TODO use Metadata.to_json() API if/when it exists in the future.
-            sample_metadata.to_dataframe().to_json(fh)
+            pandadataframe = sample_metadata.to_dataframe()
+
+            for i, row in pandadataframe.iterrows():
+                json_values.append({
+                'id': i,
+                'metadata': {j: row[j] for j in pandadataframe.columns},
+                'frequency': sample_frequencies[i]
+                })
+            fh.write(json.dumps(json_values))
+
         else:
-            fh.write('{}')
-        fh.write(', ')
-        sample_frequencies.to_json(fh)
-        fh.write(');')
+            for i in sample_frequencies:
+                # add ids
+                json_values.append({
+                'frequency': i
+                })
+            fh.write(json.dumps(json_values))
 
 
 def _compute_descriptive_stats(lst: list):
