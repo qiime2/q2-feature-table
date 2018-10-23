@@ -38,13 +38,14 @@
         </thead>
         <tbody>
           <tr>
-          <td>Length (nts):</td>
+          <td>Length* (nts):</td>
           {% for value in stats.seven_num_summ_values %}
-            <td>{{ value | round(2) }}</td>
+            <td>{{ value | round(0,'floor') | int }}</td>
           {% endfor %}
           </tr>
         </tbody>
       </table>
+        *Floored: decimal values have been removed.
     </div>
   </div>
 
@@ -83,7 +84,7 @@
         {% for sequence in data %}
           <tr>
             <td>{{ sequence.id }}</td>
-            <td>{{ sequence.len}}</td>
+            <td>{{ sequence.len }}</td>
             <td><samp><a target="_blank" href="{{ sequence.url }}" rel="noopener noreferrer">{{ sequence.seq }}</a></samp></td>
           </tr>
         {% endfor %}
