@@ -4,6 +4,10 @@
   <div class="row">
     <div class="col-lg-6">
       <h3>Sequence Length Statistics</h3>
+      <p>
+        <a href="descriptive_stats.tsv" target="_blank" rel="noopener noreferrer">Download sequence-length statistics</a>
+        as a tsv.
+      </p>
       <table class="table table-striped" id="stats_table">
         <thead>
           <tr>
@@ -12,27 +16,33 @@
             <th>Max Length</th>
             <th>Mean Length</th>
             <th>Range</th>
+            <th>Standard Deviation</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>{{ stats.count }}</td>
-            <td>{{ stats.min }}</td>
-            <td>{{ stats.max }}</td>
-            <td>{{ stats.mean | round(2) }}</td>
-            <td>{{ stats.range }}</td>
+            <td>{{ stats.min | int }}</td>
+            <td>{{ stats.max | int }}</td>
+            <td>{{ stats.mean | round(2, 'common') }}</td>
+            <td>{{ stats.range | int }}</td>
+            <td>{{ stats.std | round(2, 'common') }}</td>
           </tr>
         </tbody>
       </table>
     </div>
     <div class="col-lg-6">
       <h3>Seven-Number Summary of Sequence Lengths</h3>
+      <p>
+        <a href="seven_number_summary.tsv" target="_blank" rel="noopener noreferrer">Download seven-number summary</a>
+        as a tsv.
+      </p>
       <table class="table table-striped" id="summary_table">
         <thead>
           <tr>
             <th>Percentile:</th>
             {% for percentile in stats.seven_num_summ_percentiles %}
-            <th>{{ percentile | int }}%</th>
+            <th>{{ (percentile*100) | int }}%</th>
             {% endfor %}
           </tr>
         </thead>
@@ -40,20 +50,20 @@
           <tr>
           <td>Length* (nts):</td>
           {% for value in stats.seven_num_summ_values %}
-            <td>{{ value | round(0,'floor') | int }}</td>
+            <td>{{ value | int }}</td>
           {% endfor %}
           </tr>
         </tbody>
       </table>
-        *Floored: decimal values have been removed.
     </div>
   </div>
 
   <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-6">
+    </div>
+    <div class="col-lg-6">
       <p>
-        <a href="stats.tsv" target="_blank" rel="noopener noreferrer">Download these descriptive statistics</a>
-        as a tsv file.
+        *Values floored: decimal values have been removed.
       </p>
     </div>
   </div>

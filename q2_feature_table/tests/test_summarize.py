@@ -102,13 +102,13 @@ class TabulateSeqsTests(TestCase):
                 self.assertTrue('<td>10</td>' in file_text)
                 self.assertTrue('<td>3.62</td>' in file_text)
                 self.assertTrue('<td>9</td>' in file_text)
-                self.assertTrue('<td>1.14</td>' in file_text)
-                self.assertTrue('<td>1.63</td>' in file_text)
+                self.assertTrue('<td>1</td>' in file_text)
+                self.assertTrue('<td>1</td>' in file_text)
                 self.assertTrue('<td>2</td>' in file_text)
                 self.assertTrue('<td>3</td>' in file_text)
                 self.assertTrue('<td>4</td>' in file_text)
-                self.assertTrue('<td>6.22</td>' in file_text)
-                self.assertTrue('<td>9.16</td>' in file_text)
+                self.assertTrue('<td>6</td>' in file_text)
+                self.assertTrue('<td>9</td>' in file_text)
 
     def test_tsv_builder(self):
         seqs = DNAIterator(skbio.DNA(a, metadata=b)for a, b in (
@@ -121,28 +121,42 @@ class TabulateSeqsTests(TestCase):
             ('AA', {'id': 'seq07'}),
             ('AAAAAAAAAA', {'id': 'seq08'})))
 
-        # Does the file exist?
+        # Do the files exist?
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs)
 
-            expected_stats_fp = os.path.join(output_dir, 'stats.tsv')
+            expected_stats_fp = os.path.join(
+                output_dir, 'descriptive_stats.tsv')
+            expected_summary_fp = os.path.join(
+                output_dir, 'seven_number_summary.tsv')
             self.assertTrue(os.path.exists(expected_stats_fp))
+            self.assertTrue(os.path.exists(expected_summary_fp))
 
-            # Was data written to the file?
+            # Was data written to the files?
             with open(expected_stats_fp) as stats_tsv:
                 tsv_reader = csv.reader(stats_tsv, dialect="excel-tab")
                 tsv_text = []
                 for row in tsv_reader:
                     tsv_text.append(row)
-
-            print(tsv_text)
-            self.assertEqual(['Sequence Length', 'Statistics'], tsv_text[0])
+            self.assertEqual(['Statistic', 'Value'], tsv_text[0])
             self.assertEqual(['count', '8'], tsv_text[1])
+
+            with open(expected_summary_fp) as summ_tsv:
+                tsv_reader = csv.reader(summ_tsv, dialect="excel-tab")
+                tsv_text = []
+                for row in tsv_reader:
+                    tsv_text.append(row)
+            self.assertEqual(['Quantile', 'Value'], tsv_text[0])
+            self.assertEqual(['0.02', '1.14'], tsv_text[1])
 
             # Does link html generate correctly?
             expected_index_fp = os.path.join(output_dir, 'index.html')
             with open(expected_index_fp) as fh:
-                self.assertTrue('<a href="stats.tsv"' in fh.read())
+                self.assertTrue('<a href="descriptive_stats.tsv"' in fh.read())
+
+            with open(expected_index_fp) as fh:
+                self.assertTrue(
+                    '<a href="seven_number_summary.tsv"' in fh.read())
 
 
 class SummarizeTests(TestCase):
