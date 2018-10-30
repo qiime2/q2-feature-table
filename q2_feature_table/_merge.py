@@ -24,7 +24,7 @@ def _get_overlapping(tables, axis):
 
 
 def merge(tables: biom.Table,
-          overlap_method: str='error_on_overlapping_sample') -> biom.Table:
+          overlap_method: str = 'error_on_overlapping_sample') -> biom.Table:
     if len(tables) == 1:
         return tables[0]
 
