@@ -48,7 +48,7 @@ def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
 
 
 def summarize(output_dir: str, table: biom.Table,
-              sample_metadata: qiime2.Metadata=None) -> None:
+              sample_metadata: qiime2.Metadata = None) -> None:
     number_of_features, number_of_samples = table.shape
 
     sample_summary, sample_frequencies = _frequency_summary(

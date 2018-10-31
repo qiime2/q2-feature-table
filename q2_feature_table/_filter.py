@@ -61,11 +61,11 @@ def _filter_table(table, min_frequency, max_frequency, min_nonzero,
     table.filter(filter_fn2, axis=_other_axis_map[axis], inplace=True)
 
 
-def filter_samples(table: biom.Table, min_frequency: int=0,
-                   max_frequency: int=None, min_features: int=0,
-                   max_features: int=None,
-                   metadata: qiime2.Metadata=None, where: str=None,
-                   exclude_ids: bool=False)\
+def filter_samples(table: biom.Table, min_frequency: int = 0,
+                   max_frequency: int = None, min_features: int = 0,
+                   max_features: int = None,
+                   metadata: qiime2.Metadata = None, where: str = None,
+                   exclude_ids: bool = False)\
                   -> biom.Table:
     _filter_table(table=table, min_frequency=min_frequency,
                   max_frequency=max_frequency, min_nonzero=min_features,
@@ -75,11 +75,11 @@ def filter_samples(table: biom.Table, min_frequency: int=0,
     return table
 
 
-def filter_features(table: biom.Table, min_frequency: int=0,
-                    max_frequency: int=None, min_samples: int=0,
-                    max_samples: int=None,
-                    metadata: qiime2.Metadata=None, where: str=None,
-                    exclude_ids: bool=False)\
+def filter_features(table: biom.Table, min_frequency: int = 0,
+                    max_frequency: int = None, min_samples: int = 0,
+                    max_samples: int = None,
+                    metadata: qiime2.Metadata = None, where: str = None,
+                    exclude_ids: bool = False)\
                    -> biom.Table:
     _filter_table(table=table, min_frequency=min_frequency,
                   max_frequency=max_frequency, min_nonzero=min_samples,
@@ -89,9 +89,9 @@ def filter_features(table: biom.Table, min_frequency: int=0,
     return table
 
 
-def filter_seqs(data: pd.Series, table: biom.Table=None,
-                metadata: qiime2.Metadata=None, where: str=None,
-                exclude_ids: bool=False) -> pd.Series:
+def filter_seqs(data: pd.Series, table: biom.Table = None,
+                metadata: qiime2.Metadata = None, where: str = None,
+                exclude_ids: bool = False) -> pd.Series:
     if table is not None and metadata is not None:
         raise ValueError('Filtering with metadata and filtering with a table '
                          'are mutually exclusive.')
