@@ -97,10 +97,10 @@ def _munge_metadata(metadata, table, cluster):
 
 
 def heatmap(output_dir, table: pd.DataFrame,
-            metadata: qiime2.CategoricalMetadataColumn=None,
-            normalize: bool=True, title: str=None, metric: str='euclidean',
-            method: str='average', cluster: str='both',
-            color_scheme: str='rocket') -> None:
+            metadata: qiime2.CategoricalMetadataColumn = None,
+            normalize: bool = True, title: str = None,
+            metric: str = 'euclidean', method: str = 'average',
+            cluster: str = 'both', color_scheme: str = 'rocket') -> None:
     if table.empty:
         raise ValueError('Cannot visualize an empty table.')
 
