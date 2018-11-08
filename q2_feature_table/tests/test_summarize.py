@@ -152,11 +152,11 @@ class TabulateSeqsTests(TestCase):
             # Does link html generate correctly?
             expected_index_fp = os.path.join(output_dir, 'index.html')
             with open(expected_index_fp) as fh:
-                self.assertTrue('<a href="descriptive_stats.tsv"' in fh.read())
+                self.assertTrue('href="descriptive_stats.tsv"' in fh.read())
 
             with open(expected_index_fp) as fh:
                 self.assertTrue(
-                    '<a href="seven_number_summary.tsv"' in fh.read())
+                    'href="seven_number_summary.tsv"' in fh.read())
 
 
 class SummarizeTests(TestCase):
