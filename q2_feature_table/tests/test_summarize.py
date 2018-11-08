@@ -16,24 +16,147 @@ import pandas as pd
 import numpy as np
 import qiime2
 from q2_types.feature_data import DNAIterator
+import csv
 
 from q2_feature_table import tabulate_seqs, summarize
+from q2_feature_table._summarize._visualizer import _compute_descriptive_stats
 
 
 class TabulateSeqsTests(TestCase):
 
     def test_basic(self):
-        seqs = DNAIterator(
-            (s for s in (skbio.DNA('ACGT', metadata={'id': 'seq1'}),
-                         skbio.DNA('AAAA', metadata={'id': 'seq2'}))))
+        seqs = DNAIterator(skbio.DNA(a, metadata=b) for a, b in(
+            ('ACGT', {'id': 'seq1'}),
+            ('AAAA', {'id': 'seq2'})))
 
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs)
 
             expected_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(expected_fp))
-            self.assertTrue('ACGT</a>' in open(expected_fp).read())
-            self.assertTrue('<td>seq2</td>' in open(expected_fp).read())
+            with open(expected_fp) as fh:
+                file_text = fh.read()
+                self.assertTrue('ACGT</a>' in file_text)
+                self.assertTrue('<td>4</td>' in file_text)
+                self.assertTrue('<td>seq2</td>' in file_text)
+
+    def test_descriptive_stats(self):
+        seq_lengths = [2, 2, 5, 6, 10]
+        exp_stats = {
+            'mean': 5.0, 'min': 2,
+            'seven_num_summ_values': [2.0, 2.0, 2.0, 5.0, 6.0, 8.56, 9.68],
+            'max': 10, 'count': 5, 'range': 8}
+        rendered_stats = _compute_descriptive_stats(seq_lengths)
+        self.assertEqual(exp_stats['count'], rendered_stats['count'])
+        self.assertEqual(exp_stats['min'], rendered_stats['min'])
+        self.assertEqual(exp_stats['max'], rendered_stats['max'])
+        self.assertEqual(exp_stats['range'], rendered_stats['range'])
+        self.assertAlmostEqual(exp_stats['mean'], rendered_stats['mean'])
+        for expected, rendered in zip(exp_stats['seven_num_summ_values'],
+                                      rendered_stats['seven_num_summ_values']):
+            self.assertAlmostEqual(expected, rendered)
+
+    def test_lengths_identical(self):
+        seq_lengths = [5, 5, 5, 5, 5]
+        exp_stats = {
+            'mean': 5.0, 'min': 5,
+            'seven_num_summ_values': [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],
+            'max': 5, 'count': 5, 'range': 0}
+        rendered_stats = _compute_descriptive_stats(seq_lengths)
+        self.assertEqual(exp_stats['count'], rendered_stats['count'])
+        self.assertEqual(exp_stats['min'], rendered_stats['min'])
+        self.assertEqual(exp_stats['max'], rendered_stats['max'])
+        self.assertEqual(exp_stats['range'], rendered_stats['range'])
+        self.assertAlmostEqual(exp_stats['mean'], rendered_stats['mean'])
+        for expected, rendered in zip(exp_stats['seven_num_summ_values'],
+                                      rendered_stats['seven_num_summ_values']):
+            self.assertAlmostEqual(expected, rendered)
+
+    def test_no_sequences(self):
+        seq_lengths = []
+        with self.assertRaisesRegex(ValueError, 'No values provided.'):
+            _compute_descriptive_stats(seq_lengths)
+
+    def test_descriptive_stats_integration(self):
+        seqs = DNAIterator(skbio.DNA(a, metadata=b)for a, b in (
+            ('A', {'id': 'seq01'}),
+            ('AA', {'id': 'seq02'}),
+            ('AAA', {'id': 'seq03'}),
+            ('AAAA', {'id': 'seq04'}),
+            ('AAAA', {'id': 'seq05'}),
+            ('AAA', {'id': 'seq06'}),
+            ('AA', {'id': 'seq07'}),
+            ('AAAAAAAAAA', {'id': 'seq08'})))
+
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate_seqs(output_dir, seqs)
+
+            expected_fp = os.path.join(output_dir, 'index.html')
+
+        # all expected values are unique. If they all render in index.html, our
+        # function likely worked as expected.
+            with open(expected_fp) as fh:
+                file_text = fh.read()
+                self.assertTrue('<td>8</td>' in file_text)
+                self.assertTrue('<td>1</td>' in file_text)
+                self.assertTrue('<td>10</td>' in file_text)
+                self.assertTrue('<td>3.62</td>' in file_text)
+                self.assertTrue('<td>9</td>' in file_text)
+                self.assertTrue('<td>1</td>' in file_text)
+                self.assertTrue('<td>1</td>' in file_text)
+                self.assertTrue('<td>2</td>' in file_text)
+                self.assertTrue('<td>3</td>' in file_text)
+                self.assertTrue('<td>4</td>' in file_text)
+                self.assertTrue('<td>6</td>' in file_text)
+                self.assertTrue('<td>9</td>' in file_text)
+
+    def test_tsv_builder(self):
+        seqs = DNAIterator(skbio.DNA(a, metadata=b)for a, b in (
+            ('A', {'id': 'seq01'}),
+            ('AA', {'id': 'seq02'}),
+            ('AAA', {'id': 'seq03'}),
+            ('AAAA', {'id': 'seq04'}),
+            ('AAAA', {'id': 'seq05'}),
+            ('AAA', {'id': 'seq06'}),
+            ('AA', {'id': 'seq07'}),
+            ('AAAAAAAAAA', {'id': 'seq08'})))
+
+        # Do the files exist?
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate_seqs(output_dir, seqs)
+
+            expected_stats_fp = os.path.join(
+                output_dir, 'descriptive_stats.tsv')
+            expected_summary_fp = os.path.join(
+                output_dir, 'seven_number_summary.tsv')
+            self.assertTrue(os.path.exists(expected_stats_fp))
+            self.assertTrue(os.path.exists(expected_summary_fp))
+
+            # Was data written to the files?
+            with open(expected_stats_fp) as stats_tsv:
+                tsv_reader = csv.reader(stats_tsv, dialect="excel-tab")
+                tsv_text = []
+                for row in tsv_reader:
+                    tsv_text.append(row)
+            self.assertEqual(['Statistic', 'Value'], tsv_text[0])
+            self.assertEqual(['count', '8'], tsv_text[1])
+
+            with open(expected_summary_fp) as summ_tsv:
+                tsv_reader = csv.reader(summ_tsv, dialect="excel-tab")
+                tsv_text = []
+                for row in tsv_reader:
+                    tsv_text.append(row)
+            self.assertEqual(['Quantile', 'Value'], tsv_text[0])
+            self.assertEqual(['0.02', '1.14'], tsv_text[1])
+
+            # Does link html generate correctly?
+            expected_index_fp = os.path.join(output_dir, 'index.html')
+            with open(expected_index_fp) as fh:
+                self.assertTrue('href="descriptive_stats.tsv"' in fh.read())
+
+            with open(expected_index_fp) as fh:
+                self.assertTrue(
+                    'href="seven_number_summary.tsv"' in fh.read())
 
 
 class SummarizeTests(TestCase):
