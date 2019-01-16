@@ -21,3 +21,7 @@ def relative_frequency(table: biom.Table) -> biom.Table:
     """
     table.norm(axis='sample', inplace=True)
     return table
+
+def transpose(table: biom.Table) -> biom.Table:
+    table = table.transpose()
+    return table

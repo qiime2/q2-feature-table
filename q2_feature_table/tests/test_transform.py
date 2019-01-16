@@ -12,7 +12,7 @@ import numpy as np
 import numpy.testing as npt
 from biom.table import Table
 
-from q2_feature_table import relative_frequency, presence_absence
+from q2_feature_table import relative_frequency, presence_absence, transpose
 
 
 class RelativeFrequencyTests(TestCase):
@@ -42,6 +42,18 @@ class PresenceAbsenceTests(TestCase):
         self.assertEqual(set(a.ids(axis='observation')), set(['O1', 'O2']))
         npt.assert_array_equal(a.matrix_data.toarray(),
                                np.array([[0, 1, 1], [1, 1, 1]]))
+
+class TransposeTests(TestCase):
+
+    def test_transpose(self):
+        t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                  ['O1', 'O2'],
+                  ['S1', 'S2', 'S3'])
+        a = transpose(t)
+        self.assertEqual(a.shape, (3,2))
+        self.assertEqual(set(a.ids(axis='sample')), set(['O1', 'O2']))
+        self.assertEqual(set(a.ids(axis='observation')), set(['S1', 'S2', 'S3']))
+
 
 
 if __name__ == "__main__":
