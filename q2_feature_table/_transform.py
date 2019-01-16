@@ -23,5 +23,5 @@ def relative_frequency(table: biom.Table) -> biom.Table:
     return table
 
 def transpose(table: biom.Table) -> biom.Table:
-    table = table.transpose()
-    return table
+    transposed_table = table.transpose()
+    return transposed_table
