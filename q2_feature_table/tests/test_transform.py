@@ -43,6 +43,7 @@ class PresenceAbsenceTests(TestCase):
         npt.assert_array_equal(a.matrix_data.toarray(),
                                np.array([[0, 1, 1], [1, 1, 1]]))
 
+
 class TransposeTests(TestCase):
 
     def test_transpose(self):
@@ -50,10 +51,10 @@ class TransposeTests(TestCase):
                   ['O1', 'O2'],
                   ['S1', 'S2', 'S3'])
         a = transpose(t)
-        self.assertEqual(a.shape, (3,2))
+        self.assertEqual(a.shape, (3, 2))
         self.assertEqual(set(a.ids(axis='sample')), set(['O1', 'O2']))
-        self.assertEqual(set(a.ids(axis='observation')), set(['S1', 'S2', 'S3']))
-
+        self.assertEqual(set(a.ids(axis='observation')),
+                         set(['S1', 'S2', 'S3']))
 
 
 if __name__ == "__main__":

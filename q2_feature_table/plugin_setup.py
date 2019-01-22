@@ -122,7 +122,7 @@ plugin.methods.register_function(
     inputs={'table': FeatureTable[Frequency]},
     parameters={},
     outputs=[('transposed_feature_table',
-               FeatureTable[Frequency])],
+             FeatureTable[Frequency])],
     input_descriptions={
         'table': 'The feature table to be transposed.'
     },
@@ -131,7 +131,8 @@ plugin.methods.register_function(
         'transposed_feature_table': ('The resulting transposed feature table.')
     },
     name='Transpose a feature table.',
-    description='Transpose the rows and columns (typically samples and features) of a feature table.'
+    description='Transpose the rows and columns '
+                '(typically samples and features) of a feature table.'
 
 )
 
