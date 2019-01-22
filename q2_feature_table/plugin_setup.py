@@ -131,7 +131,7 @@ plugin.methods.register_function(
         'transposed_feature_table': ('The resulting transposed feature table.')
     },
     name='Transpose a feature table.',
-    description='Transpose the rows and columns of a feature table.'
+    description='Transpose the rows and columns (typically samples and features) of a feature table.'
 
 )
 
