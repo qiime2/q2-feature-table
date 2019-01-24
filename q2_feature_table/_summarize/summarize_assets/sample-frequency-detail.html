@@ -1,6 +1,9 @@
 {% extends "tab-child.html" %}
 
 {% block head %}
+ <!--
+ Put the json script tag in the head
+-->
   <script src="./dist/vendor.bundle.js"></script>
 {% endblock %}
 
@@ -30,6 +33,4 @@
   <div class="row">
     <div id="table" class="col-lg-10 col-md-10 col-sm-12 col-xs-12 pull-right"></div>
   </div>
-  <script src='./dist/bundle.js'></script>
-  <script src='./data.jsonp'></script>
 {% endblock %}

@@ -1,8 +1,8 @@
-.PHONY: all lint test test-cov viz-summarize install dev clean distclean
+.PHONY: all lint test test-cov install dev clean distclean
 
 PYTHON ?= python
 
-all: viz-summarize
+all: ;
 
 lint:
 	q2lint
@@ -13,14 +13,6 @@ test: all
 
 test-cov: all
 	py.test --cov=q2_feature_table
-
-q2_feature_table/_summarize/summarize_assets/dist:
-	cd q2_feature_table/_summarize/summarize_assets && \
-	npm install && \
-	npm run build && \
-	cp licenses/* dist/
-
-viz-summarize: q2_feature_table/_summarize/summarize_assets/dist
 
 install: all
 	$(PYTHON) setup.py install
