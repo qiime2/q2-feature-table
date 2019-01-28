@@ -118,6 +118,25 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
+    function=q2_feature_table.transpose,
+    inputs={'table': FeatureTable[Frequency]},
+    parameters={},
+    outputs=[('transposed_feature_table',
+             FeatureTable[Frequency])],
+    input_descriptions={
+        'table': 'The feature table to be transposed.'
+    },
+    parameter_descriptions={},
+    output_descriptions={
+        'transposed_feature_table': ('The resulting transposed feature table.')
+    },
+    name='Transpose a feature table.',
+    description='Transpose the rows and columns '
+                '(typically samples and features) of a feature table.'
+
+)
+
+plugin.methods.register_function(
     function=q2_feature_table.group,
     inputs={'table': FeatureTable[Frequency]},
     parameters={
