@@ -21,6 +21,7 @@ import q2templates
 import skbio
 import qiime2
 import json
+from ._vega_spec import vega_spec
 
 _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
                        "ALIGNMENT_VIEW=Pairwise&PROGRAM=blastn&DATABASE"
@@ -146,31 +147,32 @@ def summarize(output_dir: str, table: biom.Table,
                  feature_frequency_template, overview_template]
     q2templates.render(templates, output_dir, context=context)
 
-    shutil.copytree(os.path.join(TEMPLATES, 'summarize_assets', 'dist'),
-                    os.path.join(output_dir, 'dist'))
 
-    with open(os.path.join(output_dir, 'data.json'), 'w') as fh:
-        json_values = []
-        if sample_metadata:
-            sample_metadata = sample_metadata.filter_ids(
-                sample_frequencies.index)
-            pandadataframe = sample_metadata.to_dataframe()
 
-            for i, row in pandadataframe.iterrows():
-                json_values.append({
-                'id': i,
-                'metadata': {j: row[j] for j in pandadataframe.columns},
-                'frequency': sample_frequencies[i]
-                })
-            fh.write(json.dumps(json_values))
+    json_values = []
+    if sample_metadata:
+        sample_metadata = sample_metadata.filter_ids(
+            sample_frequencies.index)
+        pandadataframe = sample_metadata.to_dataframe()
 
-        else:
-            for i in sample_frequencies:
-                # add ids
-                json_values.append({
-                'frequency': i
-                })
-            fh.write(json.dumps(json_values))
+        for i, row in pandadataframe.iterrows():
+            json_values.append({
+            'id': i,
+            'metadata': {j: row[j] for j in pandadataframe.columns},
+            'frequency': sample_frequencies[i]
+            })
+        json.dumps(json_values)
+        print(json_values)
+
+    else:
+        for i in sample_frequencies:
+            # add ids
+            json_values.append({
+            'frequency': i
+            })
+        json.dumps(json_values)
+    # pass data as json format to the vega_spec function
+    vega_spec(json_values)
 
 
 def _compute_descriptive_stats(lst: list):

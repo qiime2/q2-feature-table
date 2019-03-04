@@ -19,9 +19,3 @@ install: all
 
 dev: all
 	pip install -e .
-
-clean: distclean
-	rm -rf q2_feature_table/_summarize/summarize_assets/node_modules
-
-distclean:
-	rm -rf q2_feature_table/_summarize/summarize_assets/dist
