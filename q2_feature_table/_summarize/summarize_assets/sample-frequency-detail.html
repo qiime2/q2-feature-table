@@ -1,36 +1,43 @@
 {% extends "tab-child.html" %}
 
 {% block head %}
- <!--
- Put the json script tag in the head
--->
-  <script src="./dist/vendor.bundle.js"></script>
+  <script src="js/vega.min.js"></script>
+  <script src="js/vega-embed.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/spinkit.css">
 {% endblock %}
 
 {% block content %}
-  <div class="row">
-    <div class="form-group col-lg-2 col-md-2 col-sm-12 col-xs-12">
-      <label for="slider-value">Sampling depth:</label>
-      <input
-        id="slider-value"
-        class="form-control"
-        type="number"
-        min="0"
-      >
-      <div>(Zero implies no even sampling.)</div>
-      <br>
-      <input
-        id="slider"
-        type="range"
-        value="0"
-        min="0"
-        max="{{ max_count }}"
-      >
-      <br>
+    <div id="plot">
+      <div id="loading" class="spinner">
+        <div class="rect1"></div>
+        <div class="rect2"></div>
+        <div class="rect3"></div>
+        <div class="rect4"></div>
+        <div class="rect5"></div>
+      </div>
     </div>
-    <div id="histogram" class="col-lg-10 col-md-10 col-sm-12 col-xs-12"></div>
-  </div>
-  <div class="row">
-    <div id="table" class="col-lg-10 col-md-10 col-sm-12 col-xs-12 pull-right"></div>
-  </div>
+{% endblock %}
+
+{% block footer %}
+{% include 'js-error-handler.html' %}
+<script id="spec" type="application/json">{}</script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+  var spec = JSON.parse(document.getElementById('spec').innerHTML);
+
+  vegaEmbed('#plot', spec).then(function(result) {
+        result.view.logLevel(vega.Warn);
+        // Stash the view object in global namespace for debugging purposes.
+        // Check out https://vega.github.io/vega/docs/api/debugging/
+        // for more details.
+        window.v = result.view;
+      }).catch(function(error) {
+        // From 'js-error-handler.html'
+        handleErrors([error], $('#plot'));
+      });
+
+})
+
+</script>
 {% endblock %}
