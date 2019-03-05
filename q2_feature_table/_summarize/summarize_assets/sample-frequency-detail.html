@@ -20,7 +20,7 @@
 
 {% block footer %}
 {% include 'js-error-handler.html' %}
-<script id="spec" type="application/json">{}</script>
+<script id="spec" type="application/json">{{ vega_spec }}</script>
 <script type="text/javascript">
 
 $(document).ready(function() {

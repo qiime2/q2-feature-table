@@ -8,7 +8,30 @@ import q2templates
 
 # data is being passed dynamically
 
-def vega_spec(values):
+def vega_spec(table, sample_metadata, sample_summary, sample_frequencies):
+    values = []
+
+    if sample_metadata:
+        sample_metadata = sample_metadata.filter_ids(
+            sample_frequencies.index)
+        pandadataframe = sample_metadata.to_dataframe()
+
+        for i, row in pandadataframe.iterrows():
+            values.append({
+            'id': i,
+            'metadata': {j: row[j] for j in pandadataframe.columns},
+            'frequency': sample_frequencies[i]
+            })
+        json.dumps(values)
+
+    else:
+        for i in sample_frequencies:
+            # add ids
+            values.append({
+            'frequency': i
+            })
+        json.dumps(values)
+    # pass data as json format to the vega_spec function
     context = dict()
     spec = {
  "$schema": "https://vega.github.io/schema/vega/v4.json",
@@ -247,10 +270,11 @@ def vega_spec(values):
     }
   ]
 }
-
-    TEMPLATES = pkg_resources.resource_filename('q2_feature_table', 'vega')
-    context['vega_spec'] = json.dumps(spec)
-
-    copy_tree(os.path.join(TEMPLATES, 'vega'), output_dir)
-    index = os.path.join(TEMPLATES, 'index.html')
-    q2templates.render(index, output_dir, context=context)
+    vega_spec = json.dumps(spec)
+    return vega_spec
+    # TEMPLATES = pkg_resources.resource_filename('q2_feature_table', 'vega')
+    # context['vega_spec'] = json.dumps(spec)
+    #
+    # copy_tree(os.path.join(TEMPLATES, 'vega'), output_dir)
+    # index = os.path.join(TEMPLATES, 'index.html')
+    # q2templates.render(index, output_dir, context=context)

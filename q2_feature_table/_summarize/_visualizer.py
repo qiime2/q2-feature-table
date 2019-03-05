@@ -145,35 +145,9 @@ def summarize(output_dir: str, table: biom.Table,
                               'title': 'Feature Detail'}]})
     templates = [index, sample_frequency_template,
                  feature_frequency_template, overview_template]
+    context.update({'vega_spec': vega_spec(table, sample_metadata, sample_summary, sample_frequencies)})
     q2templates.util.copy_assets(os.path.join(TEMPLATES, 'summarize_assets', 'vega'), output_dir)
     q2templates.render(templates, output_dir, context=context)
-
-
-
-    # json_values = []
-    # if sample_metadata:
-    #     sample_metadata = sample_metadata.filter_ids(
-    #         sample_frequencies.index)
-    #     pandadataframe = sample_metadata.to_dataframe()
-    #
-    #     for i, row in pandadataframe.iterrows():
-    #         json_values.append({
-    #         'id': i,
-    #         'metadata': {j: row[j] for j in pandadataframe.columns},
-    #         'frequency': sample_frequencies[i]
-    #         })
-    #     json.dumps(json_values)
-    #     print(json_values)
-    #
-    # else:
-    #     for i in sample_frequencies:
-    #         # add ids
-    #         json_values.append({
-    #         'frequency': i
-    #         })
-    #     json.dumps(json_values)
-    # # pass data as json format to the vega_spec function
-    # vega_spec(json_values)
 
 
 def _compute_descriptive_stats(lst: list):
