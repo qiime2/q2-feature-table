@@ -63,6 +63,7 @@ def summarize(output_dir: str, table: biom.Table,
     sample_summary, sample_frequencies = _frequency_summary(
         table, axis='sample')
     if number_of_samples > 1:
+
         # Calculate the bin count, with a minimum of 5 bins
         IQR = sample_summary['3rd quartile'] - sample_summary['1st quartile']
         if IQR == 0.0:
@@ -145,7 +146,8 @@ def summarize(output_dir: str, table: biom.Table,
                               'title': 'Feature Detail'}]})
     templates = [index, sample_frequency_template,
                  feature_frequency_template, overview_template]
-    context.update({'vega_spec': vega_spec(table, sample_metadata, sample_summary, sample_frequencies)})
+    context.update({'frequencies_list': json.dumps(sample_frequencies.values.tolist())})
+    context.update({'vega_spec': vega_spec(sample_metadata, sample_frequencies)})
     q2templates.util.copy_assets(os.path.join(TEMPLATES, 'summarize_assets', 'vega'), output_dir)
     q2templates.render(templates, output_dir, context=context)
 

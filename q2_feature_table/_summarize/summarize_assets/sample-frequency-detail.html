@@ -7,7 +7,8 @@
 {% endblock %}
 
 {% block content %}
-    <div id="plot">
+    <!-- template it in using jinja -->
+    <div id="plot" style="width:600px; height:600px;">
       <div id="loading" class="spinner">
         <div class="rect1"></div>
         <div class="rect2"></div>
@@ -16,6 +17,17 @@
         <div class="rect5"></div>
       </div>
     </div>
+    <form id="sliderData">
+    <input id="slider1" type="range" min="0" max="10095" value="0">
+    <span>0</span>
+</form>
+<script>
+var values = {{ frequencies_list }};
+console.log(values);
+$('#slider1').mousemove(function() {
+    $('span').text(values[this.value]);
+});
+</script>
 {% endblock %}
 
 {% block footer %}

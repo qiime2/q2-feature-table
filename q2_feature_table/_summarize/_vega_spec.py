@@ -6,11 +6,8 @@ from distutils.dir_util import copy_tree
 import qiime2
 import q2templates
 
-# data is being passed dynamically
-
-def vega_spec(table, sample_metadata, sample_summary, sample_frequencies):
+def vega_spec(sample_metadata, sample_frequencies):
     values = []
-
     if sample_metadata:
         sample_metadata = sample_metadata.filter_ids(
             sample_frequencies.index)
@@ -22,7 +19,7 @@ def vega_spec(table, sample_metadata, sample_summary, sample_frequencies):
             'metadata': {j: row[j] for j in pandadataframe.columns},
             'frequency': sample_frequencies[i]
             })
-        json.dumps(values)
+
 
     else:
         for i in sample_frequencies:
@@ -30,7 +27,13 @@ def vega_spec(table, sample_metadata, sample_summary, sample_frequencies):
             values.append({
             'frequency': i
             })
-        json.dumps(values)
+
+    metadata_categories = list(pandadataframe.columns.values)
+    max_frequency = int(max(sample_frequencies.values.tolist()))
+
+
+
+
     # pass data as json format to the vega_spec function
     context = dict()
     spec = {
@@ -97,9 +100,7 @@ def vega_spec(table, sample_metadata, sample_summary, sample_frequencies):
     {
       "bind": {
         "input": "select",
-        "options": [
-          # input all metadata categories here
-        ]
+        "options": metadata_categories
       },
       "name": "category",
       "value": "Day"
@@ -107,22 +108,15 @@ def vega_spec(table, sample_metadata, sample_summary, sample_frequencies):
     {
       "bind": {
         "input": "range",
-        "max": 10095,
+        "max": max_frequency,
         "min": 0,
         "step": 1
       },
       "name": "SamplingDepth",
-      "value": 0,
-      "update": "SamplingDepthValue"
+      "value": 0
     },
+    # put an "update": "SamplingDepthValue" if you want to update it with something
     # add a JS event listener to update these two signals together
-    {
-      "name": "SamplingDepthValue",
-      "value": "",
-       "bind": {
-       "input": "number"
-      }
-    },
 
     {
       "name": "RotateLabels",
@@ -272,9 +266,3 @@ def vega_spec(table, sample_metadata, sample_summary, sample_frequencies):
 }
     vega_spec = json.dumps(spec)
     return vega_spec
-    # TEMPLATES = pkg_resources.resource_filename('q2_feature_table', 'vega')
-    # context['vega_spec'] = json.dumps(spec)
-    #
-    # copy_tree(os.path.join(TEMPLATES, 'vega'), output_dir)
-    # index = os.path.join(TEMPLATES, 'index.html')
-    # q2templates.render(index, output_dir, context=context)
