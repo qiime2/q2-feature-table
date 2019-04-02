@@ -36,7 +36,6 @@ def vega_spec(sample_metadata, sample_frequencies):
 
 
 
-    # pass data as json format to the vega_spec function
     context = dict()
     spec = {
  "$schema": "https://vega.github.io/schema/vega/v4.json",

@@ -18,15 +18,18 @@
       </div>
     </div>
 
-    <input id="slider1" type="range" min="0" max="10095" value="0">
-    <span>0</span>
+    <div>
+    <input id="slider1" type="range" min="0" max="34" value="0">
+    <span id="span1">0</span>
 <script>
 var values = {{ frequencies_list }};
+values.unshift(0);
 console.log(values);
 $('#slider1').mousemove(function() {
-    $('span').text(values[this.value]);
+    $('#span1').text(values[this.value]);
 });
 </script>
+</div>
 {% endblock %}
 
 {% block footer %}

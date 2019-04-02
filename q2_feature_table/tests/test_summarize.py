@@ -280,6 +280,10 @@ class SummarizeTests(TestCase):
             self.assertTrue(os.path.exists(sample_freq_fp))
             self.assertTrue('S1,1' in open(sample_freq_fp).read())
 
+    def test_vega_spec(self):
+        # test if metadata is converted correctly to vega compatible JSON
+        assert False
+
 
 
 if __name__ == "__main__":
