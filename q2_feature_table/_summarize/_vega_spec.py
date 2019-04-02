@@ -20,6 +20,9 @@ def vega_spec(sample_metadata, sample_frequencies):
             'frequency': sample_frequencies[i]
             })
 
+        metadata_categories = list(pandadataframe.columns.values)
+        max_frequency = int(max(sample_frequencies.values.tolist()))
+
 
     else:
         for i in sample_frequencies:
@@ -27,9 +30,8 @@ def vega_spec(sample_metadata, sample_frequencies):
             values.append({
             'frequency': i
             })
-
-    metadata_categories = list(pandadataframe.columns.values)
-    max_frequency = int(max(sample_frequencies.values.tolist()))
+        metadata_categories = []
+        max_frequency = 0
 
 
 
