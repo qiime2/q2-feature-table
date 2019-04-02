@@ -39,8 +39,9 @@ def vega_spec(sample_metadata, sample_frequencies):
     context = dict()
     spec = {
  "$schema": "https://vega.github.io/schema/vega/v4.json",
-  "width": 600,
-  "height": 400,
+ 'autosize': {'type': 'fit', 'contains': 'padding'},
+  "width": 800,
+  "height": 800,
   "padding": 5,
   "data": [
     {
@@ -101,7 +102,8 @@ def vega_spec(sample_metadata, sample_frequencies):
     {
       "bind": {
         "input": "select",
-        "options": metadata_categories
+        "options": metadata_categories,
+        "element": "#metadata-category"
       },
       "name": "category",
       "value": "Day"
@@ -109,6 +111,7 @@ def vega_spec(sample_metadata, sample_frequencies):
     {
       "bind": {
         "input": "range",
+        "element": "#sampling-depth-slider",
         "max": max_frequency,
         "min": 0,
         "step": 1
@@ -123,7 +126,8 @@ def vega_spec(sample_metadata, sample_frequencies):
       "name": "RotateLabels",
       "value": False,
       "bind" :{
-        "input": "checkbox"
+        "input": "checkbox",
+        "element": "#rotate-labels"
       }
     }
   ],
