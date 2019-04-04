@@ -469,7 +469,8 @@ plugin.visualizers.register_function(
         'method': 'Clustering methods exposed by seaborn (see http://seaborn.'
                   'pydata.org/generated/seaborn.clustermap.html#seaborn.clust'
                   'ermap for more detail).',
-        'cluster': 'Specify which axes to cluster.',
+        'cluster': 'Specify which axes to cluster. Option to cluster on '
+                   'samples, features, both or none',
         'color_scheme': 'The matplotlib colorscheme to generate the heatmap '
                         'with.',
     },
