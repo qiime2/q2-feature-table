@@ -128,8 +128,6 @@ def summarize(output_dir: str, table: biom.Table,
     feature_frequencies['# of Samples Observed In'] = \
         pd.Series(feature_qualitative_data).astype(int).apply('{:,}'.format)
     feature_frequencies_table = q2templates.df_to_html(feature_frequencies)
-    overview_template = os.path.join(
-        TEMPLATES, 'summarize_assets', 'overview.html')
     sample_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'sample-frequency-detail.html')
     feature_frequency_template = os.path.join(
@@ -138,14 +136,13 @@ def summarize(output_dir: str, table: biom.Table,
     context.update({'max_count': sample_frequencies.max(),
                     'feature_frequencies_table': feature_frequencies_table,
                     'feature_qualitative_data': feature_qualitative_data,
-                    'tabs': [{'url': 'overview.html',
+                    'tabs': [{'url': 'index.html',
                               'title': 'Overview'},
                              {'url': 'sample-frequency-detail.html',
                               'title': 'Interactive Sample Detail'},
                              {'url': 'feature-frequency-detail.html',
                               'title': 'Feature Detail'}]})
-    templates = [index, sample_frequency_template,
-                 feature_frequency_template, overview_template]
+    templates = [index, sample_frequency_template, feature_frequency_template]
     context.update({'frequencies_list': json.dumps(sorted(sample_frequencies.values.tolist()))})
     context.update({'vega_spec': vega_spec(sample_metadata, sample_frequencies)})
     q2templates.util.copy_assets(os.path.join(TEMPLATES, 'summarize_assets', 'vega'), output_dir)
