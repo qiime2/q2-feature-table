@@ -1,12 +1,8 @@
 import json
-import os
-import pkg_resources
-from distutils.dir_util import copy_tree
 
-import qiime2
-import q2templates
 
 def vega_spec(sample_metadata, sample_frequencies):
+
     values = []
     if sample_metadata:
         sample_metadata = sample_metadata.filter_ids(
@@ -15,34 +11,27 @@ def vega_spec(sample_metadata, sample_frequencies):
 
         for i, row in pandadataframe.iterrows():
             values.append({
-            'id': i,
-            'metadata': {j: row[j] for j in pandadataframe.columns},
-            'frequency': sample_frequencies[i]
+                'id': i,
+                'metadata': {j: row[j] for j in pandadataframe.columns},
+                'frequency': sample_frequencies[i]
             })
 
         metadata_categories = list(pandadataframe.columns.values)
         max_frequency = int(max(sample_frequencies.values.tolist()))
 
-
     else:
         for i in sample_frequencies:
             # add ids
             values.append({
-            'frequency': i
+                'frequency': i
             })
         metadata_categories = []
         max_frequency = 0
 
-
-
-
-    context = dict()
     spec = {
- "$schema": "https://vega.github.io/schema/vega/v4.json",
- 'autosize': {'type': 'fit', 'contains': 'padding'},
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
+  "autosize": {"contains": "content", "type": "fit-x", "resize":True},
   "width": 800,
-  "height": 800,
-  "padding": 5,
   "data": [
     {
       "transform": [
@@ -85,6 +74,9 @@ def vega_spec(sample_metadata, sample_frequencies):
     }
   ],
   "signals": [
+    {"name": "chartHeight", "value": 400},
+    {"name": "chartOffset", "value": 20},
+    {"name": "height", "update": "chartHeight + chartOffset"},
     {
       "name": "tooltip",
       "value": {},
@@ -119,153 +111,200 @@ def vega_spec(sample_metadata, sample_frequencies):
       "name": "SamplingDepth",
       "value": 0
     },
-    # put an "update": "SamplingDepthValue" if you want to update it with something
-    # add a JS event listener to update these two signals together
-
     {
-      "name": "RotateLabels",
+      "name": "rotateLabelsCheckbox",
       "value": False,
-      "bind" :{
+      "bind": {
         "input": "checkbox",
         "element": "#rotate-labels"
       }
-    }
-  ],
-  "scales": [
-    {
-      "name": "xscale",
-      "type": "band",
-      "domain": {
-        "data": "grouped",
-        "field": "groupbyCat",
-        "sort": True
-      },
-      "range": "width",
-      "padding": 0.1,
-      "round": True
     },
     {
-      "name": "yscale",
-      "domain": {
-        "fields": [
-          {"data": "grouped", "field":"count"}
-        ]
-      },
-      "nice": True,
-      "range": "height"
-    }
-  ],
-  "axes": [
-    {
-      "orient": "bottom",
-      "scale": "xscale",
-      "title": {
-        "signal": "category"
-      },
-      "labelAngle": 45,
-      "labelAlign":"left"
-    },
-    {
-      "orient": "left",
-      "scale": "yscale",
-      "title": "Number of Samples"
+      "name": "rotateLabels",
+      "update": "if(rotateLabelsCheckbox, 90, 0)"
     }
   ],
   "marks": [
     {
-      "type": "rect",
-      "from": {
-        "data": "grouped"
-      },
+      "description": "Control Chart",
+      "name": "controlChart",
+      "type": "group",
       "encode": {
         "enter": {
           "x": {
-            "scale": "xscale",
-            "field": "groupbyCat"
-          },
-          "width": {
-            "scale": "xscale",
-            "band": 1
+            "value": 0
           },
           "y": {
-            "scale": "yscale",
-            "field": "count"
+            "signal": "chartOffset"
           },
-          "y2": {
-            "scale": "yscale",
-            "value": 0
-          }
-        },
-        "update": {
-          "fill": {
-            "value": "#D3D3D3"
+          "width": {
+            "value": 200
+          },
+          "height": {
+            "signal": "chartHeight"
           }
         }
-      }
-    },
-    {
-      "type": "rect",
-      "from": {
-        "data": "grouped2"
       },
-      "encode": {
-        "enter": {
-          "x": {
-            "scale": "xscale",
-            "field": "groupbyCat"
+      "marks": [
+        {
+          "type": "rect",
+          "from": {
+            "data": "grouped"
           },
-          "width": {
-            "scale": "xscale",
-            "band": 1
-          },
-          "y": {
-            "scale": "yscale",
-            "field": "count"
-          },
-          "y2": {
-            "scale": "yscale",
-            "value": 0
+          "encode": {
+            "enter": {
+              "x": {
+                "scale": "xscale",
+                "field": "groupbyCat"
+              },
+              "width": {
+                "scale": "xscale",
+                "band": 1
+              },
+              "y": {
+                "scale": "yscale",
+                "field": "count"
+              },
+              "y2": {
+                "scale": "yscale",
+                "value": 0
+              }
+            },
+            "update": {
+              "fill": {
+                "value": "#D3D3D3"
+              }
+            }
           }
         },
-        "update": {
-           "y": {
-            "scale": "yscale",
-            "field": "count"
+        {
+          "type": "rect",
+          "from": {
+            "data": "grouped2"
           },
-          "y2": {
-            "scale": "yscale",
-            "value": 0
-          },
-          "fill": {
-            "value": "steelBlue"
+          "encode": {
+            "enter": {
+              "x": {
+                "scale": "xscale",
+                "field": "groupbyCat"
+              },
+              "width": {
+                "scale": "xscale",
+                "band": 1
+              },
+              "y": {
+                "scale": "yscale",
+                "field": "count"
+              },
+              "y2": {
+                "scale": "yscale",
+                "value": 0
+              }
+            },
+            "update": {
+              "y": {
+                "scale": "yscale",
+                "field": "count"
+              },
+              "y2": {
+                "scale": "yscale",
+                "value": 0
+              },
+              "fill": {
+                "value": "steelBlue"
+              }
+            },
+            "hover": {
+              "fill": {
+                "value": "red"
+              }
+            }
           }
         },
-        "hover": {
-          "fill": {
-            "value": "red"
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "align": {
+                "value": "center"
+              },
+              "baseline": {
+                "value": "top"
+              },
+              "fill": {
+                "value": "#333"
+              }
+            },
+            "update": {
+              "x": {
+                "scale": "xscale",
+                "signal": "tooltip.groupbyCat",
+                "band": 0.5
+              },
+              "y": {
+                "scale": "yscale",
+                "signal": "tooltip.count",
+                "offset": -12
+              },
+              "text": {
+                "signal": "tooltip.count"
+              },
+              "fillOpacity": [
+                {
+                  "test": "datum === tooltip",
+                  "value": 0
+                },
+                {
+                  "value": 1
+                }
+              ]
+            }
           }
-
         }
-      }
-    },
-    {
-      "type": "text",
-      "encode": {
-        "enter": {
-          "align": {"value": "center"},
-          "baseline": {"value": "top"},
-          "fill": {"value": "#333"}
+      ],
+      "scales": [
+        {
+          "name": "xscale",
+          "type": "band",
+          "domain": {
+            "data": "grouped",
+            "field": "groupbyCat",
+            "sort": True
+          },
+          "range": "width",
+          "padding": 0.1,
+          "round": True
         },
-        "update": {
-          "x": {"scale": "xscale", "signal": "tooltip.groupbyCat", "band": 0.5},
-          "y": {"scale": "yscale", "signal": "tooltip.count", "offset": -12},
-          "text": {"signal": "tooltip.count"},
-          "fillOpacity": [
-            {"test": "datum === tooltip", "value": 0},
-            {"value": 1}
-          ]
+        {
+          "name": "yscale",
+          "domain": {
+            "fields": [
+              {
+                "data": "grouped",
+                "field": "count"
+              }
+            ]
+          },
+          "nice": True,
+          "range": [{"signal": "chartHeight"}, 0]
         }
-      }
+      ],
+      "axes": [
+        {
+          "orient": "bottom",
+          "scale": "xscale",
+          "title": {
+            "signal": "category"
+          },
+          "labelAngle": {"signal": "rotateLabels"},
+          "labelAlign": "left"
+        },
+        {
+          "orient": "left",
+          "scale": "yscale",
+          "title": "Number of Samples"
+        }
+      ]
     }
   ]
 }
