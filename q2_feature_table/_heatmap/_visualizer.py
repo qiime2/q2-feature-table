@@ -29,7 +29,7 @@ heatmap_choices = {
                'sokalsneath', 'sqeuclidean', 'yule'},
     'method': {'single', 'complete', 'average', 'weighted', 'centroid',
                'median', 'ward'},
-    'cluster': {'samples', 'features', 'both'},
+    'cluster': {'samples', 'features', 'both', 'none'},
     'color_scheme': {'Accent', 'Accent_r', 'Blues', 'Blues_r', 'BrBG',
                      'BrBG_r', 'BuGn', 'BuGn_r', 'BuPu', 'BuPu_r', 'CMRmap',
                      'CMRmap_r', 'Dark2', 'Dark2_r', 'GnBu', 'GnBu_r',
@@ -71,7 +71,8 @@ heatmap_choices = {
 
 _clustering_map = {'both': {'col_cluster': True, 'row_cluster': True},
                    'samples': {'col_cluster': False, 'row_cluster': True},
-                   'features': {'col_cluster': True, 'row_cluster': False}}
+                   'features': {'col_cluster': True, 'row_cluster': False},
+                   'none': {'col_cluster': False, 'row_cluster': False}}
 
 
 def _munge_metadata(metadata, table, cluster):

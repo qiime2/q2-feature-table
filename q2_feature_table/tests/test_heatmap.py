@@ -100,6 +100,15 @@ class TestHeatmap(unittest.TestCase):
 
         self.assertBasicVizValidity(self.output_dir)
 
+    def test_no_cluster(self):
+        md = qiime2.CategoricalMetadataColumn(
+            pd.Series(['milo', 'summer', 'russ'], name='pet',
+                      index=pd.Index(['S1', 'S2', 'S3'], name='id')))
+
+        heatmap(self.output_dir, self.table, metadata=md, cluster='none')
+
+        self.assertBasicVizValidity(self.output_dir)
+
 
 class TestPrivateHelpers(unittest.TestCase):
     def setUp(self):
