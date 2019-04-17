@@ -142,9 +142,15 @@ def summarize(output_dir: str, table: biom.Table,
                               'title': 'Interactive Sample Detail'},
                              {'url': 'feature-frequency-detail.html',
                               'title': 'Feature Detail'}]})
+
+    # Create a JSON object containing the Sample Frequencies to build the
+    # table in sample-frequency-detail.html
+    sample_frequencies_json = json.dumps(sample_frequencies.to_dict())
+
     templates = [index, sample_frequency_template, feature_frequency_template]
     context.update({'frequencies_list': json.dumps(sorted(sample_frequencies.values.tolist()))})
     context.update({'vega_spec': vega_spec(sample_metadata, sample_frequencies)})
+    context.update({'sample_frequencies_json': sample_frequencies_json})
     q2templates.util.copy_assets(os.path.join(TEMPLATES, 'summarize_assets', 'vega'), output_dir)
     q2templates.render(templates, output_dir, context=context)
 
