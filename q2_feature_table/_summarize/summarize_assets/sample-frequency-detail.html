@@ -32,8 +32,9 @@
     </div>
 
     <div class="row">
-      <div class="col-lg-12" id="sampling-depth-slider">
-        Sampling Depth Slider
+      <div class="col-lg-8" id="sampling-depth-slider"></div>
+      <div class="col-lg-4" id="sampling-depth-input-box">
+        <input id="sliderNum" type="number" value="0" min="0" max="10095" oninput="rangeSlider.value=sliderNum.value" />
       </div>
     </div>
 
@@ -66,13 +67,6 @@
 
 <script>
   var slider = document.getElementById("sampling-depth-slider");
-  var box = document.getElementById("text_field");
-  console.log(slider);
-  console.log(box);
-
-  slider.onchange = function() {
-    box.value = slider.value;
-  };
 </script>
 
 <script id="table_data" type"application/json">
@@ -143,6 +137,14 @@
       .children(".vega-bind-name")
       .replaceWith("<label> Metadata Category &nbsp;</label>");
     category.children("select").addClass("form-control");
+
+    var sampling_depth_slider = $("#sampling-depth-slider .vega-bind");
+    $(sampling_depth_slider).find('label').remove();
+    $(sampling_depth_slider).find('input').attr('id', 'rangeSlider');
+    $(sampling_depth_slider).find('input').attr('oninput', 'rangeSlider.value=sliderNum.value');
+    sampling_depth_slider
+      .children(".vega-bind-name")
+      .replaceWith("<label> Sampling Depth &nbsp; </label>");
 
     var rotateLabels = $("#rotate-labels .vega-bind");
     rotateLabels
