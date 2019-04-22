@@ -8,8 +8,6 @@
 {% if vega_spec is defined %}
 <div class="row">
   <div class="col-lg-8">
-    <h3>Some Title</h3>
-
     <div id="plot">
       <div id="loading" class="spinner">
         <div class="rect1"></div>
@@ -34,88 +32,17 @@
 
     <div class="row">
       <div class="col-lg-12" id="sampling-depth-slider"></div>
-      </div>
-
-
-      <div class="row">
-        <div class="col-lg-12" id="text_field">To be updated text!</div>
-      </div>
-
-      <div class="row">
-        <div class="col-lg-12" id="rotate-labels">rotate labels</div>
-      </div>
-
     </div>
 
+    <div class="row">
+      <div class="col-lg-12" id="text_field">To be updated text!</div>
+    </div>
 
+    <div class="row">
+      <div class="col-lg-12" id="rotate-labels">rotate labels</div>
+    </div>
   </div>
-  {% endif %}
-
-  <div class="row">
-    <div class="col-lg-8">
-  <table id="feature_table" class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">Sample ID</th>
-        <th scope="col">Feature Count</th>
-      </tr>
-    </thead>
-    <tbody id='table-body'>
-    </tbody>
-  </table>
-
-  </div>
-  </div>
-
-
-
-<script id="table-data" type="application/json">
-  {{ sample_frequencies_json }}
-</script>
-
-<script type="text/javascript">
-
-  var table_data = JSON.parse(document.getElementById('table-data').innerHTML);
-  // get object keys and store them in an ascending order based on the key value
-  sorted_samples = Object.keys(table_data).sort(function(a,b){return table_data[a]-table_data[b]})
-
-  var table_body = document.getElementById('table-body');
-  sorted_samples.forEach(function(element) {
-    var row = table_body.insertRow(0);
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    cell1.innerHTML = element;
-    cell2.innerHTML = table_data[element];
-});
-
-
-</script>
-
-<script>
-
-function updateFeatureTable(val){
-  // TODO
-}
-
-</script>
-
-<script>
-function updateRangeSliderValue(val){
-  var slider = document.getElementById('rangeSlider');
-  slider.value = val;
-  slider.dispatchEvent(new Event('change'));
-}
-
-function updateSliderNum(val){
-  var num = document.getElementById('sliderNum');
-  num.value = val;
-
-}
-</script>
-
-{% endblock %}
-
-{% block footer %}
+</div>
 
 {% include 'js-error-handler.html' %}
 <script id="spec" type="application/json">
@@ -161,22 +88,113 @@ function updateSliderNum(val){
     category.children("select").addClass("form-control");
 
     var sampling_depth_slider = $("#sampling-depth-slider .vega-bind");
-    $(sampling_depth_slider).find('label').remove();
-    $(sampling_depth_slider).find('input').attr('id', 'rangeSlider');
-    $(sampling_depth_slider).find('input').attr('oninput', 'updateSliderNum(this.value);');
-    $(sampling_depth_slider).prepend("<label> Sampling Depth &nbsp; </label> <br>");
-    $(sampling_depth_slider).append('<br> <input id="sliderNum" class="form-control" type="number" value="0" min="0" oninput="updateRangeSliderValue(this.value);" />');
-    $(sampling_depth_slider).append('(Zero implies no even sampling.)');
-    sampling_depth_slider
-      .children(".vega-bind-name")
-      .replaceWith("");
+    $(sampling_depth_slider)
+      .find("label")
+      .remove();
+    $(sampling_depth_slider)
+      .find("input")
+      .attr("id", "rangeSlider");
+    $(sampling_depth_slider)
+      .find("input")
+      .attr("oninput", "updateSliderNum(this.value);highlighFeatureTable(this.value);");
+    $(sampling_depth_slider).prepend(
+      "<label> Sampling Depth &nbsp; </label> <br>"
+    );
+    $(sampling_depth_slider).append(
+      '<br> <input id="sliderNum" class="form-control" type="number" value="0" min="0" oninput="updateRangeSliderValue(this.value);;highlighFeatureTable(this.value);" />'
+    );
+    $(sampling_depth_slider).append("(Zero implies no even sampling.)");
+    sampling_depth_slider.children(".vega-bind-name").replaceWith("");
 
     var rotateLabels = $("#rotate-labels .vega-bind");
     rotateLabels
       .children(".vega-bind-name")
       .replaceWith("<label> Rotate Labels &nbsp;</label>");
     rotateLabels.children("checkbox").addClass("form-control");
+  });
+</script>
+{% else %}
+<div class="row">
+  <div class="col-lg-4">
+    <div class="row">
+      <div class="col-lg-12" id="sampling-depth-slider">
+        <label> Sampling Depth &nbsp; </label> <br>
+        <input id="rangeSlider" class="form-control" type="range" min="0" max="{{max_count}}" value="0" class="slider" oninput="updateSliderNum(this.value);highlighFeatureTable(this.value);"> <br>
+        <input id="sliderNum" class="form-control" type="number" value="0" min="0" oninput="updateRangeSliderValue(this.value);highlighFeatureTable(this.value);" />
+        (Zero implies no even sampling.)
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+{% endif %}
+
+<div class="row">
+  <div class="col-lg-8">
+    <table id="feature-table" class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Sample ID</th>
+          <th scope="col">Feature Count</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<script id="table-data" type="application/json">
+  {{ sample_frequencies_json }}
+</script>
+
+<script type="text/javascript">
+  var table_data = JSON.parse(document.getElementById("table-data").innerHTML);
+  // get object keys and store them in an ascending order based on the key value
+  sorted_samples = Object.keys(table_data).sort(function(a, b) {
+    return table_data[a] - table_data[b];
+  });
+
+  var table_body = document.getElementById("table-body");
+  sorted_samples.forEach(function(element) {
+    var row = table_body.insertRow(0);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    cell1.innerHTML = element;
+    cell2.innerHTML = table_data[element];
 
   });
 </script>
+
+<script>
+function highlighFeatureTable(val) {
+  var table = document.getElementById("feature-table");
+  for (let i = 0; row = table.rows[i]; i++) {
+
+      if (Number(row.cells[1].innerHTML) < val){
+        row.className="danger";
+      }
+      else{
+        row.className="";
+      }
+    }
+
+  }
+</script>
+
+<script>
+  function updateRangeSliderValue(val) {
+    var slider = document.getElementById("rangeSlider");
+    slider.value = val;
+    slider.dispatchEvent(new Event("change"));
+  }
+
+  function updateSliderNum(val) {
+    var num = document.getElementById("sliderNum");
+    num.value = val;
+  }
+</script>
+
+{% endblock %} {% block footer %}
 {% endblock %}
