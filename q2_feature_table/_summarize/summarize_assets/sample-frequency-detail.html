@@ -57,10 +57,10 @@
     <thead>
       <tr>
         <th scope="col">Sample ID</th>
-        <th scope="col">Sequence Count</th>
+        <th scope="col">Feature Count</th>
       </tr>
     </thead>
-    <tbody id='table_body'>
+    <tbody id='table-body'>
     </tbody>
   </table>
 
@@ -69,17 +69,17 @@
 
 
 
-<script id="table_data" type="application/json">
+<script id="table-data" type="application/json">
   {{ sample_frequencies_json }}
 </script>
 
 <script type="text/javascript">
 
-  var table_data = JSON.parse(document.getElementById('table_data').innerHTML);
+  var table_data = JSON.parse(document.getElementById('table-data').innerHTML);
   // get object keys and store them in an ascending order based on the key value
   sorted_samples = Object.keys(table_data).sort(function(a,b){return table_data[a]-table_data[b]})
 
-  var table_body = document.getElementById('table_body');
+  var table_body = document.getElementById('table-body');
   sorted_samples.forEach(function(element) {
     var row = table_body.insertRow(0);
     var cell1 = row.insertCell(0);
@@ -165,7 +165,7 @@ function updateSliderNum(val){
     $(sampling_depth_slider).find('input').attr('id', 'rangeSlider');
     $(sampling_depth_slider).find('input').attr('oninput', 'updateSliderNum(this.value);');
     $(sampling_depth_slider).prepend("<label> Sampling Depth &nbsp; </label> <br>");
-    $(sampling_depth_slider).append('<br> <input id="sliderNum" class="form-control" type="number" value="0" min="0" max="10095" oninput="updateRangeSliderValue(this.value);" />');
+    $(sampling_depth_slider).append('<br> <input id="sliderNum" class="form-control" type="number" value="0" min="0" oninput="updateRangeSliderValue(this.value);" />');
     $(sampling_depth_slider).append('(Zero implies no even sampling.)');
     sampling_depth_slider
       .children(".vega-bind-name")

@@ -19,3 +19,7 @@ install: all
 
 dev: all
 	pip install -e .
+
+clean: distclean
+
+distclean: ;

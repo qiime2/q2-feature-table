@@ -15,20 +15,20 @@ def vega_spec(sample_metadata, sample_frequencies):
     if sample_metadata:
         sample_metadata = sample_metadata.filter_ids(
             sample_frequencies.index)
-        pandadataframe = sample_metadata.to_dataframe()
+        df = sample_metadata.to_dataframe()
 
-        for i, row in pandadataframe.iterrows():
+        for i, row in df.iterrows():
             values.append({
                 'id': i,
-                'metadata': {j: row[j] for j in pandadataframe.columns},
+                'metadata': {j: row[j] for j in df.columns},
                 'frequency': sample_frequencies[i]
             })
 
-        metadata_categories = list(pandadataframe.columns.values)
+        metadata_categories = list(df.columns.values)
         max_frequency = int(max(sample_frequencies.values.tolist()))
 
     else:
-        for i in sample_frequencies:
+        for freq in sample_frequencies:
             # add ids
             values.append({
                 'frequency': i
@@ -77,7 +77,7 @@ def vega_spec(sample_metadata, sample_frequencies):
           ]
         }
       ],
-      "name": "grouped2",
+      "name": "groupedAndRetained",
       "source": "table"
     }
   ],
@@ -134,8 +134,8 @@ def vega_spec(sample_metadata, sample_frequencies):
   ],
   "marks": [
     {
-      "description": "Control Chart",
-      "name": "controlChart",
+      "description": "Interactive rarefaction summary plot",
+      "name": "rarefactionplot",
       "type": "group",
       "encode": {
         "enter": {
@@ -188,7 +188,7 @@ def vega_spec(sample_metadata, sample_frequencies):
         {
           "type": "rect",
           "from": {
-            "data": "grouped2"
+            "data": "groupedAndRetained"
           },
           "encode": {
             "enter": {
