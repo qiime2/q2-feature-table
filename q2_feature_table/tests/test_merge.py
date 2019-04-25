@@ -286,15 +286,20 @@ class MergeFeatureSequenceTests(unittest.TestCase):
 class MergeFeatureTaxonomyTests(unittest.TestCase):
     # More extensive testing is performed in MergeFeatureDataTests, which
     # tests the shared private API.
+    # This tests a specifically FeatureData[Taxonomy]-like dataframe
+    # and ensures delivery in valid format (Taxon column first)
 
     def test_merge_taxa(self):
         # this test calls the public API directly
-        d1 = pd.Series(['a;b;c;d', 'a;b;c;e'], index=['f1', 'f2'])
-        d2 = pd.Series(['a;b;c;d', 'a;b;c;e'], index=['f1', 'f3'])
+        d1 = pd.DataFrame([('a;b;c;d', '1.0'), ('a;b;c;e', '1.0')],
+                          index=['f1', 'f2'], columns=['Taxon', 'Confidence'])
+        d2 = pd.DataFrame([('1.0', 'a;b;c;d'), ('1.0', 'a;b;c;e')],
+                          index=['f1', 'f3'], columns=['Confidence', 'Taxon'])
         obs = merge_taxa([d1, d2])
-        exp = pd.Series(['a;b;c;d', 'a;b;c;e', 'a;b;c;e'],
-                        index=['f1', 'f2', 'f3'])
-        pdt.assert_series_equal(obs, exp)
+        exp = pd.DataFrame(
+            [('a;b;c;d', '1.0'), ('a;b;c;e', '1.0'), ('a;b;c;e', '1.0')],
+            index=['f1', 'f2', 'f3'], columns=['Taxon', 'Confidence'])
+        pdt.assert_frame_equal(obs, exp)
 
 
 if __name__ == "__main__":
