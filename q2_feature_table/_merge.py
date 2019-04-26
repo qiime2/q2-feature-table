@@ -54,7 +54,7 @@ def merge(tables: biom.Table,
                          (overlap_method, ', '.join(overlap_methods())))
 
 
-def _merge_feature_data(data: pd.Series) -> pd.Series:
+def _merge_feature_data(data):
     data = iter(data)
     result = next(data)  # There is always at least 1
     for d in data:
@@ -66,5 +66,11 @@ def merge_seqs(data: pd.Series) -> pd.Series:
     return _merge_feature_data(data)
 
 
-def merge_taxa(data: pd.Series) -> pd.Series:
-    return _merge_feature_data(data)
+def merge_taxa(data: pd.DataFrame) -> pd.DataFrame:
+    data = _merge_feature_data(data)
+    # merge orders columns alphabetically; Taxon must be first header column
+    # as defined here: https://github.com/qiime2/q2-types/blob/
+    # 067d83e2aefe98674433e95162336fb5b9d96474/q2_types/feature_data/
+    # _format.py#L97
+    data = data[data.columns.drop('Taxon').insert(0, 'Taxon')]
+    return data
