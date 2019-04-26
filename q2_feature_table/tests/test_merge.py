@@ -291,13 +291,13 @@ class MergeFeatureTaxonomyTests(unittest.TestCase):
 
     def test_merge_taxa(self):
         # this test calls the public API directly
-        d1 = pd.DataFrame([('a;b;c;d', '1.0'), ('a;b;c;e', '1.0')],
+        d1 = pd.DataFrame([('a;b;c;d', '1.0'), ('a;b;c;f', '0.7')],
                           index=['f1', 'f2'], columns=['Taxon', 'Confidence'])
-        d2 = pd.DataFrame([('1.0', 'a;b;c;d'), ('1.0', 'a;b;c;e')],
+        d2 = pd.DataFrame([('1.0', 'a;b;c;g'), ('1.0', 'a;b;c;e')],
                           index=['f1', 'f3'], columns=['Confidence', 'Taxon'])
         obs = merge_taxa([d1, d2])
         exp = pd.DataFrame(
-            [('a;b;c;d', '1.0'), ('a;b;c;e', '1.0'), ('a;b;c;e', '1.0')],
+            [('a;b;c;d', '1.0'), ('a;b;c;f', '0.7'), ('a;b;c;e', '1.0')],
             index=['f1', 'f2', 'f3'], columns=['Taxon', 'Confidence'])
         pdt.assert_frame_equal(obs, exp)
 
