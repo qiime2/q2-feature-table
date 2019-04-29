@@ -37,10 +37,6 @@
     <div class="row">
       <div class="col-lg-12" id="text_field">To be updated text!</div>
     </div>
-
-    <div class="row">
-      <div class="col-lg-12" id="rotate-labels">rotate labels</div>
-    </div>
   </div>
 </div>
 
@@ -150,10 +146,10 @@
 </script>
 
 <script type="text/javascript">
-  var table_data = JSON.parse(document.getElementById("table-data").innerHTML);
+  var sample_frequencies = JSON.parse(document.getElementById("table-data").innerHTML);
   // get object keys and store them in an ascending order based on the key value
-  sorted_samples = Object.keys(table_data).sort(function(a, b) {
-    return table_data[a] - table_data[b];
+  sorted_samples = Object.keys(sample_frequencies).sort(function(a, b) {
+    return sample_frequencies[a] - sample_frequencies[b];
   });
 
   var table_body = document.getElementById("table-body");
@@ -162,7 +158,7 @@
     var cell1 = row.insertCell(0);
     var cell2 = row.insertCell(1);
     cell1.innerHTML = element;
-    cell2.innerHTML = table_data[element];
+    cell2.innerHTML = sample_frequencies[element];
 
   });
 </script>
@@ -194,6 +190,15 @@ function highlighFeatureTable(val) {
     var num = document.getElementById("sliderNum");
     num.value = val;
   }
+</script>
+
+<script>
+var retainedSamples = 0;
+var retainedFeatures = 0;
+function update_text(val){
+
+
+}
 </script>
 
 {% endblock %} {% block footer %}

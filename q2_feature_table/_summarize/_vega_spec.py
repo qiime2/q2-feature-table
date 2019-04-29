@@ -44,7 +44,7 @@ def vega_spec(sample_metadata, sample_frequencies):
     {
       "transform": [
         {
-          "as": "groupbyCat",
+          "as": "selectedCategory",
           "expr": "datum.metadata[category]",
           "type": "formula"
         }
@@ -57,27 +57,27 @@ def vega_spec(sample_metadata, sample_frequencies):
         {
           "type": "aggregate",
           "groupby": [
-            "groupbyCat"
+            "selectedCategory"
           ]
         }
       ],
-      "name": "grouped",
+      "name": "groupedBySelectedCategory",
       "source": "table"
     },
     {
       "transform": [
         {
-          "expr": "datum.frequency >= SamplingDepth",
+          "expr": "datum.frequency >= samplingDepth",
           "type": "filter"
         },
         {
           "type": "aggregate",
           "groupby": [
-            "groupbyCat"
+            "selectedCategory"
           ]
         }
       ],
-      "name": "groupedAndRetained",
+      "name": "groupedBySelectedCategoryAndRetained",
       "source": "table"
     }
   ],
@@ -116,20 +116,8 @@ def vega_spec(sample_metadata, sample_frequencies):
         "min": 0,
         "step": 1
       },
-      "name": "SamplingDepth",
+      "name": "samplingDepth",
       "value": 0
-    },
-    {
-      "name": "rotateLabelsCheckbox",
-      "value": False,
-      "bind": {
-        "input": "checkbox",
-        "element": "#rotate-labels"
-      }
-    },
-    {
-      "name": "rotateLabels",
-      "update": "if(rotateLabelsCheckbox, 90, 0)"
     }
   ],
   "marks": [
@@ -157,13 +145,13 @@ def vega_spec(sample_metadata, sample_frequencies):
         {
           "type": "rect",
           "from": {
-            "data": "grouped"
+            "data": "groupedBySelectedCategory"
           },
           "encode": {
             "enter": {
               "x": {
                 "scale": "xscale",
-                "field": "groupbyCat"
+                "field": "selectedCategory"
               },
               "width": {
                 "scale": "xscale",
@@ -179,6 +167,9 @@ def vega_spec(sample_metadata, sample_frequencies):
               }
             },
             "update": {
+              "tooltip": {
+                "signal": "{\"title\": datum.selectedCategory, \"Number of Samples Dropped\": datum.count}"
+              },
               "fill": {
                 "value": "#D3D3D3"
               }
@@ -188,13 +179,13 @@ def vega_spec(sample_metadata, sample_frequencies):
         {
           "type": "rect",
           "from": {
-            "data": "groupedAndRetained"
+            "data": "groupedBySelectedCategoryAndRetained"
           },
           "encode": {
             "enter": {
               "x": {
                 "scale": "xscale",
-                "field": "groupbyCat"
+                "field": "selectedCategory"
               },
               "width": {
                 "scale": "xscale",
@@ -219,7 +210,7 @@ def vega_spec(sample_metadata, sample_frequencies):
                 "value": 0
               },
               "fill": {
-                "value": "steelBlue"
+                "value": "#4682B4"
               }
             },
             "hover": {
@@ -240,13 +231,16 @@ def vega_spec(sample_metadata, sample_frequencies):
                 "value": "top"
               },
               "fill": {
-                "value": "#333"
+                "value": "#000000"
               }
             },
             "update": {
+              "tooltip": {
+                "signal": "{\"title\": datum.selectedCategory, \"Number of Samples Retained\": datum.count}"
+              },
               "x": {
                 "scale": "xscale",
-                "signal": "tooltip.groupbyCat",
+                "signal": "tooltip.selectedCategory",
                 "band": 0.5
               },
               "y": {
@@ -275,8 +269,8 @@ def vega_spec(sample_metadata, sample_frequencies):
           "name": "xscale",
           "type": "band",
           "domain": {
-            "data": "grouped",
-            "field": "groupbyCat",
+            "data": "groupedBySelectedCategory",
+            "field": "selectedCategory",
             "sort": True
           },
           "range": "width",
@@ -288,25 +282,30 @@ def vega_spec(sample_metadata, sample_frequencies):
           "domain": {
             "fields": [
               {
-                "data": "grouped",
+                "data": "groupedBySelectedCategory",
                 "field": "count"
               }
             ]
           },
           "nice": True,
-          "range": [{"signal": "chartHeight"}, 0]
+          "range": [
+            {
+              "signal": "chartHeight"
+            },
+            0
+          ]
         }
       ],
-      "axes": [
+     "axes": [
         {
           "orient": "bottom",
           "scale": "xscale",
           "title": {
             "signal": "category"
           },
-          "labelAngle": {"signal": "rotateLabels"},
-          "labelAlign": "left"
-        },
+          "labelAngle": 90,
+          "labelAlign": "left",
+          "labelBaseline": "middle"   },
         {
           "orient": "left",
           "scale": "yscale",
