@@ -148,11 +148,16 @@ def summarize(output_dir: str, table: biom.Table,
     sample_frequencies_json = sample_frequencies.to_json()
 
     templates = [index, sample_frequency_template, feature_frequency_template]
-    context.update({'frequencies_list': json.dumps(sorted(sample_frequencies.values.tolist()))})
+    context.update({'frequencies_list':
+                    json.dumps(sorted(sample_frequencies.values.tolist()))})
     if sample_metadata is not None:
-        context.update({'vega_spec': vega_spec(sample_metadata, sample_frequencies)})
+        context.update({'vega_spec':
+                        vega_spec(sample_metadata, sample_frequencies)})
     context.update({'sample_frequencies_json': sample_frequencies_json})
-    q2templates.util.copy_assets(os.path.join(TEMPLATES, 'summarize_assets', 'vega'), output_dir)
+    q2templates.util.copy_assets(os.path.join(TEMPLATES,
+                                              'summarize_assets',
+                                              'vega'),
+                                 output_dir)
     q2templates.render(templates, output_dir, context=context)
 
 

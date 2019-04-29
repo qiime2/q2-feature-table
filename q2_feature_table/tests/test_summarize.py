@@ -186,7 +186,6 @@ class SummarizeTests(TestCase):
             self.assertTrue(os.path.exists(sample_freq_fp))
             self.assertTrue('S1,1453' in open(sample_freq_fp).read())
 
-
     def test_frequency_ranges_are_zero(self):
         table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
                            ['O1', 'O2'],
@@ -207,7 +206,6 @@ class SummarizeTests(TestCase):
                                           'sample-frequency-detail.csv')
             self.assertTrue(os.path.exists(sample_freq_fp))
             self.assertTrue('S1,50' in open(sample_freq_fp).read())
-
 
     def test_one_sample(self):
         sample_frequencies_pdf_fn = 'sample-frequencies.pdf'
@@ -283,7 +281,6 @@ class SummarizeTests(TestCase):
     def test_vega_spec(self):
         # test if metadata is converted correctly to vega compatible JSON
         assert False
-
 
 
 if __name__ == "__main__":
