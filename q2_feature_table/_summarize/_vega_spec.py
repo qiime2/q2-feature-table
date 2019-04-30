@@ -84,7 +84,7 @@ def vega_spec(sample_metadata, sample_frequencies):
                 }
               ],
             "signals": [
-                    {"name": "chartHeight", "value": 400},
+                    {"name": "chartHeight", "update": "width / 2.5"},
                     {"name": "chartOffset", "value": 20},
                     {"name": "height", "update": "chartHeight + chartOffset"},
                     {
@@ -172,7 +172,7 @@ def vega_spec(sample_metadata, sample_frequencies):
                           "tooltip": {
                             "signal": (
                                 "{\"title\": datum.selectedCategory, "
-                                "\"Number of Samples Dropped\": datum.count}")
+                                "\"Total Number of Samples\": datum.count}")
                           },
                           "fill": {
                             "value": "#D3D3D3"
@@ -205,6 +205,11 @@ def vega_spec(sample_metadata, sample_frequencies):
                           }
                         },
                         "update": {
+                          "tooltip": {
+                            "signal": (
+                              "{\"title\": datum.selectedCategory, "
+                              "\"Number of Samples Retained\": datum.count}")
+                              },
                           "y": {
                             "scale": "yscale",
                             "field": "count"
@@ -239,11 +244,6 @@ def vega_spec(sample_metadata, sample_frequencies):
                           }
                         },
                         "update": {
-                          "tooltip": {
-                            "signal": (
-                                "{\"title\": datum.selectedCategory, "
-                                "\"Number of Samples Retained\": datum.count}")
-                          },
                           "x": {
                             "scale": "xscale",
                             "signal": "tooltip.selectedCategory",

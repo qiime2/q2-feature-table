@@ -4,9 +4,9 @@
 <link rel="stylesheet" type="text/css" href="css/spinkit.css" /> {% endblock %}
 {% block tabcontent %}
 
-<!-- template it in using jinja -->
 {% if vega_spec is defined %}
 <div class="row">
+
   <div class="col-lg-8">
     <div id="plot">
       <div id="loading" class="spinner">
@@ -21,10 +21,14 @@
 
   <div class="col-lg-4">
     <div class="row">
-      <div class="col-lg-12"><h3>Plot Controls</h3></div>
+      <div class="col-lg-12">
+        <h3>Plot Controls</h3>
+      </div>
     </div>
 
-    <div class="row"><div class="col-lg-12" id="toolbar"></div></div>
+    <div class="row">
+      <div class="col-lg-12" id="toolbar"></div>
+    </div>
 
     <div class="row">
       <div class="col-lg-12" id="metadata-category">Metadata Category</div>
@@ -35,14 +39,16 @@
     </div>
 
     <div class="row">
-      <div class="col-lg-12" id="text_field">To be updated text!</div>
+      <div class="col-lg-12" id="text-field"></div>
     </div>
+
   </div>
+
 </div>
 
 {% include 'js-error-handler.html' %}
 <script id="spec" type="application/json">
-  {{ vega_spec }}
+{{ vega_spec }}
 </script>
 <script type="text/javascript">
   $(document).ready(function() {
@@ -52,7 +58,7 @@
     // based on the browser dimensions.
     var opts = {
       width: $("#plot").width(),
-      height: $("#plot").width() / 2
+      height: $("#plot").width() / 2.5
     };
 
     vegaEmbed("#plot", spec, opts)
@@ -83,24 +89,24 @@
       .replaceWith("<label> Metadata Category &nbsp;</label>");
     category.children("select").addClass("form-control");
 
-    var sampling_depth_slider = $("#sampling-depth-slider .vega-bind");
-    $(sampling_depth_slider)
+    var samplingDepthSlider = $("#sampling-depth-slider .vega-bind");
+    $(samplingDepthSlider)
       .find("label")
       .remove();
-    $(sampling_depth_slider)
+    $(samplingDepthSlider)
       .find("input")
-      .attr("id", "rangeSlider");
-    $(sampling_depth_slider)
+      .attr("id", "range-slider");
+    $(samplingDepthSlider)
       .find("input")
-      .attr("oninput", "updateSliderNum(this.value);highlighFeatureTable(this.value);");
-    $(sampling_depth_slider).prepend(
+      .attr("oninput", "updateBoxVal(this.value);highlighFeatureTable(this.value);");
+    $(samplingDepthSlider).prepend(
       "<label> Sampling Depth &nbsp; </label> <br>"
     );
-    $(sampling_depth_slider).append(
-      '<br> <input id="sliderNum" class="form-control" type="number" value="0" min="0" oninput="updateRangeSliderValue(this.value);;highlighFeatureTable(this.value);" />'
+    $(samplingDepthSlider).append(
+      '<br> <input id="text-box" class="form-control" type="number" value="0" min="0" oninput="updateSliderVal(this.value);highlighFeatureTable(this.value);" />'
     );
-    $(sampling_depth_slider).append("(Zero implies no even sampling.)");
-    sampling_depth_slider.children(".vega-bind-name").replaceWith("");
+    $(samplingDepthSlider).append("(Zero implies no even sampling.)");
+    samplingDepthSlider.children(".vega-bind-name").replaceWith("");
 
     var rotateLabels = $("#rotate-labels .vega-bind");
     rotateLabels
@@ -115,8 +121,8 @@
     <div class="row">
       <div class="col-lg-12" id="sampling-depth-slider">
         <label> Sampling Depth &nbsp; </label> <br>
-        <input id="rangeSlider" class="form-control" type="range" min="0" max="{{max_count}}" value="0" class="slider" oninput="updateSliderNum(this.value);highlighFeatureTable(this.value);"> <br>
-        <input id="sliderNum" class="form-control" type="number" value="0" min="0" oninput="updateRangeSliderValue(this.value);highlighFeatureTable(this.value);" />
+        <input id="range-slider" class="form-control" type="range" min="0" max="{{max_count}}" value="0" class="slider" oninput="updateBoxVal(this.value);highlighFeatureTable(this.value);"> <br>
+        <input id="text-box" class="form-control" type="number" value="0" min="0" oninput="updateSliderVal(this.value);highlighFeatureTable(this.value);" />
         (Zero implies no even sampling.)
       </div>
     </div>
@@ -142,7 +148,7 @@
 </div>
 
 <script id="table-data" type="application/json">
-  {{ sample_frequencies_json }}
+{{ sample_frequencies_json }}
 </script>
 
 <script type="text/javascript">
@@ -161,45 +167,32 @@
     cell2.innerHTML = sample_frequencies[element];
 
   });
-</script>
 
-<script>
-function highlighFeatureTable(val) {
-  var table = document.getElementById("feature-table");
-  for (let i = 0; row = table.rows[i]; i++) {
+  function highlighFeatureTable(val) {
+    var table = document.getElementById("feature-table");
+    for (let i = 0; row = table.rows[i]; i++) {
 
-      if (Number(row.cells[1].innerHTML) < val){
-        row.className="danger";
-      }
-      else{
-        row.className="";
+      if (Number(row.cells[1].innerHTML) < val) {
+        row.className = "danger";
+      } else {
+        row.className = "";
       }
     }
 
   }
-</script>
 
-<script>
-  function updateRangeSliderValue(val) {
-    var slider = document.getElementById("rangeSlider");
+  function updateSliderVal(val) {
+    var slider = document.getElementById("range-slider");
     slider.value = val;
     slider.dispatchEvent(new Event("change"));
   }
 
-  function updateSliderNum(val) {
-    var num = document.getElementById("sliderNum");
+  function updateBoxVal(val) {
+    var num = document.getElementById("text-box");
     num.value = val;
   }
 </script>
 
-<script>
-var retainedSamples = 0;
-var retainedFeatures = 0;
-function update_text(val){
-
-
-}
-</script>
-
-{% endblock %} {% block footer %}
+{% endblock %}
+{% block footer %}
 {% endblock %}
