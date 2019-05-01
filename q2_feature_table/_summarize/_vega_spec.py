@@ -172,7 +172,7 @@ def vega_spec(sample_metadata, sample_frequencies):
                           "tooltip": {
                             "signal": (
                                 "{\"title\": datum.selectedCategory, "
-                                "\"Total Number of Samples\": datum.count}")
+                                "\"Samples Dropped\": datum.count}")
                           },
                           "fill": {
                             "value": "#D3D3D3"
@@ -208,7 +208,7 @@ def vega_spec(sample_metadata, sample_frequencies):
                           "tooltip": {
                             "signal": (
                               "{\"title\": datum.selectedCategory, "
-                              "\"Number of Samples Retained\": datum.count}")
+                              "\"Samples Retained\": datum.count}")
                               },
                           "y": {
                             "scale": "yscale",
