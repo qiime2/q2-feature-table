@@ -278,8 +278,13 @@ class SummarizeTests(TestCase):
             self.assertTrue(os.path.exists(sample_freq_fp))
             self.assertTrue('S1,1' in open(sample_freq_fp).read())
 
-    def test_vega_spec(self):
+    def test_vega_spec_data(self):
         # test if metadata is converted correctly to vega compatible JSON
+        df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
+                           'SampleType': ['gut', 'tongue', 'gut']},
+                          index=pd.Index(['S1', 'S2', 'S3'], name='id'))
+        metadata = qiime2.Metadata(df)
+        print(metadata)
         assert False
 
 
