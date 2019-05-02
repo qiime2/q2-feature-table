@@ -8,11 +8,11 @@
 
 from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
                            Choices, MetadataColumn, Categorical, List,
-                           Citations)
+                           Citations, TypeMatch)
 
 import q2_feature_table
 from q2_types.feature_table import (
-    FeatureTable, Frequency, RelativeFrequency, PresenceAbsence)
+    FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
 from q2_types.feature_data import FeatureData, Sequence, Taxonomy
 
 citations = Citations.load('citations.bib', package='q2_feature_table')
@@ -236,9 +236,11 @@ plugin.methods.register_function(
                 "the data from the first will be propagated to the result."
 )
 
+T = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
+# TODO: constrain min/max frequency when optional is handeled by typemap
 plugin.methods.register_function(
     function=q2_feature_table.filter_samples,
-    inputs={'table': FeatureTable[Frequency]},
+    inputs={'table': FeatureTable[T]},
     parameters={'min_frequency': Int,
                 'max_frequency': Int,
                 'min_features': Int,
@@ -246,7 +248,7 @@ plugin.methods.register_function(
                 'metadata': Metadata,
                 'where': Str,
                 'exclude_ids': Bool},
-    outputs=[('filtered_table', FeatureTable[Frequency])],
+    outputs=[('filtered_table', FeatureTable[T])],
     input_descriptions={
         'table': 'The feature table from which samples should be filtered.'
     },
