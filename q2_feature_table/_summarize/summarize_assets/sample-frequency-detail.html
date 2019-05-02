@@ -154,7 +154,9 @@
 <script type="text/javascript">
   var totalFrequencies = {{total_frequencies}};
   var sampleCount = {{number_of_samples}};
-  var defaultDescription = `Retained ${totalFrequencies.toLocaleString('en')} (100.00%) features in ${sampleCount} (100.00%) samples at the specifed sampling depth.`;
+  var defaultDescription = "Retained " + (totalFrequencies.toLocaleString('en'))
+                                       + " (100.00%) features in "
+                                       + sampleCount + " (100.00%) samples at the specifed sampling depth.";
 
 
   var textField = document.getElementById('text-field');
@@ -166,8 +168,24 @@
 
   var sampleFrequency = JSON.parse(document.getElementById("table-data").innerHTML);
   // get object keys and store them in an ascending order based on the key value
+  // this order is used to create the table rows
   sortedSampleIDs = Object.keys(sampleFrequency).sort(function(a, b) {
-    return sampleFrequency[a] - sampleFrequency[b];
+    var temp = sampleFrequency[a] - sampleFrequency[b];
+    // if two samples have the same number of features then we
+    // determine the order using the sample ID alphabetical order
+    if (temp == 0){
+      if (a.localeCompare(b) == -1){
+        temp = -1
+      }
+      if (a.localeCompare(b) == 0){
+        temp = 0
+      }
+      else{
+        temp = 1
+      }
+    }
+
+  return temp;
   });
 
   sortedSampleIDs.forEach(function(element) {
@@ -200,7 +218,10 @@
     }
     else{
       var retainedFeatureCount = retainedSampleCount * val;
-      textField.innerHTML = `Retained ${retainedFeatureCount.toLocaleString('en')} (${(retainedFeatureCount/totalFrequencies*100).toFixed(2)}%) features in ${retainedSampleCount} (${(retainedSampleCount/sampleCount*100).toFixed(2)}%) samples at the specifed sampling depth.`;
+      textField.innerHTML = "Retained " + retainedFeatureCount.toLocaleString('en')
+                                        + " (" + (retainedFeatureCount/totalFrequencies*100).toFixed(2) + "%) features in "
+                                        + retainedSampleCount + " (" + (retainedSampleCount/sampleCount*100).toFixed(2)
+                                        +  "%) samples at the specifed sampling depth.";
     }
 
   }

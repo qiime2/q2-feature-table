@@ -10,29 +10,20 @@
 def vega_spec(sample_metadata, sample_frequencies):
 
     values = []
-    if sample_metadata:
-        sample_metadata = sample_metadata.filter_ids(
-            sample_frequencies.index)
-        df = sample_metadata.to_dataframe()
-        # create data in json format for Vega
-        for i, row in df.iterrows():
-            values.append({
-                'id': i,
-                'metadata': {j: row[j] for j in df.columns},
-                'frequency': sample_frequencies[i]
-            })
 
-        metadata_categories = list(df.columns.values)
-        max_frequency = int(max(sample_frequencies.values.tolist()))
+    sample_metadata = sample_metadata.filter_ids(
+        sample_frequencies.index)
+    df = sample_metadata.to_dataframe()
+    # create data in json format for Vega
+    for i, row in df.iterrows():
+        values.append({
+            'id': i,
+            'metadata': {j: row[j] for j in df.columns},
+            'frequency': sample_frequencies[i]
+        })
 
-    else:
-        for freq in sample_frequencies:
-            # add ids
-            values.append({
-                'frequency': i
-            })
-        metadata_categories = []
-        max_frequency = 0
+    metadata_categories = list(df.columns.values)
+    max_frequency = int(max(sample_frequencies.values.tolist()))
 
     spec = {
             "$schema": "https://vega.github.io/schema/vega/v4.json",
