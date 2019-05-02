@@ -73,6 +73,10 @@ def vega_spec(sample_metadata, sample_frequencies):
                 }
               ],
             "signals": [
+                    {'name': 'width', 'value': '', 'bind': {'input': 'text'},
+                             'on': [{'events': {'source': 'window',
+                                                'type': 'resize'},
+                                     'update': 'containerSize()[0]'}]},
                     {"name": "chartHeight", "update": "width / 2.5"},
                     {"name": "chartOffset", "value": 20},
                     {"name": "height", "update": "chartHeight + chartOffset"},
@@ -304,7 +308,8 @@ def vega_spec(sample_metadata, sample_frequencies):
                     {
                       "orient": "left",
                       "scale": "yscale",
-                      "title": "Number of Samples"
+                      "title": "Number of Samples",
+                      "tickMinStep": 1
                     }
                   ]
                 }
