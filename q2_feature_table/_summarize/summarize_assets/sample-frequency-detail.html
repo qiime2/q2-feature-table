@@ -106,7 +106,7 @@
     $(samplingDepthSlider).append(
       '<br> <input id="text-box" class="form-control" type="number" value="0" min="0" oninput="textBoxHelperFunction(this.value);" />'
     );
-    $(samplingDepthSlider).append("(Zero implies no even sampling.)");
+    $(samplingDepthSlider).append("(zero implies no even sampling)");
     samplingDepthSlider.children(".vega-bind-name").replaceWith("");
 
     var rotateLabels = $("#rotate-labels .vega-bind");
@@ -124,7 +124,8 @@
         <label> Sampling Depth &nbsp; </label> <br>
         <input id="range-slider" type="range" min="0" max="{{max_count}}" value="0" class="slider" oninput="sliderHelperFunction(this.value);"> <br>
         <input id="text-box" class="form-control" type="number" value="0" min="0" oninput="textBoxHelperFunction(this.value);"/>
-        (Zero implies no even sampling.)
+        <br>
+        (zero implies no even sampling)
         <div class="row">
           <div class="col-lg-12" id="text-field"></div>
         </div>
@@ -176,15 +177,7 @@
     // if two samples have the same number of features then we
     // determine the order using the sample ID alphabetical order
     if (temp == 0){
-      if (a.localeCompare(b) == -1){
-        temp = -1
-      }
-      if (a.localeCompare(b) == 0){
-        temp = 0
-      }
-      else{
-        temp = 1
-      }
+      return b.localeCompare(a);
     }
 
   return temp;
@@ -251,6 +244,11 @@
 
 
   function textBoxHelperFunction(val){
+    val = parseInt(val);
+    if (val !== val) {
+      val = 0;
+    }
+
     // make sure the value in the textbox cannot exceed the max count
     if (val > {{max_count}}){
       var num = document.getElementById("text-box");
