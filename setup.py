@@ -17,7 +17,9 @@ setup(
     package_data={'q2_feature_table': ['citations.bib'],
                   'q2_feature_table._summarize': [
                       'summarize_assets/*.html',
-                      'summarize_assets/dist/*',
+                      'summarize_assets/licenses/*',
+                      'summarize_assets/vega/licenses/*',
+                      'summarize_assets/vega/js/*',
                       'tabulate_seqs_assets/js/*',
                       'tabulate_seqs_assets/index.html'],
                   'q2_feature_table._core_features': [

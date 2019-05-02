@@ -20,6 +20,8 @@ from q2_types.feature_data import DNAIterator
 import q2templates
 import skbio
 import qiime2
+import json
+from ._vega_spec import vega_spec
 
 _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
                        "ALIGNMENT_VIEW=Pairwise&PROGRAM=blastn&DATABASE"
@@ -61,6 +63,7 @@ def summarize(output_dir: str, table: biom.Table,
     sample_summary, sample_frequencies = _frequency_summary(
         table, axis='sample')
     if number_of_samples > 1:
+
         # Calculate the bin count, with a minimum of 5 bins
         IQR = sample_summary['3rd quartile'] - sample_summary['1st quartile']
         if IQR == 0.0:
@@ -125,8 +128,6 @@ def summarize(output_dir: str, table: biom.Table,
     feature_frequencies['# of Samples Observed In'] = \
         pd.Series(feature_qualitative_data).astype(int).apply('{:,}'.format)
     feature_frequencies_table = q2templates.df_to_html(feature_frequencies)
-    overview_template = os.path.join(
-        TEMPLATES, 'summarize_assets', 'overview.html')
     sample_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'sample-frequency-detail.html')
     feature_frequency_template = os.path.join(
@@ -135,31 +136,32 @@ def summarize(output_dir: str, table: biom.Table,
     context.update({'max_count': sample_frequencies.max(),
                     'feature_frequencies_table': feature_frequencies_table,
                     'feature_qualitative_data': feature_qualitative_data,
-                    'tabs': [{'url': 'overview.html',
+                    'tabs': [{'url': 'index.html',
                               'title': 'Overview'},
                              {'url': 'sample-frequency-detail.html',
                               'title': 'Interactive Sample Detail'},
                              {'url': 'feature-frequency-detail.html',
                               'title': 'Feature Detail'}]})
-    templates = [index, sample_frequency_template,
-                 feature_frequency_template, overview_template]
+
+    # Create a JSON object containing the Sample Frequencies to build the
+    # table in sample-frequency-detail.html
+    sample_frequencies_json = sample_frequencies.to_json()
+
+    templates = [index, sample_frequency_template, feature_frequency_template]
+    context.update({'frequencies_list':
+                    json.dumps(sorted(sample_frequencies.values.tolist()))})
+    if sample_metadata is not None:
+        context.update({'vega_spec':
+                        json.dumps(vega_spec(sample_metadata,
+                                             sample_frequencies
+                                             ))
+                        })
+    context.update({'sample_frequencies_json': sample_frequencies_json})
+    q2templates.util.copy_assets(os.path.join(TEMPLATES,
+                                              'summarize_assets',
+                                              'vega'),
+                                 output_dir)
     q2templates.render(templates, output_dir, context=context)
-
-    shutil.copytree(os.path.join(TEMPLATES, 'summarize_assets', 'dist'),
-                    os.path.join(output_dir, 'dist'))
-
-    with open(os.path.join(output_dir, 'data.jsonp'), 'w') as fh:
-        fh.write("app.init(")
-        if sample_metadata:
-            sample_metadata = sample_metadata.filter_ids(
-                sample_frequencies.index)
-            # TODO use Metadata.to_json() API if/when it exists in the future.
-            sample_metadata.to_dataframe().to_json(fh)
-        else:
-            fh.write('{}')
-        fh.write(', ')
-        sample_frequencies.to_json(fh)
-        fh.write(');')
 
 
 def _compute_descriptive_stats(lst: list):
