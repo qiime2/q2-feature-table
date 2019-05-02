@@ -237,7 +237,7 @@ plugin.methods.register_function(
 )
 
 T = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
-# TODO: constrain min/max frequency when optional is handeled by typemap
+# TODO: constrain min/max frequency when optional is handled by typemap
 plugin.methods.register_function(
     function=q2_feature_table.filter_samples,
     inputs={'table': FeatureTable[T]},
