@@ -6,6 +6,8 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import pandas as pd
+
 
 def vega_spec(sample_metadata, sample_frequencies):
     values = []
@@ -13,6 +15,7 @@ def vega_spec(sample_metadata, sample_frequencies):
     sample_metadata = sample_metadata.filter_ids(
         sample_frequencies.index)
     df = sample_metadata.to_dataframe()
+    df = df.where(pd.notnull(df), None)
     # create data in json format for Vega
     for i, row in df.iterrows():
         values.append({
@@ -25,7 +28,7 @@ def vega_spec(sample_metadata, sample_frequencies):
     max_frequency = int(max(sample_frequencies.values.tolist()))
 
     spec = {
-            '$schema': 'https://vega.github.io/schema/vega/v4.json',
+            '$schema': 'https://vega.github.io/schema/vega/v5.json',
             'autosize': {'contains': 'content',
                          'type': 'fit-x',
                          'resize': True},
@@ -164,7 +167,7 @@ def vega_spec(sample_metadata, sample_frequencies):
                           'tooltip': {
                             'signal': (
                                 '{\'title\': datum.selectedCategory, '
-                                '\'Samples Dropped\': datum.count}')
+                                '\'Total Samples\': datum.count}')
                           },
                           'fill': {
                             'value': '#D3D3D3'
@@ -211,12 +214,12 @@ def vega_spec(sample_metadata, sample_frequencies):
                             'value': 0
                           },
                           'fill': {
-                            'value': '#4682B4'
+                            'value': '#1F77B4'
                           }
                         },
                         'hover': {
                           'fill': {
-                            'value': 'red'
+                            'value': '#60B3F7'
                           }
                         }
                       }
