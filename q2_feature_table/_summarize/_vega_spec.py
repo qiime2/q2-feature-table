@@ -16,7 +16,7 @@ def vega_spec(sample_metadata, sample_frequencies):
         sample_metadata = sample_metadata.filter_ids(
             sample_frequencies.index)
         df = sample_metadata.to_dataframe()
-
+        # create data in json format for Vega
         for i, row in df.iterrows():
             values.append({
                 'id': i,
@@ -322,5 +322,6 @@ def vega_spec(sample_metadata, sample_frequencies):
               ]
 
               }
+
     vega_spec = json.dumps(spec)
     return vega_spec
