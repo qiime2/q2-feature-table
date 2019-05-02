@@ -20,6 +20,8 @@ import csv
 
 from q2_feature_table import tabulate_seqs, summarize
 from q2_feature_table._summarize._visualizer import _compute_descriptive_stats
+from q2_feature_table._summarize._visualizer import _frequencies
+from q2_feature_table._summarize._vega_spec import vega_spec
 
 
 class TabulateSeqsTests(TestCase):
@@ -284,8 +286,19 @@ class SummarizeTests(TestCase):
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='id'))
         metadata = qiime2.Metadata(df)
-        print(metadata)
-        assert False
+        table = biom.Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                           ['O1', 'O2'],
+                           ['S1', 'S2', 'S3'])
+        sample_frequencies = _frequencies(table, axis='sample')
+        spec = vega_spec(metadata, sample_frequencies)
+
+        self.assertTrue([{'id': 'S1', 'metadata': {'Subject': 'subject-1',
+                          'SampleType': 'gut'}, 'frequency': 1.0},
+                         {'id': 'S2', 'metadata': {'Subject': 'subject-1',
+                          'SampleType': 'tongue'}, 'frequency': 2.0},
+                         {'id': 'S3', 'metadata': {'Subject': 'subject-2',
+                          'SampleType': 'gut'}, 'frequency': 5.0}],
+                        spec['data'][0]['values'])
 
 
 if __name__ == "__main__":

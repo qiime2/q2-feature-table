@@ -6,8 +6,6 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import json
-
 
 def vega_spec(sample_metadata, sample_frequencies):
 
@@ -323,5 +321,4 @@ def vega_spec(sample_metadata, sample_frequencies):
 
               }
 
-    vega_spec = json.dumps(spec)
-    return vega_spec
+    return spec
