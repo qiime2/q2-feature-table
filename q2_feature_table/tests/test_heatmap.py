@@ -17,7 +17,7 @@ import qiime2
 
 from q2_feature_table import heatmap
 from q2_feature_table._heatmap._visualizer import (
-    _munge_metadata, _munge_feature_metadata)
+    _munge_sample_metadata, _munge_feature_metadata)
 
 
 class TestHeatmap(unittest.TestCase):
@@ -139,11 +139,11 @@ class TestPrivateHelpers(unittest.TestCase):
                                   columns=['O1', 'O2'],
                                   index=['S1', 'S2', 'S3'])
 
-    def test_munge_metadata_simple(self):
+    def test_munge_sample_metadata_simple(self):
         md = qiime2.CategoricalMetadataColumn(
             pd.Series(['milo', 'russ', 'russ'], name='pet',
                       index=pd.Index(['S1', 'S2', 'S3'], name='id')))
-        obs = _munge_metadata(md, self.table, 'both')
+        obs = _munge_sample_metadata(md, self.table, 'both')
 
         exp_idx = pd.Index(['milo | S1', 'russ | S2', 'russ | S3'],
                            name='pet | id')
@@ -151,11 +151,11 @@ class TestPrivateHelpers(unittest.TestCase):
                            index=exp_idx)
         assert_frame_equal(exp, obs)
 
-    def test_munge_metadata_ids_different_order(self):
+    def test_munge_sample_metadata_ids_different_order(self):
         md = qiime2.CategoricalMetadataColumn(
             pd.Series(['russ', 'milo', 'russ'], name='pet',
                       index=pd.Index(['S2', 'S1', 'S3'], name='id')))
-        obs = _munge_metadata(md, self.table, 'both')
+        obs = _munge_sample_metadata(md, self.table, 'both')
 
         exp_idx = pd.Index(['milo | S1', 'russ | S2', 'russ | S3'],
                            name='pet | id')
@@ -163,18 +163,18 @@ class TestPrivateHelpers(unittest.TestCase):
                            index=exp_idx)
         assert_frame_equal(exp, obs)
 
-    def test_munge_metadata_missing_samples(self):
+    def test_munge_sample_metadata_missing_samples(self):
         md = qiime2.CategoricalMetadataColumn(
             pd.Series(['milo', 'russ'], name='pet',
                       index=pd.Index(['S1', 'S3'], name='id')))
         with self.assertRaisesRegex(ValueError, 'not present.*S2'):
-            _munge_metadata(md, self.table, 'both')
+            _munge_sample_metadata(md, self.table, 'both')
 
-    def test_munge_metadata_empty_values(self):
+    def test_munge_sample_metadata_empty_values(self):
         md = qiime2.CategoricalMetadataColumn(
             pd.Series([None, 'russ', np.nan], name='pet',
                       index=pd.Index(['S1', 'S2', 'S3'], name='id')))
-        obs = _munge_metadata(md, self.table, 'both')
+        obs = _munge_sample_metadata(md, self.table, 'both')
 
         exp_idx = pd.Index(['[No Value] | S1', 'russ | S2', '[No Value] | S3'],
                            name='pet | id')
@@ -182,11 +182,11 @@ class TestPrivateHelpers(unittest.TestCase):
                            index=exp_idx)
         assert_frame_equal(exp, obs)
 
-    def test_munge_metadata_sort_samples(self):
+    def test_munge_sample_metadata_sort_samples(self):
         md = qiime2.CategoricalMetadataColumn(
             pd.Series(['peanut', 'milo', 'russ'], name='pet',
                       index=pd.Index(['S1', 'S2', 'S3'], name='id')))
-        obs = _munge_metadata(md, self.table, 'features')
+        obs = _munge_sample_metadata(md, self.table, 'features')
 
         exp_idx = pd.Index(['milo | S2', 'peanut | S1', 'russ | S3'],
                            name='pet | id')
@@ -242,6 +242,20 @@ class TestPrivateHelpers(unittest.TestCase):
 
         exp = pd.DataFrame(
             [[10, 0], [12, 10], [11, 10]], columns=['dog', 'peanut'],
+            index=pd.Index(['S1', 'S2', 'S3']))
+        assert_frame_equal(exp, obs)
+
+    def test_munge_feature_metadata_sort_duplicate_feature_names(self):
+        new_tab = self.table.copy()
+        new_tab['O3'] = [1, 2, 3]
+        feature_md = qiime2.CategoricalMetadataColumn(
+            pd.Series(['peanut', 'dog', 'peanut'], name='species',
+                      index=pd.Index(['O1', 'O2', 'O3'], name='id')))
+        obs = _munge_feature_metadata(feature_md, new_tab, 'samples')
+
+        exp = pd.DataFrame(
+            [[10, 0, 1], [12, 10, 2], [11, 10, 3]],
+            columns=['dog', 'peanut', 'peanut'],
             index=pd.Index(['S1', 'S2', 'S3']))
         assert_frame_equal(exp, obs)
 
