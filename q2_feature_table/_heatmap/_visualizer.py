@@ -75,7 +75,7 @@ _clustering_map = {'both': {'col_cluster': True, 'row_cluster': True},
                    'none': {'col_cluster': False, 'row_cluster': False}}
 
 
-def _munge_metadata(metadata, table, cluster):
+def _munge_sample_metadata(metadata, table, cluster):
     metadata = metadata.filter_ids(table.index)
     column_name = metadata.name
 
@@ -97,16 +97,32 @@ def _munge_metadata(metadata, table, cluster):
     return table
 
 
+def _munge_feature_metadata(metadata, table, cluster):
+    metadata = metadata.filter_ids(table.columns)
+    column_name = metadata.name
+    metadata_df = metadata.to_dataframe()
+    # replace feature IDs with feature metadata annotations
+    table.columns = metadata_df.reindex(table.columns)[column_name].values
+    if cluster == 'samples':
+        table = table.sort_index(axis=1)
+    return table
+
+
 def heatmap(output_dir, table: pd.DataFrame,
-            metadata: qiime2.CategoricalMetadataColumn = None,
+            sample_metadata: qiime2.CategoricalMetadataColumn = None,
+            feature_metadata: qiime2.CategoricalMetadataColumn = None,
             normalize: bool = True, title: str = None,
             metric: str = 'euclidean', method: str = 'average',
             cluster: str = 'both', color_scheme: str = 'rocket') -> None:
     if table.empty:
         raise ValueError('Cannot visualize an empty table.')
 
-    if metadata is not None:
-        table = _munge_metadata(metadata, table, cluster)
+    if sample_metadata is not None:
+        table = _munge_sample_metadata(sample_metadata, table, cluster)
+
+    # relabel feature table feature IDs with feature metadata column values
+    if feature_metadata is not None:
+        table = _munge_feature_metadata(feature_metadata, table, cluster)
 
     cbar_label = 'frequency'
     if normalize:

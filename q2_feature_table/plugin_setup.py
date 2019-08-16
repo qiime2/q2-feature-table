@@ -440,7 +440,8 @@ plugin.visualizers.register_function(
         'table': FeatureTable[Frequency]
     },
     parameters={
-        'metadata': MetadataColumn[Categorical],
+        'sample_metadata': MetadataColumn[Categorical],
+        'feature_metadata': MetadataColumn[Categorical],
         'normalize': Bool,
         'title': Str,
         'metric': Str % Choices(q2_feature_table.heatmap_choices['metric']),
@@ -459,9 +460,14 @@ plugin.visualizers.register_function(
         'table': 'The feature table to visualize.'
     },
     parameter_descriptions={
-        'metadata': 'Annotate the sample IDs with these metadata values. '
-                    'When metadata is present and `cluster`=\'feature\', '
-                    'samples will be sorted by the metadata values.',
+        'sample_metadata': 'Annotate the sample IDs with these sample '
+                           'metadata values. When metadata is present and '
+                           '`cluster`=\'feature\', samples will be sorted by '
+                           'the metadata values.',
+        'feature_metadata': 'Annotate the feature IDs with these feature '
+                            'metadata values. When metadata is present and '
+                            '`cluster`=\'sample\', features will be sorted by '
+                            'the metadata values.',
         'normalize': 'Normalize the feature table by adding a psuedocount '
                      'of 1 and then taking the log10 of the table.',
         'title': 'Optional custom plot title.',
