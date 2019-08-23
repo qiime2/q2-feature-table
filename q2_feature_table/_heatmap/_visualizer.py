@@ -65,7 +65,7 @@ heatmap_choices = {
                      'summer_r', 'tab10', 'tab10_r', 'tab20', 'tab20_r',
                      'tab20b', 'tab20b_r', 'tab20c', 'tab20c_r', 'terrain',
                      'terrain_r', 'viridis', 'viridis_r', 'vlag', 'vlag_r',
-                     'winter', 'winter_r'}
+                     'winter', 'winter_r', 'cividis', 'cividis_r'}
 }
 
 
