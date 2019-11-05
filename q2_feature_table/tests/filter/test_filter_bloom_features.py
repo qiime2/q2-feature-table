@@ -8,7 +8,6 @@
 
 import unittest
 
-import qiime2
 import numpy as np
 import pandas as pd
 from biom.table import Table
