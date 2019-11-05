@@ -135,14 +135,6 @@ def _bloom_seq_matches(seq, bloom_seq):
     return str(seq) == str(bloom_seq)[:len(seq)]
 
 
-def _find_bloom_sequence_matches_alt(data, bloom_sequences):
-    sequence_checks = itertools.product(data.iteritems(), bloom_sequences)
-    matches = {idx for (idx, seq), bloom_seq in sequence_checks if
-               _bloom_seq_matches(seq, bloom_seq)}
-
-    return matches
-
-
 def filter_bloom_features(table: biom.Table, data: pd.Series,
                           bloom_sequences: pd.Series = None) -> biom.Table:
     if bloom_sequences is None:
