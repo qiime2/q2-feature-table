@@ -10,6 +10,7 @@ import biom
 import qiime2
 import numpy as np
 import pandas as pd
+import itertools
 import os
 from pkg_resources import resource_filename
 
@@ -118,11 +119,23 @@ def filter_seqs(data: pd.Series, table: biom.Table = None,
     return filtered
 
 
+def _load_default_bloom_sequences():
+    sequence_artifact = qiime2.Artifact.load(DEFAULT_BLOOM_SEQUENCES)
+    bloom_sequences = sequence_artifact.view(pd.Series)
+    return bloom_sequences
+
+
+def _find_bloom_sequence_matches(data, bloom_sequences):
+    matches = {idx for idx, seq in data.iteritems() for bloom_seq in
+               bloom_sequences if (str(seq) == str(bloom_seq)[:len(
+                seq)])}
+    return matches
+
+
 def filter_bloom_features(table: biom.Table, data: pd.Series,
                           bloom_sequences: pd.Series = None) -> biom.Table:
     if bloom_sequences is None:
-        sequence_artifact = qiime2.Artifact.load(DEFAULT_BLOOM_SEQUENCES)
-        bloom_sequences = sequence_artifact.view(pd.Series)
+        bloom_sequences = _load_default_bloom_sequences()
     table_ids = table.ids(axis='observation')
     data_ids = set(data.index)
     # assert that all ids in `data` are in `table`
@@ -139,14 +152,11 @@ def filter_bloom_features(table: biom.Table, data: pd.Series,
                          'as all sequences in the provided table.')
 
     #  for each seq in `data`, keep it's index if it matches a bloom_seq
-    ids_to_drop = {idx for idx, seq in data.iteritems() for bloom_seq in
-                   bloom_sequences if (str(seq) == str(bloom_seq)[:len(
-                    seq)])}
+    ids_to_drop = _find_bloom_sequence_matches(data, bloom_sequences)
 
     ids_to_keep = set(data.index) - ids_to_drop
 
-    filter_fn = _get_biom_filter_function(
-        ids_to_keep, 0, None, 0, None)
+    filter_fn = _get_biom_filter_function(ids_to_keep, 0, None, 0, None)
     table.filter(filter_fn, axis='observation', inplace=True)
 
     if len(table.ids(axis='observation')) == 0:
