@@ -127,8 +127,19 @@ def _load_default_bloom_sequences():
 
 def _find_bloom_sequence_matches(data, bloom_sequences):
     matches = {idx for idx, seq in data.iteritems() for bloom_seq in
-               bloom_sequences if (str(seq) == str(bloom_seq)[:len(
-                seq)])}
+               bloom_sequences if _bloom_seq_matches(seq, bloom_seq)}
+    return matches
+
+
+def _bloom_seq_matches(seq, bloom_seq):
+    return str(seq) == str(bloom_seq)[:len(seq)]
+
+
+def _find_bloom_sequence_matches_alt(data, bloom_sequences):
+    sequence_checks = itertools.product(data.iteritems(), bloom_sequences)
+    matches = {idx for (idx, seq), bloom_seq in sequence_checks if
+               _bloom_seq_matches(seq, bloom_seq)}
+
     return matches
 
 
