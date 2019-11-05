@@ -1,2 +1,3 @@
 include versioneer.py
 include q2_feature_table/_version.py
+include q2_feature_table/assets/newbloom.all.qza
