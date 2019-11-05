@@ -10,6 +10,11 @@ import biom
 import qiime2
 import numpy as np
 import pandas as pd
+import os
+from pkg_resources import resource_filename
+
+ASSETS = resource_filename('q2_feature_table', 'assets')
+DEFAULT_BLOOM_SEQUENCES = os.path.join(ASSETS, 'newbloom.all.qza')
 
 
 def _get_biom_filter_function(ids_to_keep, min_frequency, max_frequency,
@@ -89,37 +94,6 @@ def filter_features(table: biom.Table, min_frequency: int = 0,
     return table
 
 
-def filter_bloom_features(table: biom.Table, data: pd.Series,
-                          bloom_sequences: pd.Series = None) -> biom.Table:
-    if bloom_sequences is None:
-        pass  # TODO load default sequences from pkg_resources
-    table_ids = table.ids(axis='observation')
-    data_ids = set(data.index)
-    # assert that all ids in `data` are in `table`
-    if not all(id_ in data_ids for id_ in table_ids):
-        raise ValueError('Table features must all be present in the the '
-                         'Sequence Data.')
-
-    # figure out sequence lengths in data
-    sequence_lengths = {len(sequence) for sequence in data_ids}
-    drop_sequence_lengths = {len(sequence) for sequence in bloom_sequences}
-    if any(seq_len > min(drop_sequence_lengths) for seq_len in
-           sequence_lengths):
-        raise ValueError('Sequences to be dropped must be at least as long '
-                         'as all sequences in the provided table.')
-
-    #  for each seq in `data`, keep it's index if it matches a drop_seq
-    ids_to_drop = {idx for idx, seq in data.iteritems() for bloom_seq in
-                   bloom_sequences if (str(seq) == str(bloom_seq)[:len(
-                    seq)])}
-
-    ids_to_keep = set(data.index) - ids_to_drop
-    filter_fn = _get_biom_filter_function(
-        ids_to_keep, 0, None, 0, None)
-    table.filter(filter_fn, axis='observation', inplace=True)
-    return table
-
-
 def filter_seqs(data: pd.Series, table: biom.Table = None,
                 metadata: qiime2.Metadata = None, where: str = None,
                 exclude_ids: bool = False) -> pd.Series:
@@ -142,3 +116,40 @@ def filter_seqs(data: pd.Series, table: biom.Table = None,
     if filtered.empty is True:
         raise ValueError('All features were filtered out of the data.')
     return filtered
+
+
+def filter_bloom_features(table: biom.Table, data: pd.Series,
+                          bloom_sequences: pd.Series = None) -> biom.Table:
+    if bloom_sequences is None:
+        sequence_artifact = qiime2.Artifact.load(DEFAULT_BLOOM_SEQUENCES)
+        bloom_sequences = sequence_artifact.view(pd.Series)
+    table_ids = table.ids(axis='observation')
+    data_ids = set(data.index)
+    # assert that all ids in `data` are in `table`
+    if not all(id_ in data_ids for id_ in table_ids):
+        raise ValueError('Table features must all be present in the '
+                         'Sequence Data.')
+
+    # figure out sequence lengths in data
+    sequence_lengths = {len(sequence) for sequence in data}
+    bloom_sequence_lengths = {len(sequence) for sequence in bloom_sequences}
+    if any(seq_len > min(bloom_sequence_lengths) for seq_len in
+           sequence_lengths):
+        raise ValueError('Sequences to be dropped must be at least as long '
+                         'as all sequences in the provided table.')
+
+    #  for each seq in `data`, keep it's index if it matches a bloom_seq
+    ids_to_drop = {idx for idx, seq in data.iteritems() for bloom_seq in
+                   bloom_sequences if (str(seq) == str(bloom_seq)[:len(
+                    seq)])}
+
+    ids_to_keep = set(data.index) - ids_to_drop
+
+    filter_fn = _get_biom_filter_function(
+        ids_to_keep, 0, None, 0, None)
+    table.filter(filter_fn, axis='observation', inplace=True)
+
+    if len(table.ids(axis='observation')) == 0:
+        raise ValueError('All features were filtered out of the data.')
+
+    return table
