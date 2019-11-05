@@ -25,4 +25,4 @@ __all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'transpose',
            'summarize', 'merge', 'merge_seqs', 'filter_samples',
            'filter_features', 'merge_taxa', 'tabulate_seqs', 'overlap_methods',
            'core_features', 'group', 'heatmap', 'heatmap_choices',
-           'filter_seqs', 'subsample']
+           'filter_seqs', 'subsample', 'filter_bloom_features']
