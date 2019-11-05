@@ -15,7 +15,7 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
     package_data={'q2_feature_table': ['citations.bib',
-                                       'assets/newbloom.all.qza'],
+                                       'assets/newbloom.all.fna'],
                   'q2_feature_table._summarize': [
                       'summarize_assets/*.html',
                       'summarize_assets/licenses/*',

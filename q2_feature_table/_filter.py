@@ -10,12 +10,12 @@ import biom
 import qiime2
 import numpy as np
 import pandas as pd
-import itertools
 import os
+import skbio.io
 from pkg_resources import resource_filename
 
 ASSETS = resource_filename('q2_feature_table', 'assets')
-DEFAULT_BLOOM_SEQUENCES = os.path.join(ASSETS, 'newbloom.all.qza')
+DEFAULT_BLOOM_SEQUENCES = os.path.join(ASSETS, 'newbloom.all.fna')
 
 
 def _get_biom_filter_function(ids_to_keep, min_frequency, max_frequency,
@@ -120,8 +120,12 @@ def filter_seqs(data: pd.Series, table: biom.Table = None,
 
 
 def _load_default_bloom_sequences():
-    sequence_artifact = qiime2.Artifact.load(DEFAULT_BLOOM_SEQUENCES)
-    bloom_sequences = sequence_artifact.view(pd.Series)
+    seqs = []
+    index = []
+    for seq in skbio.io.read(DEFAULT_BLOOM_SEQUENCES, format='fasta'):
+        seqs.append(seq)
+        index.append(seq.metadata['id'])
+    bloom_sequences = pd.Series(seqs, index=index)
     return bloom_sequences
 
 
