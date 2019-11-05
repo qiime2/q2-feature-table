@@ -375,6 +375,30 @@ plugin.methods.register_function(
                 "exclusive)."
 )
 
+plugin.methods.register_function(
+    function=q2_feature_table.filter_bloom_features,
+    inputs={
+        'table': FeatureTable[Frequency],
+        'data': FeatureData[Sequence],
+        'bloom_sequences': FeatureData[Sequence],
+    },
+    parameters={},
+    outputs=[('filtered_table', FeatureTable[Frequency])],
+    input_descriptions={
+        'table': 'The table from which blooms should be filtered.',
+        'data': 'The sequences from which blooms should be filtered.',
+        'bloom_sequences': 'The bloom sequences to filter from the table.'
+    },
+    parameter_descriptions={},
+    output_descriptions={
+        'filtered_table': 'The resulting filtered table.'
+    },
+    name="Filter bloom sequences from a table",
+    description="Filter features that are associated with microbial blooms "
+                "from a feature table.",
+    citations=[citations['Amir2018Blooms']]
+)
+
 plugin.visualizers.register_function(
     function=q2_feature_table.summarize,
     inputs={'table': FeatureTable[Frequency | RelativeFrequency |
