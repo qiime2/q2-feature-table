@@ -11,7 +11,8 @@ from ._subsample import subsample
 from ._transform import (presence_absence, relative_frequency, transpose)
 from ._summarize import (summarize, tabulate_seqs)
 from ._merge import (merge, merge_seqs, merge_taxa, overlap_methods)
-from ._filter import (filter_samples, filter_features, filter_seqs)
+from ._filter import (filter_samples, filter_features,
+                      filter_bloom_features, filter_seqs)
 from ._core_features import core_features
 from ._group import group
 from ._heatmap import (heatmap, heatmap_choices)
