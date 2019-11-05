@@ -67,6 +67,26 @@ def _filter_table(table, min_frequency, max_frequency, min_nonzero,
     table.filter(filter_fn2, axis=_other_axis_map[axis], inplace=True)
 
 
+def _load_default_bloom_sequences():
+    seqs = []
+    index = []
+    for seq in skbio.io.read(DEFAULT_BLOOM_SEQUENCES, format='fasta'):
+        seqs.append(seq)
+        index.append(seq.metadata['id'])
+    bloom_sequences = pd.Series(seqs, index=index)
+    return bloom_sequences
+
+
+def _find_bloom_sequence_matches(data, bloom_sequences):
+    matches = {idx for idx, seq in data.iteritems() for bloom_seq in
+               bloom_sequences if _bloom_seq_matches(seq, bloom_seq)}
+    return matches
+
+
+def _bloom_seq_matches(seq, bloom_seq):
+    return str(seq) == str(bloom_seq)[:len(seq)]
+
+
 def filter_samples(table: biom.Table, min_frequency: int = 0,
                    max_frequency: int = None, min_features: int = 0,
                    max_features: int = None,
@@ -117,26 +137,6 @@ def filter_seqs(data: pd.Series, table: biom.Table = None,
     if filtered.empty is True:
         raise ValueError('All features were filtered out of the data.')
     return filtered
-
-
-def _load_default_bloom_sequences():
-    seqs = []
-    index = []
-    for seq in skbio.io.read(DEFAULT_BLOOM_SEQUENCES, format='fasta'):
-        seqs.append(seq)
-        index.append(seq.metadata['id'])
-    bloom_sequences = pd.Series(seqs, index=index)
-    return bloom_sequences
-
-
-def _find_bloom_sequence_matches(data, bloom_sequences):
-    matches = {idx for idx, seq in data.iteritems() for bloom_seq in
-               bloom_sequences if _bloom_seq_matches(seq, bloom_seq)}
-    return matches
-
-
-def _bloom_seq_matches(seq, bloom_seq):
-    return str(seq) == str(bloom_seq)[:len(seq)]
 
 
 def filter_bloom_features(table: biom.Table, data: pd.Series,
