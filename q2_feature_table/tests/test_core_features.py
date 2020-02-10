@@ -108,7 +108,7 @@ class TestCoreFeatures(unittest.TestCase):
 
         self.assertBasicVizValidity(self.output_dir)
 
-        core_55_fp = os.path.join(self.output_dir, 'core-features-0.550.tsv')
+        core_55_fp = os.path.join(self.output_dir, 'core-features-0.55.tsv')
         tsv_files = glob.glob(os.path.join(self.output_dir, '*.tsv'))
         self.assertEqual(tsv_files, [core_55_fp])
 
