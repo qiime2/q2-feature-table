@@ -34,8 +34,7 @@ def core_features(output_dir, table: biom.Table, min_fraction: float = 0.5,
     }
 
     if min_fraction == max_fraction:
-        # HACK: two-"step" minimum to keep seaborn happy
-        fractions = [min_fraction, min_fraction]
+        fractions = [min_fraction]
     else:
         fractions = np.linspace(min_fraction, max_fraction, steps)
 
@@ -75,8 +74,8 @@ def core_features(output_dir, table: biom.Table, min_fraction: float = 0.5,
     ax.get_figure().savefig(
         os.path.join(output_dir, 'core-feature-counts.svg'))
 
-    context['table_html'] = q2templates.df_to_html(df.drop_duplicates(),
-                                                   index=False, escape=False)
+    context['table_html'] = q2templates.df_to_html(df, index=False,
+                                                   escape=False)
 
     q2templates.render(index_fp, output_dir, context=context)
 
