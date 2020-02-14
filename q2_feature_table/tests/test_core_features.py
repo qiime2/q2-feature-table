@@ -33,7 +33,8 @@ class TestCoreFeatures(unittest.TestCase):
         self.output_dir_obj.cleanup()
 
     def assertBasicVizValidity(self, viz_dir, exp_sample_count=3,
-                               exp_feature_count=2, exp_no_core=False):
+                               exp_feature_count=2, exp_no_core=False,
+                               exp_no_plot=False):
         index_fp = os.path.join(viz_dir, 'index.html')
         self.assertTrue(os.path.exists(index_fp))
         with open(index_fp, 'r') as fh:
@@ -44,8 +45,11 @@ class TestCoreFeatures(unittest.TestCase):
         if exp_no_core:
             self.assertIn('No core features', index_contents)
 
-        svg_fp = os.path.join(viz_dir, 'core-feature-counts.svg')
-        self.assertTrue(os.path.exists(svg_fp))
+        if exp_no_plot:
+            self.assertIn('only one data point', index_contents)
+        else:
+            svg_fp = os.path.join(viz_dir, 'core-feature-counts.svg')
+            self.assertTrue(os.path.exists(svg_fp))
 
     def assertCoreFeaturesPresent(self, filepath, positive_ids, negative_ids):
         self.assertTrue(os.path.exists(filepath))
@@ -106,7 +110,7 @@ class TestCoreFeatures(unittest.TestCase):
         core_features(self.output_dir, self.table, min_fraction=0.55,
                       max_fraction=0.55)
 
-        self.assertBasicVizValidity(self.output_dir)
+        self.assertBasicVizValidity(self.output_dir, exp_no_plot=True)
 
         core_55_fp = os.path.join(self.output_dir, 'core-features-0.550.tsv')
         tsv_files = glob.glob(os.path.join(self.output_dir, '*.tsv'))

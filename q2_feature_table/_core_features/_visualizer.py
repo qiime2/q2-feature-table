@@ -62,17 +62,19 @@ def core_features(output_dir, table: biom.Table, min_fraction: float = 0.5,
     df['Fraction of features'] = df['Feature count'] / table.shape[0]
     df['Feature list'] = file_links
 
-    ax = sns.regplot(data=df, x='Fraction of samples', y='Feature count',
-                     fit_reg=False)
+    # newer versions of seaborn don't like dataframes with fewer than two rows
+    if len(fractions) > 1:
+        ax = sns.regplot(data=df, x='Fraction of samples', y='Feature count',
+                         fit_reg=False)
 
-    # matplotlib will issue a UserWarning if attempting to set left and right
-    # bounds to the same value.
-    if min_fraction != max_fraction:
+        # matplotlib will issue a UserWarning if attempting to set left and
+        # right bounds to the same value.
         ax.set_xbound(min(fractions), max(fractions))
-    ax.set_ybound(0, max(df['Feature count']) + 1)
+        ax.set_ybound(0, max(df['Feature count']) + 1)
 
-    ax.get_figure().savefig(
-        os.path.join(output_dir, 'core-feature-counts.svg'))
+        ax.get_figure().savefig(
+            os.path.join(output_dir, 'core-feature-counts.svg'))
+        context['show_plot'] = True
 
     context['table_html'] = q2templates.df_to_html(df, index=False,
                                                    escape=False)

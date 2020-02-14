@@ -15,7 +15,11 @@
     </div>
     <div class='row'>
       <div class='col-md-12'>
+        {% if show_plot %}
         <img src='core-feature-counts.svg'>
+        {% else %}
+        <span class="text-danger">Plot with only one data point has been omitted.</span>
+        {% endif %}
       </div>
     </div>
   </div>
