@@ -69,8 +69,7 @@ def core_features(output_dir, table: biom.Table, min_fraction: float = 0.5,
 
         # matplotlib will issue a UserWarning if attempting to set left and
         # right bounds to the same value.
-        if min_fraction != max_fraction:
-            ax.set_xbound(min(fractions), max(fractions))
+        ax.set_xbound(min(fractions), max(fractions))
         ax.set_ybound(0, max(df['Feature count']) + 1)
 
         ax.get_figure().savefig(
