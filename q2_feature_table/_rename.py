@@ -10,8 +10,6 @@ import warnings
 
 import biom
 import qiime2
-import numpy as np
-import pandas as pd
 
 
 def _generate_new_names(old_ids, rename, strict, verbose=False):
@@ -25,19 +23,21 @@ def _generate_new_names(old_ids, rename, strict, verbose=False):
                          'to combine multipel samples in the same table.')
     old_disjoint = list(set(old_ids) - set(rename.index))
     new_disjoint = list(set(rename.index) - set(old_ids))
-    
+
     if (len(old_disjoint) > 0) & strict:
         missing_rename = '\n    '.join(old_disjoint)
         raise ValueError(
             "There are ids in the table which do not have new names.\n"
-            "Either turn off strict mode or provide a remapping for all ids.\n"
+            "Either turn off strict mode or provide a remapping for all ids."
+            "\n"
             "The following ids are not mapped:\n"
             "    %s" % missing_rename
             )
     elif (len(old_disjoint) > 0) & verbose:
         missing_rename = '\n    '.join(old_disjoint)
         warnings.warn(UserWarning(
-            'There are ids in the original table which do not have new names.\n'
+            'There are ids in the original table which do not have new names.'
+            '\n'
             'The following ids will not be mapped:\n'
             '   %s' % missing_rename)
         )
@@ -48,6 +48,7 @@ def _generate_new_names(old_ids, rename, strict, verbose=False):
             'The following ids will not be mapped:\n'
             '   %s' % missing_rename)
         )
+
     new_ids = {id_: rename.to_dict().get(id_, id_) for id_ in old_ids}
     return new_ids
 
@@ -57,7 +58,7 @@ def rename_samples(table: biom.Table,
                    axis: str = 'sample',
                    strict: bool = False)\
                     -> biom.Table:
-    
+
     rename = metadata.to_series()
     if axis == 'feature':
         axis = 'observation'

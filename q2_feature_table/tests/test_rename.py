@@ -21,17 +21,17 @@ from q2_feature_table import _rename
 class TestRename(unittest.TestCase):
     def setUp(self):
         self.old_ids = ['S1', 'S2', 'S3']
-        self.name_map = pd.Series({'S1': 'S1_new', 
-                                   'S2': 'S2_new', 
+        self.name_map = pd.Series({'S1': 'S1_new',
+                                   'S2': 'S2_new',
                                    'S4': 'S4_name'})
         self.known = {'S1': 'S1_new', 'S2': 'S2_new', 'S3': 'S3'}
 
     def test_generate_new_names_non_unique(self):
         name_map = pd.Series({'S1': 'S2_new', 'S2': 'S2_new'})
         with self.assertRaises(ValueError) as cm:
-            _rename._generate_new_names(self.old_ids, 
-                                        name_map, 
-                                        strict=True, 
+            _rename._generate_new_names(self.old_ids,
+                                        name_map,
+                                        strict=True,
                                         verbose=False)
             self.assertEqual(
                 str(cm.exception),
@@ -42,14 +42,15 @@ class TestRename(unittest.TestCase):
 
     def test_generate_new_names_old_disjoint_strict(self):
         with self.assertRaises(ValueError) as cm:
-            _rename._generate_new_names(self.old_ids, self.name_map, 
-                                        strict=True, 
+            _rename._generate_new_names(self.old_ids,
+                                        self.name_map,
+                                        strict=True,
                                         verbose=False)
             self.assertEqual(
                 str(cm.exception),
                 ("There are ids in the table which do not have new names.\n"
-                 "Either turn off strict mode or provide a remapping for all ids.\n"
-                 "The following ids are not mapped:\n    S3")
+                 "Either turn off strict mode or provide a remapping for "
+                 "all ids.\nThe following ids are not mapped:\n    S3")
                 )
 
     def test_generate_new_names_verbose_warnings(self):
@@ -57,8 +58,8 @@ class TestRename(unittest.TestCase):
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
             new_names = \
-                _rename._generate_new_names(self.old_ids, 
-                                            self.name_map, 
+                _rename._generate_new_names(self.old_ids,
+                                            self.name_map,
                                             strict=False, 
                                             verbose=True)
         self.assertEqual(len(w), 2)
@@ -82,9 +83,9 @@ class TestRename(unittest.TestCase):
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
             new_names = \
-                _rename._generate_new_names(self.old_ids, 
-                                            self.name_map, 
-                                            strict=False, 
+                _rename._generate_new_names(self.old_ids,
+                                            self.name_map,
+                                            strict=False,
                                             verbose=False)
         self.assertEqual(len(w), 0)
         self.assertEqual(new_names.keys(), self.known.keys())
@@ -93,8 +94,8 @@ class TestRename(unittest.TestCase):
 
     def test_rename_samples(self):
         table = biom.Table(np.array([[0, 1, 2], [3, 4, 5]]),
-                            observation_ids=['01', '02'],
-                            sample_ids=['S1', 'S2', 'S3'])
+                           observation_ids=['01', '02'],
+                           sample_ids=['S1', 'S2', 'S3'])
         meta1 = qiime2.Metadata(pd.DataFrame(
             data=np.array([['cat'], ['rat'], ['dog']]),
             index=pd.Index(['S1', 'S2', 'S3'], name='sample-id'),
@@ -105,10 +106,12 @@ class TestRename(unittest.TestCase):
             index=pd.Index(['01', '02'], name='feature-id'),
             columns=['sequence']
             ))
-        updated = _rename.rename_samples(table, meta1.get_column('animal'))
-        updated = _rename.rename_samples(updated, meta2.get_column('sequence'),
+        updated = _rename.rename_samples(table, 
+                                         meta1.get_column('animal'))
+        updated = _rename.rename_samples(updated,
+                                         meta2.get_column('sequence'),
                                          axis='observation')
-        
+
         npt.assert_array_equal(np.array(updated.ids(axis='sample')), 
                                np.array(['cat', 'rat', 'dog']))
         npt.assert_array_equal(np.array(updated.ids(axis='observation')), 
