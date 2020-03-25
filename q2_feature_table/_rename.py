@@ -54,14 +54,17 @@ def _generate_new_names(old_ids, rename, strict, verbose=False):
 
 def rename_samples(table: biom.Table, 
                    metadata: qiime2.CategoricalMetadataColumn, 
+                   axis: str = 'sample',
                    strict: bool = False)\
                     -> biom.Table:
     
     rename = metadata.to_series()
-    old_ids = table.ids(axis='sample')
+    if axis == 'feature':
+        axis = 'observation'
+    old_ids = table.ids(axis=axis)
 
     new_ids = _generate_new_names(old_ids, rename, strict, False)
 
-    updated = table.update_ids(new_ids, axis='sample', inplace=False)
+    updated = table.update_ids(new_ids, axis=axis, inplace=False)
 
     return updated

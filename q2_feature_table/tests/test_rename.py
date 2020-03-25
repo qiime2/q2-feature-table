@@ -95,16 +95,24 @@ class TestRename(unittest.TestCase):
         table = biom.Table(np.array([[0, 1, 2], [3, 4, 5]]),
                             observation_ids=['01', '02'],
                             sample_ids=['S1', 'S2', 'S3'])
-        meta = qiime2.Metadata(pd.DataFrame(
+        meta1 = qiime2.Metadata(pd.DataFrame(
             data=np.array([['cat'], ['rat'], ['dog']]),
             index=pd.Index(['S1', 'S2', 'S3'], name='sample-id'),
             columns=['animal']
             ))
-        updated = _rename.rename_samples(table, meta.get_column('animal'))
+        meta2 = qiime2.Metadata(pd.DataFrame(
+            data=[['CATCATCAT'], ['WANTCAT']],
+            index=pd.Index(['01', '02'], name='feature-id'),
+            columns=['sequence']
+            ))
+        updated = _rename.rename_samples(table, meta1.get_column('animal'))
+        updated = _rename.rename_samples(updated, meta2.get_column('sequence'),
+                                         axis='observation')
         
         npt.assert_array_equal(np.array(updated.ids(axis='sample')), 
                                np.array(['cat', 'rat', 'dog']))
-
+        npt.assert_array_equal(np.array(updated.ids(axis='observation')), 
+                               np.array(['CATCATCAT', 'WANTCAT']))
 
 
 if __name__ == "__main__":
