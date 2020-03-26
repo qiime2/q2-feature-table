@@ -110,7 +110,7 @@ class TestRename(unittest.TestCase):
                                          meta1.get_column('animal'))
         updated = _rename.rename_samples(updated,
                                          meta2.get_column('sequence'),
-                                         axis='observation')
+                                         axis='feature')
 
         npt.assert_array_equal(np.array(updated.ids(axis='sample')),
                                np.array(['cat', 'rat', 'dog']))
