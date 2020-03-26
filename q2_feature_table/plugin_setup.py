@@ -261,7 +261,7 @@ plugin.methods.register_function(
                    'samples described in `metadata` will be renamed and '
                    'the others will keep their original names.'),
         'axis': 'Along which axis to rename the data.',
-    }, 
+    },
     output_descriptions={
         'renamed_table': ('A table which has new sample ids, where the ids '
                           'are replaced by values in the `metadata` column.')

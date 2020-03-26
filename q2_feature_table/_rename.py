@@ -53,8 +53,8 @@ def _generate_new_names(old_ids, rename, strict, verbose=False):
     return new_ids
 
 
-def rename_samples(table: biom.Table, 
-                   metadata: qiime2.CategoricalMetadataColumn, 
+def rename_samples(table: biom.Table,
+                   metadata: qiime2.CategoricalMetadataColumn,
                    axis: str = 'sample',
                    strict: bool = False)\
                     -> biom.Table:

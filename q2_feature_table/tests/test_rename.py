@@ -60,11 +60,11 @@ class TestRename(unittest.TestCase):
             new_names = \
                 _rename._generate_new_names(self.old_ids,
                                             self.name_map,
-                                            strict=False, 
+                                            strict=False,
                                             verbose=True)
         self.assertEqual(len(w), 2)
         self.assertTrue(isinstance(w[0].message, UserWarning))
-        self.assertEqual(str(w[0].message), 
+        self.assertEqual(str(w[0].message),
                          'There are ids in the original table which do not '
                          'have new names.\nThe following ids will not be '
                          'mapped:\n   S3')
@@ -106,15 +106,15 @@ class TestRename(unittest.TestCase):
             index=pd.Index(['01', '02'], name='feature-id'),
             columns=['sequence']
             ))
-        updated = _rename.rename_samples(table, 
+        updated = _rename.rename_samples(table,
                                          meta1.get_column('animal'))
         updated = _rename.rename_samples(updated,
                                          meta2.get_column('sequence'),
                                          axis='observation')
 
-        npt.assert_array_equal(np.array(updated.ids(axis='sample')), 
+        npt.assert_array_equal(np.array(updated.ids(axis='sample')),
                                np.array(['cat', 'rat', 'dog']))
-        npt.assert_array_equal(np.array(updated.ids(axis='observation')), 
+        npt.assert_array_equal(np.array(updated.ids(axis='observation')),
                                np.array(['CATCATCAT', 'WANTCAT']))
 
 
