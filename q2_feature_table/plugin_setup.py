@@ -14,6 +14,8 @@ import q2_feature_table
 from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
 from q2_types.feature_data import FeatureData, Sequence, Taxonomy
+from .examples import (feature_table_merge_example,
+                       feature_table_merge_three_tables_example)
 
 citations = Citations.load('citations.bib', package='q2_feature_table')
 plugin = Plugin(
@@ -189,7 +191,10 @@ plugin.methods.register_function(
         'merged_table': ('The resulting merged feature table.'),
     },
     name="Combine multiple tables",
-    description="Combines feature tables using the `overlap_method` provided."
+    description="Combines feature tables using the `overlap_method` provided.",
+    examples={'feature_table_merge_exampe': feature_table_merge_example,
+              'feature_table_merge_three_tables_example':
+                  feature_table_merge_three_tables_example},
 )
 
 

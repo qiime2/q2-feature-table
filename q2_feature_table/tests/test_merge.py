@@ -14,6 +14,7 @@ from biom.table import Table
 import pandas as pd
 import pandas.util.testing as pdt
 
+from qiime2.plugin.testing import TestPluginBase
 from q2_feature_table import merge, merge_seqs, merge_taxa
 from q2_feature_table._merge import _merge_feature_data, _get_overlapping
 
@@ -300,6 +301,13 @@ class MergeFeatureTaxonomyTests(unittest.TestCase):
             [('a;b;c;d', '1.0'), ('a;b;c;f', '0.7'), ('a;b;c;e', '1.0')],
             index=['f1', 'f2', 'f3'], columns=['Taxon', 'Confidence'])
         pdt.assert_frame_equal(obs, exp)
+
+
+class TestUsageExample(TestPluginBase):
+    package = 'q2_feature_table.tests'
+
+    def test_usage_example_ft_merge(self):
+        self.execute_examples()
 
 
 if __name__ == "__main__":
