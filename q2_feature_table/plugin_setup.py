@@ -192,9 +192,8 @@ plugin.methods.register_function(
     },
     name="Combine multiple tables",
     description="Combines feature tables using the `overlap_method` provided.",
-    examples={'feature_table_merge_exampe': feature_table_merge_example,
-              'feature_table_merge_three_tables_example':
-                  feature_table_merge_three_tables_example},
+    examples={'basic': feature_table_merge_example,
+              'three_tables': feature_table_merge_three_tables_example},
 )
 
 
