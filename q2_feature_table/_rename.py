@@ -14,13 +14,13 @@ import qiime2
 
 def _generate_new_names(old_ids, rename, strict, verbose=False):
     """
-    Checks the list of samples ot be renamed
+    Checks the list of ids to be renamed
     """
     # all old ids need to be unique
     if (rename.value_counts() > 1).any():
         raise ValueError('All new ids must be unique.\n'
-                         'Try qiime feature-table group if you want '
-                         'to combine multipel samples in the same table.')
+                         'Try the group method in this plugin if you want '
+                         'to combine multiple ids in the same table.')
     old_disjoint = list(set(old_ids) - set(rename.index))
     new_disjoint = list(set(rename.index) - set(old_ids))
 
@@ -53,11 +53,11 @@ def _generate_new_names(old_ids, rename, strict, verbose=False):
     return new_ids
 
 
-def rename_samples(table: biom.Table,
-                   metadata: qiime2.CategoricalMetadataColumn,
-                   axis: str = 'sample',
-                   strict: bool = False)\
-                    -> biom.Table:
+def relabel_ids(table: biom.Table,
+                metadata: qiime2.CategoricalMetadataColumn,
+                axis: str = 'sample',
+                strict: bool = False)\
+                -> biom.Table:
 
     rename = metadata.to_series()
     if axis == 'feature':

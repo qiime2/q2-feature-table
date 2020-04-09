@@ -236,10 +236,12 @@ plugin.methods.register_function(
                 "the data from the first will be propagated to the result."
 )
 
+T = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
+
 plugin.methods.register_function(
-    function=q2_feature_table.rename_samples,
+    function=q2_feature_table.relabel_ids,
     inputs={
-        'table': FeatureTable[Frequency | RelativeFrequency],
+        'table': FeatureTable[T],
     },
     parameters={
         'metadata': MetadataColumn[Categorical],
@@ -247,7 +249,7 @@ plugin.methods.register_function(
         'axis': Str % Choices({'sample', 'feature'})
         },
     outputs=[
-        ('renamed_table', FeatureTable[Frequency | RelativeFrequency])
+        ('renamed_table', FeatureTable[T])
         ],
     input_descriptions={
         'table': 'The table to be renamed',
@@ -271,7 +273,6 @@ plugin.methods.register_function(
                  'define the new IDs.')
     )
 
-T = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
 # TODO: constrain min/max frequency when optional is handled by typemap
 plugin.methods.register_function(
     function=q2_feature_table.filter_samples,

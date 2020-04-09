@@ -36,8 +36,8 @@ class TestRename(unittest.TestCase):
             self.assertEqual(
                 str(cm.exception),
                 ('All new ids must be unique.\n'
-                 'Try qiime feature-table group if you want '
-                 'to combine multipel samples in the same table.')
+                 'Try the group method in this plugin if you want '
+                 'to combine multiple samples in the same table.')
                 )
 
     def test_generate_new_names_old_disjoint_strict(self):
@@ -106,11 +106,11 @@ class TestRename(unittest.TestCase):
             index=pd.Index(['01', '02'], name='feature-id'),
             columns=['sequence']
             ))
-        updated = _rename.rename_samples(table,
-                                         meta1.get_column('animal'))
-        updated = _rename.rename_samples(updated,
-                                         meta2.get_column('sequence'),
-                                         axis='feature')
+        updated = _rename.relabel_ids(table,
+                                      meta1.get_column('animal'))
+        updated = _rename.relabel_ids(updated,
+                                      meta2.get_column('sequence'),
+                                      axis='feature')
 
         npt.assert_array_equal(np.array(updated.ids(axis='sample')),
                                np.array(['cat', 'rat', 'dog']))
