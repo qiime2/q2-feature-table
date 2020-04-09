@@ -12,5 +12,5 @@ from qiime2.plugin.testing import TestPluginBase
 class TestUsageExample(TestPluginBase):
     package = 'q2_feature_table.tests'
 
-    def test_usage_example_ft_merge(self):
+    def test_usage_examples(self):
         self.execute_examples()
