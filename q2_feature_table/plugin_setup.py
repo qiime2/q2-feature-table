@@ -237,6 +237,42 @@ plugin.methods.register_function(
 )
 
 T = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
+
+plugin.methods.register_function(
+    function=q2_feature_table.rename_ids,
+    inputs={
+        'table': FeatureTable[T],
+    },
+    parameters={
+        'metadata': MetadataColumn[Categorical],
+        'strict': Bool,
+        'axis': Str % Choices({'sample', 'feature'})
+        },
+    outputs=[
+        ('renamed_table', FeatureTable[T])
+        ],
+    input_descriptions={
+        'table': 'The table to be renamed',
+    },
+    parameter_descriptions={
+        'metadata': 'A metadata column defining the new ids. Each original id '
+                    'must map to a new unique id. If strict mode is used, '
+                    'then every id in the original table must have a new id.',
+        'strict': 'Whether the naming needs to be strict (each id in '
+                  'the table must have a new id). Otherwise, only the '
+                  'ids described in `metadata` will be renamed and '
+                  'the others will keep their original id names.',
+        'axis': 'Along which axis to rename the ids.',
+    },
+    output_descriptions={
+        'renamed_table': 'A table which has new ids, where the ids are '
+                         'replaced by values in the `metadata` column.',
+    },
+    name='Renames sample or feature ids in a table',
+    description='Renames the sample or feature ids in a feature table using '
+                'metadata to define the new ids.',
+    )
+
 # TODO: constrain min/max frequency when optional is handled by typemap
 plugin.methods.register_function(
     function=q2_feature_table.filter_samples,
