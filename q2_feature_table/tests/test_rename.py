@@ -67,7 +67,7 @@ class TestRename(unittest.TestCase):
         self.assertEqual(str(w[0].message),
                          'There are ids in the original table which do not '
                          'have new names.\nThe following ids will not be '
-                         'mapped:\n   S3')
+                         'included:\n   S3')
         self.assertTrue(isinstance(w[1].message, UserWarning))
         self.assertEqual(str(w[1].message),
                          'There are ids supplied for renaming that are not in'
@@ -106,11 +106,11 @@ class TestRename(unittest.TestCase):
             index=pd.Index(['01', '02'], name='feature-id'),
             columns=['sequence']
             ))
-        updated = _rename.relabel_ids(table,
-                                      meta1.get_column('animal'))
-        updated = _rename.relabel_ids(updated,
-                                      meta2.get_column('sequence'),
-                                      axis='feature')
+        updated = _rename.rename_ids(table,
+                                     meta1.get_column('animal'))
+        updated = _rename.rename_ids(updated,
+                                     meta2.get_column('sequence'),
+                                     axis='feature')
 
         npt.assert_array_equal(np.array(updated.ids(axis='sample')),
                                np.array(['cat', 'rat', 'dog']))

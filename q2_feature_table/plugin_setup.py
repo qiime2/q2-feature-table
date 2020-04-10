@@ -239,7 +239,7 @@ plugin.methods.register_function(
 T = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
 
 plugin.methods.register_function(
-    function=q2_feature_table.relabel_ids,
+    function=q2_feature_table.rename_ids,
     inputs={
         'table': FeatureTable[T],
     },
@@ -255,22 +255,22 @@ plugin.methods.register_function(
         'table': 'The table to be renamed',
     },
     parameter_descriptions={
-        'metadata': ('A column defining the new names. Each old name must '
-                     'map to a unique new name.'' If strict mode is used, '
-                     'then every id in the original table must have a new id'),
-        'strict': ('Whether the naming needs to be strict (each sample in '
-                   'the table must have a new name). Otherwise, only the '
-                   'samples described in `metadata` will be renamed and '
-                   'the others will keep their original names.'),
-        'axis': 'Along which axis to rename the data.',
+        'metadata': 'A metadata column defining the new ids. Each original id '
+                    'must map to a new unique id. If strict mode is used, '
+                    'then every id in the original table must have a new id.',
+        'strict': 'Whether the naming needs to be strict (each id in '
+                  'the table must have a new id). Otherwise, only the '
+                  'ids described in `metadata` will be renamed and '
+                  'the others will keep their original id names.',
+        'axis': 'Along which axis to rename the ids.',
     },
     output_descriptions={
-        'renamed_table': ('A table which has new sample ids, where the ids '
-                          'are replaced by values in the `metadata` column.')
+        'renamed_table': 'A table which has new ids, where the ids are '
+                         'replaced by values in the `metadata` column.',
     },
-    name="Renames samples or features in a table",
-    description=('Renames the samples in a feature table using metadata to '
-                 'define the new IDs.')
+    name='Renames sample or feature ids in a table',
+    description='Renames the sample or feature ids in a feature table using '
+                'metadata to define the new ids.',
     )
 
 # TODO: constrain min/max frequency when optional is handled by typemap
