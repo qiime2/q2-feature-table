@@ -27,7 +27,7 @@ from q2_feature_table._summarize._vega_spec import vega_spec
 class TabulateSeqsTests(TestCase):
 
     def test_basic(self):
-        seqs = DNAIterator(skbio.DNA(a, metadata=b) for a, b in(
+        seqs = DNAIterator(skbio.DNA(a, metadata=b) for a, b in (
             ('ACGT', {'id': 'seq1'}),
             ('AAAA', {'id': 'seq2'})))
 
