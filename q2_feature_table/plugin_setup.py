@@ -13,7 +13,8 @@ from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
 import q2_feature_table
 from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
-from q2_types.feature_data import FeatureData, Sequence, Taxonomy
+from q2_types.feature_data import (
+    FeatureData, Sequence, Taxonomy, AlignedSequence)
 from .examples import (feature_table_merge_example,
                        feature_table_merge_three_tables_example)
 
@@ -374,10 +375,13 @@ plugin.methods.register_function(
                 "on https://docs.qiime2.org for additional details."
 )
 
+_filter_seqs_type_match = TypeMatch([Sequence, AlignedSequence])
+
+
 plugin.methods.register_function(
     function=q2_feature_table.filter_seqs,
     inputs={
-        'data': FeatureData[Sequence],
+        'data': FeatureData[_filter_seqs_type_match],
         'table': FeatureTable[Frequency],
     },
     parameters={
@@ -385,7 +389,7 @@ plugin.methods.register_function(
         'where': Str,
         'exclude_ids': Bool
     },
-    outputs=[('filtered_data', FeatureData[Sequence])],
+    outputs=[('filtered_data', FeatureData[_filter_seqs_type_match])],
     input_descriptions={
         'data': 'The sequences from which features should be filtered.',
         'table': 'Table containing feature ids used for id-based filtering.'
