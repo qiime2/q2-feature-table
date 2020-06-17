@@ -13,7 +13,8 @@ from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
 import q2_feature_table
 from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
-from q2_types.feature_data import FeatureData, Sequence, Taxonomy
+from q2_types.feature_data import (
+    FeatureData, Sequence, Taxonomy, AlignedSequence)
 from .examples import (feature_table_merge_example,
                        feature_table_merge_three_tables_example)
 
@@ -240,12 +241,12 @@ plugin.methods.register_function(
                 "the data from the first will be propagated to the result."
 )
 
-T = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
+T1 = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
 
 plugin.methods.register_function(
     function=q2_feature_table.rename_ids,
     inputs={
-        'table': FeatureTable[T],
+        'table': FeatureTable[T1],
     },
     parameters={
         'metadata': MetadataColumn[Categorical],
@@ -253,7 +254,7 @@ plugin.methods.register_function(
         'axis': Str % Choices({'sample', 'feature'})
         },
     outputs=[
-        ('renamed_table', FeatureTable[T])
+        ('renamed_table', FeatureTable[T1])
         ],
     input_descriptions={
         'table': 'The table to be renamed',
@@ -280,7 +281,7 @@ plugin.methods.register_function(
 # TODO: constrain min/max frequency when optional is handled by typemap
 plugin.methods.register_function(
     function=q2_feature_table.filter_samples,
-    inputs={'table': FeatureTable[T]},
+    inputs={'table': FeatureTable[T1]},
     parameters={'min_frequency': Int,
                 'max_frequency': Int,
                 'min_features': Int,
@@ -288,7 +289,7 @@ plugin.methods.register_function(
                 'metadata': Metadata,
                 'where': Str,
                 'exclude_ids': Bool},
-    outputs=[('filtered_table', FeatureTable[T])],
+    outputs=[('filtered_table', FeatureTable[T1])],
     input_descriptions={
         'table': 'The feature table from which samples should be filtered.'
     },
@@ -374,10 +375,14 @@ plugin.methods.register_function(
                 "on https://docs.qiime2.org for additional details."
 )
 
+
+T2 = TypeMatch([Sequence, AlignedSequence])
+
+
 plugin.methods.register_function(
     function=q2_feature_table.filter_seqs,
     inputs={
-        'data': FeatureData[Sequence],
+        'data': FeatureData[T2],
         'table': FeatureTable[Frequency],
     },
     parameters={
@@ -385,7 +390,7 @@ plugin.methods.register_function(
         'where': Str,
         'exclude_ids': Bool
     },
-    outputs=[('filtered_data', FeatureData[Sequence])],
+    outputs=[('filtered_data', FeatureData[T2])],
     input_descriptions={
         'data': 'The sequences from which features should be filtered.',
         'table': 'Table containing feature ids used for id-based filtering.'
@@ -428,7 +433,7 @@ plugin.visualizers.register_function(
 
 plugin.visualizers.register_function(
     function=q2_feature_table.tabulate_seqs,
-    inputs={'data': FeatureData[Sequence]},
+    inputs={'data': FeatureData[Sequence | AlignedSequence]},
     parameters={},
     input_descriptions={'data': 'The feature sequences to be tabulated.'},
     parameter_descriptions={},
