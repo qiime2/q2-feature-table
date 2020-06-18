@@ -300,6 +300,43 @@ class SummarizeTests(TestCase):
                           'SampleType': 'gut'}, 'frequency': 5.0}],
                         spec['data'][0]['values'])
 
+    def test_counts_sort_in_descending_order(self):
+        # attempts to prevent reversions to the unusual sort behavior seen in
+        # https://github.com/qiime2/q2-feature-table/issues/169
+        table = biom.Table(np.array([[0, 1, 3],
+                                    [1, 1, 2],
+                                    [100, 150, 500],
+                                    [1000, 10000, 100000],
+                                    [52, 42, 99]]),
+                           ['O1', 'O2', '0a', 'aa', 'a0'],
+                           ['1', '3', '2'])
+
+        with tempfile.TemporaryDirectory() as output_dir:
+            summarize(output_dir, table)
+
+            feature_freq_fp = os.path.join(output_dir,
+                                           'feature-frequency-detail.csv')
+            prior_count = None
+            for i, line in enumerate(open(feature_freq_fp)):
+                # unpack file with lines formatted like: `aa,111000.0`
+                feature_count_str = int(float(line.strip().split(',')[1]))
+                # values stored as strs with decimals '100.0' require float
+                # cast before int cast
+                feature_count = int(float(feature_count_str))
+                if i > 0:
+                    self.assertGreaterEqual(prior_count, feature_count)
+                prior_count = feature_count
+
+            sample_freq_fp = os.path.join(output_dir,
+                                          'sample-frequency-detail.csv')
+            prior_count = None
+            for i, line in enumerate(open(sample_freq_fp)):
+                sample_count_str = int(float(line.strip().split(',')[1]))
+                sample_count = int(float(sample_count_str))
+                if i > 0:
+                    self.assertGreaterEqual(prior_count, sample_count)
+                prior_count = sample_count
+
 
 if __name__ == "__main__":
     main()
