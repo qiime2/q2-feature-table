@@ -171,6 +171,22 @@ def vega_spec(sample_metadata, sample_frequencies):
                           },
                           'fill': {
                             'value': '#D3D3D3'
+                          },
+                          'x': {
+                            'scale': 'xscale',
+                            'field': 'selectedCategory'
+                          },
+                          'width': {
+                            'scale': 'xscale',
+                            'band': 1
+                          },
+                          'y': {
+                            'scale': 'yscale',
+                            'field': 'count'
+                          },
+                          'y2': {
+                            'scale': 'yscale',
+                            'value': 0
                           }
                         }
                       }
@@ -205,6 +221,14 @@ def vega_spec(sample_metadata, sample_frequencies):
                               '{\'title\': datum.selectedCategory, '
                               '\'Samples Retained\': datum.count}')
                               },
+                          'x': {
+                            'scale': 'xscale',
+                            'field': 'selectedCategory'
+                          },
+                          'width': {
+                            'scale': 'xscale',
+                            'band': 1
+                          },
                           'y': {
                             'scale': 'yscale',
                             'field': 'count'
