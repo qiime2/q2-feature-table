@@ -40,11 +40,13 @@ def ft3_factory():
 def feature_table_merge_example(use):
     feature_table1 = use.init_data('feature_table1', ft1_factory)
     feature_table2 = use.init_data('feature_table2', ft2_factory)
+    merged_table = use.init_data_collection('merged_table', list,
+                                            feature_table1, feature_table2)
 
     use.action(
         UsageAction(plugin_id='feature_table',
                     action_id='merge'),
-        UsageInputs(tables=[feature_table1, feature_table2]),
+        UsageInputs(tables=merged_table),
         UsageOutputNames(merged_table='merged_table'),
     )
 
@@ -53,11 +55,14 @@ def feature_table_merge_three_tables_example(use):
     feature_table1 = use.init_data('feature_table1', ft1_factory)
     feature_table2 = use.init_data('feature_table2', ft2_factory)
     feature_table3 = use.init_data('feature_table3', ft3_factory)
+    merged_table = use.init_data_collection('merged_table', list,
+                                            feature_table1,
+                                            feature_table2,
+                                            feature_table3)
 
     use.action(
         UsageAction(plugin_id='feature_table',
                     action_id='merge'),
-        UsageInputs(tables=[feature_table1, feature_table2, feature_table3],
-                    overlap_method='sum'),
+        UsageInputs(tables=merged_table, overlap_method='sum'),
         UsageOutputNames(merged_table='merged_table'),
     )
