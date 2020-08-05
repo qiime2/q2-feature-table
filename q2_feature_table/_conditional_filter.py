@@ -8,8 +8,6 @@
 
 
 import biom
-import qiime2
-import numpy as np
 
 
 def filter_features_conditionally(table: biom.Table,
@@ -20,17 +18,17 @@ def filter_features_conditionally(table: biom.Table,
     """
     num_samples, num_observations = table.shape
     prevelance = prevelance * num_samples
-    
+
     # Calculates the filteering parameters on the original table
-    filter_f = lambda v, id_, md: (v > abundance).sum() >= prevelance
+    def _filter_f(v, id_, md):
+        return (v > abundance).sum() >= prevelance
 
     # Normalized the table to get the prevelance
     table_n = table.copy().norm(axis='sample', inplace=False)
-    table_s = table_n.filter(filter_f, axis='observation', inplace=True)
+    table_s = table_n.filter(_filter_f, axis='observation', inplace=True)
     filter_ids = table_s.ids(axis='observation')
 
     new_table = table.filter(filter_ids, axis='observation', inplace=False)
 
     return new_table
 
-    

@@ -21,7 +21,7 @@ class TestConditional(unittest.TestCase):
             data=np.array([[0,   0,  10,   0,   0],
                            [250, 250, 140,  90, 150],
                            [250,  25, 100, 200, 100],
-                           [  0, 225, 250, 210, 250]]),
+                           [0, 225, 250, 210, 250]]),
             sample_ids=['A', 'B', 'C', 'D', 'E'],
             observation_ids=['bat', 'cat', 'rat', 'a-tat-tat']
             )
@@ -30,8 +30,9 @@ class TestConditional(unittest.TestCase):
             sample_ids=['A', 'B', 'C', 'D', 'E'],
             observation_ids=['a-tat-tat']
             )
-        test_ = filter_features_conditionally(table, prevelance=0.8, 
-                                             abundance=0.4)
+        test_ = filter_features_conditionally(table,
+                                              prevelance=0.8,
+                                              abundance=0.4)
         npt.assert_array_equal(known.matrix_data.toarray(),
                                test_.matrix_data.toarray())
         npt.assert_array_equal(known.ids(axis='sample'),
