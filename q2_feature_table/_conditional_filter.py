@@ -31,4 +31,3 @@ def filter_features_conditionally(table: biom.Table,
     new_table = table.filter(filter_ids, axis='observation', inplace=False)
 
     return new_table
-
