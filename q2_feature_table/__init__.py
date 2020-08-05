@@ -16,6 +16,7 @@ from ._core_features import core_features
 from ._group import group
 from ._rename import rename_ids
 from ._heatmap import (heatmap, heatmap_choices)
+from ._conditional_filter import (filter_features_conditionally)
 from ._version import get_versions
 
 __version__ = get_versions()['version']
@@ -25,4 +26,5 @@ __all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'transpose',
            'summarize', 'merge', 'merge_seqs', 'filter_samples',
            'filter_features', 'merge_taxa', 'tabulate_seqs', 'overlap_methods',
            'core_features', 'group', 'heatmap', 'heatmap_choices',
-           'filter_seqs', 'subsample', 'rename_ids']
+           'filter_seqs', 'subsample', 'rename_ids', 
+           'filter_features_conditionally']

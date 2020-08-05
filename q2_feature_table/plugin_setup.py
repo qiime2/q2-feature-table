@@ -328,6 +328,34 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
+    function=q2_feature_table.filter_features_conditionally,
+    inputs={'table': FeatureTable[T1]},
+    parameters={'prevelance': Float % Range(0, 1),
+                'abundance': Float % Range(0, 1)},
+    outputs=[('filtered_table', FeatureTable[T1])],
+    input_descriptions={
+        'table': 'The feature table from which features should be filtered.'
+    },
+    parameter_descriptions={
+        'abundance': ('the minimum relative abundance for a feature to be '
+                      'retained'),
+        'prevelance': ('the minimum portion of samples a that a feature '
+                       'must have a relative abundancee of at least '
+                       '`abundance` to be retained')
+    },
+    output_descriptions={
+        'filtered_table': 'The resulting feature table filtered by feature.'
+    },
+    name="Filter features from a table based on abundance and prevelance",
+    description=("Filter features based on the relative abundance in a "
+                 "certain portion of samples. (i.e. Feature must have a "
+                 "relative abundance of at least `abundance` in at least "
+                 "`prevelance` number of samples). Any samples with a "
+                 "frequency of zero after feature filtering will also be "
+                 "removed.")
+)
+
+plugin.methods.register_function(
     function=q2_feature_table.filter_features,
     inputs={'table': FeatureTable[Frequency]},
     parameters={'min_frequency': Int,
