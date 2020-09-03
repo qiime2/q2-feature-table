@@ -16,7 +16,7 @@ def filter_features_conditionally(table: biom.Table,
     """
     A function to perform joint filtering because it makes life better
     """
-    num_samples, num_observations = table.shape
+    num_observations, num_samples = table.shape
     prevelance = prevelance * num_samples
 
     # Calculates the filteering parameters on the original table
