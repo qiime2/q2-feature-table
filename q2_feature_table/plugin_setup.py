@@ -348,9 +348,9 @@ plugin.methods.register_function(
     },
     name="Filter features from a table based on abundance and prevalence",
     description=("Filter features based on the relative abundance in a "
-                 "certain portion of samples. (i.e. Feature must have a "
+                 "certain portion of samples (i.e., features must have a "
                  "relative abundance of at least `abundance` in at least "
-                 "`prevelance` number of samples). Any samples with a "
+                 "`prevalence` number of samples). Any samples with a "
                  "frequency of zero after feature filtering will also be "
                  "removed.")
 )
