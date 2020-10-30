@@ -11,7 +11,8 @@ import biom
 
 
 def filter_features_conditionally(table: biom.Table,
-                                  prevelance: float, abundance: float
+                                  prevelance: float, 
+                                  abundance: float
                                   ) -> biom.Table:
     """
     A function to perform joint filtering because it makes life better
@@ -24,9 +25,12 @@ def filter_features_conditionally(table: biom.Table,
         return (v > abundance).sum() >= prevelance
 
     # Normalized the table to get the prevelance
-    table_n = table.copy().norm(axis='sample', inplace=False)
-    table_s = table_n.filter(_filter_f, axis='observation', inplace=True)
-    filter_ids = table_s.ids(axis='observation')
+    # Copy is because biom really wants to normalize the original table. By 
+    # copying and not using inplace, the original table is preserved. 
+   	# Redundant, but better safe that sorry.
+    table_norm = table.copy().norm(axis='sample', inplace=False)
+    table_norm.filter(_filter_f, axis='observation', inplace=True)
+    filter_ids = table_norm.ids(axis='observation')
 
     new_table = table.filter(filter_ids, axis='observation', inplace=False)
 
