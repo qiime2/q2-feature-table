@@ -339,8 +339,8 @@ plugin.methods.register_function(
     parameter_descriptions={
         'abundance': ('the minimum relative abundance for a feature to be '
                       'retained'),
-        'prevelance': ('the minimum portion of samples a that a feature '
-                       'must have a relative abundancee of at least '
+        'prevalence': ('the minimum portion of samples that a feature '
+                       'must have a relative abundance of at least '
                        '`abundance` to be retained')
     },
     output_descriptions={
