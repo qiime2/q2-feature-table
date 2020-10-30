@@ -31,8 +31,7 @@ class TestConditional(unittest.TestCase):
             observation_ids=['a-tat-tat']
             )
         test_ = filter_features_conditionally(table,
-                                              prevalence=0.8,
-                                              abundance=0.4)
+                                              0.8, 0.4)
         npt.assert_array_equal(known.matrix_data.toarray(),
                                test_.matrix_data.toarray())
         npt.assert_array_equal(known.ids(axis='sample'),

@@ -11,7 +11,7 @@ import biom
 
 
 def filter_features_conditionally(table: biom.Table,
-                                  prevalance: float, abundance: float
+                                  prevalence: float, abundance: float
                                   ) -> biom.Table:
     """
     A function to perform joint filtering because it makes life better
