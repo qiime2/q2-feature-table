@@ -330,8 +330,8 @@ plugin.methods.register_function(
 plugin.methods.register_function(
     function=q2_feature_table.filter_features_conditionally,
     inputs={'table': FeatureTable[T1]},
-    parameters={'prevalence': Int,# % Range(0, 1),
-                'abundance': Int,# % Range(0, 1)
+    parameters={'prevalence': Float % Range(0, 1),
+                'abundance': Float % Range(0, 1)
                 },
     outputs=[('filtered_table', FeatureTable[T1])],
     input_descriptions={
