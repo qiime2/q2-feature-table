@@ -346,7 +346,7 @@ plugin.methods.register_function(
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'
     },
-    name="Filter features from a table based on abundance and prevelance",
+    name="Filter features from a table based on abundance and prevalence",
     description=("Filter features based on the relative abundance in a "
                  "certain portion of samples. (i.e. Feature must have a "
                  "relative abundance of at least `abundance` in at least "
