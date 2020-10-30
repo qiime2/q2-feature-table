@@ -337,11 +337,11 @@ plugin.methods.register_function(
         'table': 'The feature table from which features should be filtered.'
     },
     parameter_descriptions={
-        'abundance': ('the minimum relative abundance for a feature to be '
-                      'retained'),
-        'prevalence': ('the minimum portion of samples that a feature '
+        'abundance': ('The minimum relative abundance for a feature to be '
+                      'retained.'),
+        'prevalence': ('The minimum portion of samples that a feature '
                        'must have a relative abundance of at least '
-                       '`abundance` to be retained')
+                       '`abundance` to be retained.')
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'
