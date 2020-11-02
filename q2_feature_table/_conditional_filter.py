@@ -19,9 +19,9 @@ def filter_features_conditionally(table: biom.Table,
     num_observations, num_samples = table.shape
     prevalence = prevalence * num_samples
 
-    # Calculates the filteering parameters on the original table
-    def _filter_f(v, id_, md):
-        return (v > abundance).sum() >= prevalence
+    # Calculates the filtering parameters on the original table
+    def _filter_f(value, id_, metadata):
+        return (value >= abundance).sum() >= prevalence
 
     # Normalized the table to get the prevalance
     # Copy is because biom really wants to normalize the original table. By
