@@ -114,7 +114,8 @@ def filter_seqs(data: pd.Series, table: biom.Table = None,
 
 
 def filter_features_conditionally(table: biom.Table,
-                                  prevalence: float, abundance: float
+                                  abundance: float
+                                  prevalence: float,
                                   ) -> biom.Table:
     """
     A function to perform joint filtering because it makes life better
@@ -123,8 +124,8 @@ def filter_features_conditionally(table: biom.Table,
     prevalence = prevalence * num_samples
 
     # Calculates the filtering parameters on the original table
-    def _filter_f(value, id_, metadata):
-        return (value >= abundance).sum() >= prevalence
+    def _filter_f(values, id_, metadata):
+        return (values >= abundance).sum() >= prevalence
 
     # Normalized the table to get the prevalance
     # Copy is because biom really wants to normalize the original table. By
