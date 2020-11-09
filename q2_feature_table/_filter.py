@@ -114,7 +114,7 @@ def filter_seqs(data: pd.Series, table: biom.Table = None,
 
 
 def filter_features_conditionally(table: biom.Table,
-                                  abundance: float
+                                  abundance: float,
                                   prevalence: float,
                                   ) -> biom.Table:
     """
