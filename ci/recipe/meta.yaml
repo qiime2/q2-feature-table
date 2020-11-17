@@ -23,7 +23,7 @@ requirements:
     - biom-format >=2.1.7,<2.2.0
     - h5py
     - seaborn
-    - pandas <1
+    - pandas >=1
     - numpy
     # `ipywidgets` included to avoid ShimWarning from
     # `seaborn` imports:
