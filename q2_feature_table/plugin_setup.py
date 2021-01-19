@@ -174,14 +174,16 @@ plugin.methods.register_function(
                 "to define the mapping of IDs to a group."
 )
 
+T3 = TypeMatch([Frequency, RelativeFrequency])
+
 plugin.methods.register_function(
     function=q2_feature_table.merge,
-    inputs={'tables': List[FeatureTable[Frequency]]},
+    inputs={'tables': List[FeatureTable[T3]]},
     parameters={
         'overlap_method': Str % Choices(q2_feature_table.overlap_methods()),
     },
     outputs=[
-        ('merged_table', FeatureTable[Frequency])],
+        ('merged_table', FeatureTable[T3])],
     input_descriptions={
         'tables': 'The collection of feature tables to be merged.',
     },

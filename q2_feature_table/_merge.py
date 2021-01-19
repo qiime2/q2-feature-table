@@ -13,7 +13,7 @@ import collections
 
 def overlap_methods():
     return ('error_on_overlapping_sample', 'error_on_overlapping_feature',
-            'sum')
+            'sum', 'average')
 
 
 def _get_overlapping(tables, axis):
@@ -42,11 +42,14 @@ def merge(tables: biom.Table,
             overlapping = _get_overlapping(tables, 'observation')
             raise ValueError('Same features are present in some of the '
                              'provided tables: %s' % ', '.join(overlapping))
-    elif overlap_method == 'sum':
+    elif overlap_method in ('sum', 'average'):
+        n = len(tables)
         tables = iter(tables)
         result = next(tables)  # There is always at least 1
         for table in tables:
             result = result.merge(table)
+        if overlap_method == 'average':
+            result.transform(lambda v, _, __: v / n)
         return result
     else:
         raise ValueError('Invalid overlap method: %s. Please provide one of '

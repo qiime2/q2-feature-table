@@ -167,6 +167,16 @@ class MergeTableTests(unittest.TestCase):
                     ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'])
         self.assertEqual(obs, exp)
 
+    def test_average(self):
+        t1 = Table(np.array([[1, 1, 1], [1, 1, 1]]),
+                   ['O1', 'O2'],
+                   ['S1', 'S2', 'S3'])
+        obs = merge([t1] * 3, 'average')
+        exp = Table(np.array([[1, 1, 1], [1, 1, 1]]),
+                    ['O1', 'O2'],
+                    ['S1', 'S2', 'S3'])
+        self.assertEqual(obs, exp)
+
 
 class UtilTests(unittest.TestCase):
 
