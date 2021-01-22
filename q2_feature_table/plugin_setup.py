@@ -8,7 +8,7 @@
 
 from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
                            Choices, MetadataColumn, Categorical, List,
-                           Citations, TypeMatch)
+                           Citations, TypeMatch, TypeMap)
 
 import q2_feature_table
 from q2_types.feature_table import (
@@ -174,16 +174,23 @@ plugin.methods.register_function(
                 "to define the mapping of IDs to a group."
 )
 
-T3 = TypeMatch([Frequency, RelativeFrequency])
+i_table, p_overlap_method, o_table = TypeMap({
+    (FeatureTable[Frequency],
+     Str % Choices(q2_feature_table.overlap_methods())):
+    FeatureTable[Frequency],
+    (FeatureTable[RelativeFrequency],
+     Str % Choices(q2_feature_table.overlap_methods()[:3])):
+    FeatureTable[RelativeFrequency]
+})
 
 plugin.methods.register_function(
     function=q2_feature_table.merge,
-    inputs={'tables': List[FeatureTable[T3]]},
+    inputs={'tables': List[i_table]},
     parameters={
-        'overlap_method': Str % Choices(q2_feature_table.overlap_methods()),
+        'overlap_method': p_overlap_method
     },
     outputs=[
-        ('merged_table', FeatureTable[T3])],
+        ('merged_table', o_table)],
     input_descriptions={
         'tables': 'The collection of feature tables to be merged.',
     },

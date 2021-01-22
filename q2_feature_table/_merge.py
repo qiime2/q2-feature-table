@@ -13,7 +13,7 @@ import collections
 
 def overlap_methods():
     return ('error_on_overlapping_sample', 'error_on_overlapping_feature',
-            'sum', 'average')
+            'average', 'sum')
 
 
 def _get_overlapping(tables, axis):
