@@ -288,7 +288,8 @@ plugin.methods.register_function(
                 'max_features': Int,
                 'metadata': Metadata,
                 'where': Str,
-                'exclude_ids': Bool},
+                'exclude_ids': Bool,
+                'keep_zero_features':Bool},
     outputs=[('filtered_table', FeatureTable[T1])],
     input_descriptions={
         'table': 'The feature table from which samples should be filtered.'
@@ -315,7 +316,9 @@ plugin.methods.register_function(
                  'also in the feature table will be retained.',
         'exclude_ids': 'If true, the samples selected by `metadata` or '
                        '`where` parameters will be excluded from the filtered '
-                       'table instead of being retained.'
+                       'table instead of being retained.',
+        'keep_zero_features': 'If True, features which are not present in any '
+                              'retained samples are kept.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by sample.'
