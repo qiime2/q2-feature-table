@@ -288,7 +288,8 @@ plugin.methods.register_function(
                 'max_features': Int,
                 'metadata': Metadata,
                 'where': Str,
-                'exclude_ids': Bool},
+                'exclude_ids': Bool,
+                'filter_empty_features': Bool},
     outputs=[('filtered_table', FeatureTable[T1])],
     input_descriptions={
         'table': 'The feature table from which samples should be filtered.'
@@ -315,7 +316,9 @@ plugin.methods.register_function(
                  'also in the feature table will be retained.',
         'exclude_ids': 'If true, the samples selected by `metadata` or '
                        '`where` parameters will be excluded from the filtered '
-                       'table instead of being retained.'
+                       'table instead of being retained.',
+        'filter_empty_features': 'If true, features which are not present in '
+                                 'any retained samples are dropped.',
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by sample.'
@@ -366,7 +369,8 @@ plugin.methods.register_function(
                 'max_samples': Int,
                 'metadata': Metadata,
                 'where': Str,
-                'exclude_ids': Bool},
+                'exclude_ids': Bool,
+                'filter_empty_samples': Bool},
     outputs=[('filtered_table', FeatureTable[Frequency])],
     input_descriptions={
         'table': 'The feature table from which features should be filtered.'
@@ -393,7 +397,9 @@ plugin.methods.register_function(
                  'also in the feature table will be retained.',
         'exclude_ids': 'If true, the features selected by `metadata` or '
                        '`where` parameters will be excluded from the filtered '
-                       'table instead of being retained.'
+                       'table instead of being retained.',
+        'filter_empty_samples': 'If true, drop any samples where none of the '
+                                'retained features are present.',
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'

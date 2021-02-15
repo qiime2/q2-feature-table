@@ -31,7 +31,8 @@ _other_axis_map = {'sample': 'observation', 'observation': 'sample'}
 
 
 def _filter_table(table, min_frequency, max_frequency, min_nonzero,
-                  max_nonzero, metadata, where, axis, exclude_ids=False):
+                  max_nonzero, metadata, where, axis, exclude_ids=False,
+                  filter_opposite_axis=True):
     if min_frequency == 0 and max_frequency is None and min_nonzero == 0 and\
        max_nonzero is None and metadata is None and where is None and\
        exclude_ids is False:
@@ -55,22 +56,25 @@ def _filter_table(table, min_frequency, max_frequency, min_nonzero,
 
     # filter on the opposite axis to remove any entities that now have a
     # frequency of zero
-    filter_fn2 = _get_biom_filter_function(
-        ids_to_keep=table.ids(axis=_other_axis_map[axis]), min_frequency=0,
-        max_frequency=None, min_nonzero=1, max_nonzero=None)
-    table.filter(filter_fn2, axis=_other_axis_map[axis], inplace=True)
+    if filter_opposite_axis:
+        filter_fn2 = _get_biom_filter_function(
+            ids_to_keep=table.ids(axis=_other_axis_map[axis]), min_frequency=0,
+            max_frequency=None, min_nonzero=1, max_nonzero=None)
+        table.filter(filter_fn2, axis=_other_axis_map[axis], inplace=True)
 
 
 def filter_samples(table: biom.Table, min_frequency: int = 0,
                    max_frequency: int = None, min_features: int = 0,
                    max_features: int = None,
                    metadata: qiime2.Metadata = None, where: str = None,
-                   exclude_ids: bool = False)\
+                   exclude_ids: bool = False,
+                   filter_empty_features: bool = True)\
                   -> biom.Table:
     _filter_table(table=table, min_frequency=min_frequency,
                   max_frequency=max_frequency, min_nonzero=min_features,
                   max_nonzero=max_features, metadata=metadata,
-                  where=where, axis='sample', exclude_ids=exclude_ids)
+                  where=where, axis='sample', exclude_ids=exclude_ids,
+                  filter_opposite_axis=filter_empty_features)
 
     return table
 
@@ -79,12 +83,14 @@ def filter_features(table: biom.Table, min_frequency: int = 0,
                     max_frequency: int = None, min_samples: int = 0,
                     max_samples: int = None,
                     metadata: qiime2.Metadata = None, where: str = None,
-                    exclude_ids: bool = False)\
+                    exclude_ids: bool = False,
+                    filter_empty_samples: bool = True)\
                    -> biom.Table:
     _filter_table(table=table, min_frequency=min_frequency,
                   max_frequency=max_frequency, min_nonzero=min_samples,
                   max_nonzero=max_samples, metadata=metadata,
-                  where=where, axis='observation', exclude_ids=exclude_ids)
+                  where=where, axis='observation', exclude_ids=exclude_ids,
+                  filter_opposite_axis=filter_empty_samples)
 
     return table
 

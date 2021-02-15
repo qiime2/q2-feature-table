@@ -111,6 +111,49 @@ class FilterSamplesTests(unittest.TestCase):
         expected = Table(np.array([]), [], [])
         self.assertEqual(actual, expected)
 
+    def test_filter_empty_features(self):
+        # no filtering
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table, max_frequency=42,
+                                filter_empty_features=False)
+        expected = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                         ['O1', 'O2'],
+                         ['S1', 'S2', 'S3'])
+        self.assertEqual(actual, expected)
+
+        # filter one
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table, max_frequency=4,
+                                filter_empty_features=False)
+        expected = Table(np.array([[0, 1], [1, 1]]),
+                         ['O1', 'O2'],
+                         ['S1', 'S2'])
+        self.assertEqual(actual, expected)
+
+        # filter two
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table, max_frequency=1,
+                                filter_empty_features=False)
+        expected = Table(np.array([[0], [1]]),
+                         ['O1', 'O2'],
+                         ['S1'])
+        self.assertEqual(actual, expected)
+
+        # filter all
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table, max_frequency=0,
+                                filter_empty_features=False)
+        expected = Table(np.array([[], []]), ['O1', 'O2'], [])
+        self.assertEqual(actual, expected)
+
     def test_min_features(self):
         # no filtering
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
