@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2020, QIIME 2 development team.
+# Copyright (c) 2016-2021, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -51,6 +51,27 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['S1', 'S2', 'S3'])
         actual = filter_features(table, min_frequency=5)
         expected = Table(np.array([]), [], [])
+        self.assertEqual(actual, expected)
+
+    def test_filter_empty_samples(self):
+        # no filtering
+        table = Table(np.array([[0, 1, 1], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_features(table, min_frequency=2,
+                                 filter_empty_samples=False)
+        expected = Table(np.array([[0, 1, 1], [1, 1, 2]]),
+                         ['O1', 'O2'],
+                         ['S1', 'S2', 'S3'])
+        self.assertEqual(actual, expected)
+
+        # filter all
+        table = Table(np.array([[0, 1, 1], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_features(table, min_frequency=5,
+                                 filter_empty_samples=False)
+        expected = Table(np.empty((0, 3)), [], ['S1', 'S2', 'S3'])
         self.assertEqual(actual, expected)
 
     def test_feature_metadata(self):
