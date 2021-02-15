@@ -176,10 +176,12 @@ plugin.methods.register_function(
 
 i_table, p_overlap_method, o_table = TypeMap({
     (FeatureTable[Frequency],
-     Str % Choices(q2_feature_table.overlap_methods())):
+     Str % Choices(sorted(q2_feature_table.overlap_methods()))):
     FeatureTable[Frequency],
     (FeatureTable[RelativeFrequency],
-     Str % Choices(q2_feature_table.overlap_methods()[:3])):
+     # We don't want to allow summing of RelativeFrequency tables, so remove
+     # that option from the overlap methods
+     Str % Choices(sorted(q2_feature_table.overlap_methods() - {'sum'}))):
     FeatureTable[RelativeFrequency]
 })
 

@@ -177,6 +177,19 @@ class MergeTableTests(unittest.TestCase):
                     ['S1', 'S2', 'S3'])
         self.assertEqual(obs, exp)
 
+    def test_average_relative_frequency(self):
+        t1 = Table(np.array([[0.75, 0.75, 0.75], [0.75, 0.75, 0.75]]),
+                   ['O1', 'O2'],
+                   ['S1', 'S2', 'S3'])
+        t2 = Table(np.array([[0.25, 0.25, 0.25], [0.25, 0.25, 0.25]]),
+                   ['O1', 'O2'],
+                   ['S1', 'S2', 'S3'])
+        obs = merge([t1, t2], 'average')
+        exp = Table(np.array([[0.5, 0.5, 0.5], [0.5, 0.5, 0.5]]),
+                    ['O1', 'O2'],
+                    ['S1', 'S2', 'S3'])
+        self.assertEqual(obs, exp)
+
 
 class UtilTests(unittest.TestCase):
 
