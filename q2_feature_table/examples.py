@@ -9,7 +9,6 @@
 import numpy as np
 from biom import Table
 
-from qiime2.sdk.usage import UsageAction, UsageInputs, UsageOutputNames
 from qiime2 import Artifact
 
 
@@ -44,10 +43,10 @@ def feature_table_merge_example(use):
                                             feature_table1, feature_table2)
 
     use.action(
-        UsageAction(plugin_id='feature_table',
-                    action_id='merge'),
-        UsageInputs(tables=merged_table),
-        UsageOutputNames(merged_table='merged_table'),
+        use.UsageAction(plugin_id='feature_table',
+                        action_id='merge'),
+        use.UsageInputs(tables=merged_table),
+        use.UsageOutputNames(merged_table='merged_table'),
     )
 
 
@@ -61,8 +60,8 @@ def feature_table_merge_three_tables_example(use):
                                             feature_table3)
 
     use.action(
-        UsageAction(plugin_id='feature_table',
-                    action_id='merge'),
-        UsageInputs(tables=merged_table, overlap_method='sum'),
-        UsageOutputNames(merged_table='merged_table'),
+        use.UsageAction(plugin_id='feature_table',
+                        action_id='merge'),
+        use.UsageInputs(tables=merged_table, overlap_method='sum'),
+        use.UsageOutputNames(merged_table='merged_table'),
     )
