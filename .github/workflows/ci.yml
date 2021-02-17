@@ -51,4 +51,4 @@ jobs:
       with:
         package-name: q2-feature-table
         build-target: staging
-        additional-tests: py.test --pyargs q2_feature_table --capture=tee-sys
+        additional-tests: py.test --pyargs q2_feature_table
