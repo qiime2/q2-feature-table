@@ -75,8 +75,8 @@ def summarize(output_dir: str, table: biom.Table,
             bins = max((sample_summary['Maximum frequency'] -
                         sample_summary['Minimum frequency']) / bin_width, 5)
 
-        sample_frequencies_ax = sns.distplot(sample_frequencies, kde=False,
-                                             rug=True, bins=int(round(bins)))
+        sample_frequencies_ax = sns.histplot(sample_frequencies, kde=False,
+                                             bins=int(round(bins)))
         sample_frequencies_ax.get_xaxis().set_major_formatter(
             matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
         sample_frequencies_ax.set_xlabel('Frequency per sample')
@@ -90,8 +90,7 @@ def summarize(output_dir: str, table: biom.Table,
     feature_summary, feature_frequencies = _frequency_summary(
         table, axis='observation')
     if number_of_features > 1:
-        feature_frequencies_ax = sns.distplot(feature_frequencies, kde=False,
-                                              rug=False)
+        feature_frequencies_ax = sns.histplot(feature_frequencies, kde=False)
         feature_frequencies_ax.set_xlabel('Frequency per feature')
         feature_frequencies_ax.set_ylabel('Number of features')
         feature_frequencies_ax.set_xscale('log')
