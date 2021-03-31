@@ -162,6 +162,8 @@ def summarize(output_dir: str, table: biom.Table,
                                  output_dir)
     q2templates.render(templates, output_dir, context=context)
 
+    plt.close('all')
+
 
 def _compute_descriptive_stats(lst: list):
     """Basic descriptive statistics and a (parametric) seven-number summary.
