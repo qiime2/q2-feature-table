@@ -11,7 +11,7 @@ import unittest
 import qiime2
 import pandas as pd
 import numpy as np
-from pandas.util.testing import assert_series_equal
+from pandas.testing import assert_series_equal
 from biom.table import Table
 
 from q2_feature_table import filter_seqs

@@ -112,7 +112,7 @@ def _seven_number_summary(a):
     # TODO this should probably be publicly accessible throughout QIIME 2. it's
     # also currently implemented in q2-demux `summarize` and q2-diversity
     # `alpha-rarefaction`
-    stats = pd.Series(a).describe(
+    stats = pd.Series(a, dtype=float).describe(
         percentiles=[0.02, 0.09, 0.25, 0.5, 0.75, 0.91, 0.98])
     drop_cols = stats.index.isin(['std', 'mean', 'min', 'max', 'count'])
     stats = stats[~drop_cols]
