@@ -12,7 +12,7 @@ import skbio
 import numpy as np
 from biom.table import Table
 import pandas as pd
-import pandas.util.testing as pdt
+import pandas.testing as pdt
 
 from q2_feature_table import merge, merge_seqs, merge_taxa
 from q2_feature_table._merge import _merge_feature_data, _get_overlapping
