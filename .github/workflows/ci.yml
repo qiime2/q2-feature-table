@@ -51,5 +51,5 @@ jobs:
       with:
         package-name: q2-feature-table
         build-target: tested
-        # additional-tests: py.test --pyargs q2_feature_table
+        additional-tests: py.test --pyargs q2_feature_table
         library-token: ${{ secrets.LIBRARY_TOKEN }}
