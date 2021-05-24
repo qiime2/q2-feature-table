@@ -106,7 +106,7 @@ def summarize(output_dir: str, table: biom.Table,
             bins = min(bins, MAX_BINS)
 
         feature_frequencies_ax = sns.histplot(feature_frequencies, kde=False,
-                                              bins=int(round(bins))
+                                              bins=int(round(bins)))
         feature_frequencies_ax.set_xlabel('Frequency per feature')
         feature_frequencies_ax.set_ylabel('Number of features')
         feature_frequencies_ax.set_xscale('log')
