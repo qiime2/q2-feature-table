@@ -58,6 +58,9 @@ def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
 
 def summarize(output_dir: str, table: biom.Table,
               sample_metadata: qiime2.Metadata = None) -> None:
+    # this value is to limit the amount of memory used by seaborn.histplot, for
+    # more information see: https://github.com/mwaskom/seaborn/issues/2325
+    MAX_BINS = 50
     number_of_features, number_of_samples = table.shape
 
     sample_summary, sample_frequencies = _frequency_summary(
@@ -74,6 +77,7 @@ def summarize(output_dir: str, table: biom.Table,
 
             bins = max((sample_summary['Maximum frequency'] -
                         sample_summary['Minimum frequency']) / bin_width, 5)
+            bins = min(bins, MAX_BINS)
 
         sample_frequencies_ax = sns.histplot(sample_frequencies, kde=False,
                                              bins=int(round(bins)))
@@ -90,7 +94,19 @@ def summarize(output_dir: str, table: biom.Table,
     feature_summary, feature_frequencies = _frequency_summary(
         table, axis='observation')
     if number_of_features > 1:
-        feature_frequencies_ax = sns.histplot(feature_frequencies, kde=False)
+        IQR = feature_summary['3rd quartile'] - feature_summary['1st quartile']
+        if IQR == 0.0:
+            bins = 5
+        else:
+            # Freedman–Diaconis rule
+            bin_width = (2 * IQR) / (number_of_features ** (1/3))
+
+            bins = max((feature_summary['Maximum frequency'] -
+                        feature_summary['Minimum frequency']) / bin_width, 5)
+            bins = min(bins, MAX_BINS)
+
+        feature_frequencies_ax = sns.histplot(feature_frequencies, kde=False,
+                                              bins=int(round(bins))
         feature_frequencies_ax.set_xlabel('Frequency per feature')
         feature_frequencies_ax.set_ylabel('Number of features')
         feature_frequencies_ax.set_xscale('log')
