@@ -29,11 +29,14 @@ requirements:
     # `seaborn` imports:
     #  https://github.com/mwaskom/seaborn/issues/874
     - ipywidgets
-    - qiime2 {{ release }}.*
-    - q2templates {{ release }}.*
-    - q2-types {{ release }}.*
+    - qiime2 {{ qiime2 }}
+    - q2templates {{ q2templates }}
+    - q2-types {{ q2_types }}
 
 test:
+  requires:
+    - pytest
+
   imports:
     - q2_feature_table
     - qiime2.plugins.feature_table
