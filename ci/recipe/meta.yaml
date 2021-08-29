@@ -34,6 +34,9 @@ requirements:
     - q2-types {{ q2_types }}
 
 test:
+  requires:
+    - pytest
+
   imports:
     - q2_feature_table
     - qiime2.plugins.feature_table
