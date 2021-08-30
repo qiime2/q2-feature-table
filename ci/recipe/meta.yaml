@@ -22,6 +22,7 @@ requirements:
     - scikit-bio
     - biom-format >=2.1.7,<2.2.0
     - h5py
+    - hdf5 {{ hdf5 }}
     - seaborn
     - pandas >=1
     - numpy
