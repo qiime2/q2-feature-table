@@ -19,7 +19,8 @@ requirements:
   run:
     - python {{ python }}
     - scikit-bio {{ scikit_bio }}
-    - biom-format >=2.1.7,<2.2.0
+    # bear with me for a moment
+    - biom-format >=2.1.7,<2.1.12
     - seaborn
     - pandas {{ pandas }}
     - numpy
