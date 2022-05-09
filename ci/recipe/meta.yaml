@@ -21,7 +21,7 @@ requirements:
     - scikit-bio {{ scikit_bio }}
     - biom-format >=2.1.7,<2.2.0
     - seaborn
-    - pandas >=1
+    - pandas {{ pandas }}
     - numpy
     # `ipywidgets` included to avoid ShimWarning from
     # `seaborn` imports:
