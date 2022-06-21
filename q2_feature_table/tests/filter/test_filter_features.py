@@ -50,8 +50,7 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         actual = filter_features(table, min_frequency=5)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
     def test_filter_empty_samples(self):
         # no filtering
@@ -71,8 +70,7 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['S1', 'S2', 'S3'])
         actual = filter_features(table, min_frequency=5,
                                  filter_empty_samples=False)
-        expected = Table(np.empty((0, 3)), [], ['S1', 'S2', 'S3'])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
     def test_feature_metadata(self):
         # no filtering
@@ -108,8 +106,7 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         actual = filter_features(table, metadata=metadata)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
         # exclude one
         df = pd.DataFrame({'SequencedGenome': ['yes']},
@@ -134,8 +131,7 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['S1', 'S2', 'S3'])
         actual = filter_features(table, metadata=metadata,
                                  exclude_ids=True)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
     def test_where(self):
         # no filtering
@@ -175,8 +171,7 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['S1', 'S2', 'S3'])
         where = "SequencedGenome='yes' AND SequencedGenome='no'"
         actual = filter_features(table, metadata=metadata, where=where)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
         # filter one -> exclude one
         df = pd.DataFrame({'SequencedGenome': ['yes', 'no']},
