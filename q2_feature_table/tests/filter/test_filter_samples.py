@@ -69,8 +69,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         actual = filter_samples(table, min_frequency=42)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
     def test_max_frequency(self):
         # no filtering
@@ -108,8 +107,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         actual = filter_samples(table, max_frequency=0)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
     def test_filter_empty_features(self):
         # no filtering
@@ -151,8 +149,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['S1', 'S2', 'S3'])
         actual = filter_samples(table, max_frequency=0,
                                 filter_empty_features=False)
-        expected = Table(np.array([[], []]), ['O1', 'O2'], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
     def test_min_features(self):
         # no filtering
@@ -180,8 +177,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         actual = filter_samples(table, min_features=3)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
     def test_max_features(self):
         # no filtering
@@ -209,8 +205,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         actual = filter_samples(table, max_features=0)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
     def test_sample_metadata(self):
         # no filtering
@@ -248,8 +243,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         actual = filter_samples(table, metadata=metadata)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
         # exclude none
         df = pd.DataFrame({'Subject': ['subject-1'],
@@ -297,8 +291,7 @@ class FilterSamplesTests(unittest.TestCase):
         metadata = qiime2.Metadata(df)
         actual = filter_samples(table, metadata=metadata,
                                 exclude_ids=True)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
     def test_sample_metadata_extra_ids(self):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
@@ -371,8 +364,7 @@ class FilterSamplesTests(unittest.TestCase):
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1' AND Subject='subject-2'"
         actual = filter_samples(table, metadata=metadata, where=where)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
         # filter none -> exclude none
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
@@ -438,8 +430,7 @@ class FilterSamplesTests(unittest.TestCase):
                                 metadata=metadata,
                                 where=where,
                                 exclude_ids=True)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
     def test_combine_id_and_frequency_filters(self):
         # no filtering
@@ -660,8 +651,7 @@ class FilterSamplesTests(unittest.TestCase):
                                 where=where,
                                 max_frequency=4,
                                 min_frequency=3)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
     def test_combine_exclude_ids_and_features_filters(self):
         # exclude one, min_features filter none
@@ -797,8 +787,7 @@ class FilterSamplesTests(unittest.TestCase):
                                 exclude_ids=True,
                                 min_features=1,
                                 max_features=1)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
         # where filter one -> exclude one,
         # max_features filter one,
@@ -817,8 +806,7 @@ class FilterSamplesTests(unittest.TestCase):
                                 exclude_ids=True,
                                 min_features=1,
                                 max_features=1)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
 
 if __name__ == "__main__":
