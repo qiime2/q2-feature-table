@@ -631,8 +631,7 @@ class FilterSamplesTests(unittest.TestCase):
                                 exclude_ids=True,
                                 max_frequency=4,
                                 min_frequency=3)
-        expected = Table(np.array([]), [], [])
-        self.assertEqual(actual, expected)
+        self.assertTrue(actual.is_empty())
 
         # where filter one -> exclude one,
         # min_frequency filter one,
