@@ -15,6 +15,9 @@ def vega_spec(sample_metadata, sample_frequencies):
     sample_metadata = sample_metadata.filter_ids(
         sample_frequencies.index)
     df = sample_metadata.to_dataframe()
+    # Set each column to object so that None remains instead of being converted
+    # back into an appropriate null for the column's dtype
+    df = df.astype(object)
     df = df.where(pd.notnull(df), None)
     # create data in json format for Vega
     for i, row in df.iterrows():
