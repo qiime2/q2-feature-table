@@ -300,7 +300,7 @@ class SummarizeTests(TestCase):
                           'SampleType': 'gut'}, 'frequency': 5.0}],
                         spec['data'][0]['values'])
 
-    def test_vega_spec_nan_handling(self):
+    def test_vega_spec_nandling(self):
         df = pd.DataFrame({'a': [0.5, float('nan')]})
         df.index = df.index.map(str)
         df.index.name = 'id'
