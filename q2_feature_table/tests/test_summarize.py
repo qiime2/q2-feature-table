@@ -300,6 +300,20 @@ class SummarizeTests(TestCase):
                           'SampleType': 'gut'}, 'frequency': 5.0}],
                         spec['data'][0]['values'])
 
+    def test_vega_spec_nan_handling(self):
+        df = pd.DataFrame({'a': [0.5, float('nan')]})
+        df.index = df.index.map(str)
+        df.index.name = 'id'
+        md = qiime2.Metadata(df)
+        sample_freqs = pd.Series([10, 50])
+        sample_freqs.index = sample_freqs.index.map(str)
+
+        spec = vega_spec(md, sample_freqs)
+        exp = [{'frequency': 10, 'id': '0', 'metadata': {'a': 0.5}},
+               {'frequency': 50, 'id': '1', 'metadata': {'a': None}}]
+
+        self.assertEqual(spec['data'][0]['values'], exp)
+
 
 if __name__ == "__main__":
     main()
