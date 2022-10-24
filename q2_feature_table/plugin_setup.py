@@ -23,7 +23,8 @@ from ._examples import (feature_table_merge_example,
                         feature_table_filter_samples_metadata3,
                         feature_table_filter_samples_metadata4,
                         feature_table_filter_samples_metadata5,
-                        feature_table_filter_samples_min_features,)
+                        feature_table_filter_samples_min_features,
+                        feature_table_filter_samples_min_frequency)
 
 citations = Citations.load('citations.bib', package='q2_feature_table')
 plugin = Plugin(
@@ -355,7 +356,8 @@ plugin.methods.register_function(
         'filter_to_subject1_gut': feature_table_filter_samples_metadata3,
         'filter_to_gut_or_abx': feature_table_filter_samples_metadata4,
         'filter_to_subject1_not_gut': feature_table_filter_samples_metadata5,
-        'filter_min_features': feature_table_filter_samples_min_features}
+        'filter_min_features': feature_table_filter_samples_min_features,
+        'filter_min_frequency': feature_table_filter_samples_min_frequency}
 )
 
 plugin.methods.register_function(

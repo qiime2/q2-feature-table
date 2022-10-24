@@ -103,6 +103,19 @@ def feature_table_filter_samples_min_features(use):
     )
 
 
+def feature_table_filter_samples_min_frequency(use):
+    feature_table = use.init_artifact_from_url(
+        'feature_table', moving_pics_ft_url
+    )
+
+    filtered_table, = use.action(
+        use.UsageAction(plugin_id='feature_table', action_id='filter_samples'),
+        use.UsageInputs(table=feature_table,
+                        min_frequency=1500),
+        use.UsageOutputNames(filtered_table='filtered_table')
+    )
+
+
 def feature_table_filter_samples_metadata1(use):
     feature_table = use.init_artifact_from_url(
         'feature_table', moving_pics_ft_url
