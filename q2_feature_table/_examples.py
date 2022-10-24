@@ -15,6 +15,29 @@ from biom import Table
 from qiime2 import Artifact
 
 
+rep_seqs_dada2_url = 'https://docs.qiime2.org/2022.8/data/tutorials/' \
+                     'moving-pictures/rep-seqs-dada2.qza'
+rep_seqs_deblur_url = 'https://docs.qiime2.org/2022.8/data/tutorials/' \
+                      'moving-pictures/rep-seqs-deblur.qza'
+
+
+def artifact_from_url(url):
+    def factory():
+        import tempfile
+        import requests
+        import qiime2
+
+        data = requests.get(url)
+
+        with tempfile.NamedTemporaryFile() as f:
+            f.write(data.content)
+            f.flush()
+            result = qiime2.Artifact.load(f.name)
+
+        return result
+    return factory
+
+
 def _get_data_from_tests(path):
     return pkg_resources.resource_filename('q2_feature_table.tests',
                                            os.path.join('data', path))
@@ -73,13 +96,13 @@ def feature_table_merge_three_tables_example(use):
 
 
 def feature_table_merge_seqs(use):
-    seqs1 = Artifact.load(_get_data_from_tests('rep-seqs-dada2.qza'))
-    seqs2 = Artifact.load(_get_data_from_tests('rep-seqs-deblur.qza'))
+    dada2_seqs = use.init_artifact_from_url('seqs1', rep_seqs_dada2_url)
+    deblur_seqs = use.init_artifact_from_url('seqs2', rep_seqs_deblur_url)
 
     merged_data, = use.action(
         use.UsageAction('feature_table', 'merge_seqs'),
         use.UsageInputs(
-            data=[seqs1, seqs2]
+            data=[dada2_seqs, deblur_seqs]
         ),
         use.UsageOutputNames(
             merged_data='merged_data'
