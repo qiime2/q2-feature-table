@@ -24,7 +24,8 @@ from ._examples import (feature_table_merge_example,
                         feature_table_filter_samples_metadata4,
                         feature_table_filter_samples_metadata5,
                         feature_table_filter_samples_min_features,
-                        feature_table_filter_samples_min_frequency)
+                        feature_table_filter_samples_min_frequency,
+                        feature_table_filter_features_min_samples)
 
 citations = Citations.load('citations.bib', package='q2_feature_table')
 plugin = Plugin(
@@ -438,7 +439,10 @@ plugin.methods.register_function(
     description="Filter features from table based on frequency and/or "
                 "metadata. Any samples with a frequency of zero after feature "
                 "filtering will also be removed. See the filtering tutorial "
-                "on https://docs.qiime2.org for additional details."
+                "on https://docs.qiime2.org for additional details.",
+    examples={
+     'filter_features_min_samples': feature_table_filter_features_min_samples
+    }
 )
 
 

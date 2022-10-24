@@ -196,3 +196,17 @@ def feature_table_filter_samples_metadata5(use):
             where=r'[subject]="subject-1" AND NOT [body-site]="gut"'),
         use.UsageOutputNames(filtered_table='filtered_table')
     )
+
+
+def feature_table_filter_features_min_samples(use):
+    feature_table = use.init_artifact_from_url(
+        'feature_table', moving_pics_ft_url
+    )
+
+    filtered_table, = use.action(
+        use.UsageAction(plugin_id='feature_table',
+                        action_id='filter_features'),
+        use.UsageInputs(table=feature_table,
+                        min_samples=2),
+        use.UsageOutputNames(filtered_table='filtered_table')
+    )
