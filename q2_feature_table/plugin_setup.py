@@ -25,7 +25,8 @@ from ._examples import (feature_table_merge_example,
                         feature_table_filter_samples_metadata5,
                         feature_table_filter_samples_min_features,
                         feature_table_filter_samples_min_frequency,
-                        feature_table_filter_features_min_samples)
+                        feature_table_filter_features_min_samples,
+                        feature_table_filter_features_conditionally)
 
 citations = Citations.load('citations.bib', package='q2_feature_table')
 plugin = Plugin(
@@ -387,7 +388,11 @@ plugin.methods.register_function(
                  "relative abundance of at least `abundance` in at least "
                  "`prevalence` number of samples). Any samples with a "
                  "frequency of zero after feature filtering will also be "
-                 "removed.")
+                 "removed."),
+    examples={
+        'retain_features_1_percent_abundance_in_34_percent_samples':
+        feature_table_filter_features_conditionally
+    }
 )
 
 

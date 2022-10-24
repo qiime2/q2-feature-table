@@ -210,3 +210,18 @@ def feature_table_filter_features_min_samples(use):
                         min_samples=2),
         use.UsageOutputNames(filtered_table='filtered_table')
     )
+
+
+def feature_table_filter_features_conditionally(use):
+    feature_table = use.init_artifact_from_url(
+        'feature_table', moving_pics_ft_url
+    )
+
+    filtered_table, = use.action(
+        use.UsageAction(plugin_id='feature_table',
+                        action_id='filter_features_conditionally'),
+        use.UsageInputs(table=feature_table,
+                        abundance=0.01,
+                        prevalence=0.34),
+        use.UsageOutputNames(filtered_table='filtered_table')
+    )
