@@ -15,8 +15,9 @@ from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
 from q2_types.feature_data import (
     FeatureData, Sequence, Taxonomy, AlignedSequence)
-from .examples import (feature_table_merge_example,
-                       feature_table_merge_three_tables_example)
+from ._examples import (feature_table_merge_example,
+                        feature_table_merge_three_tables_example,
+                        feature_table_merge_seqs)
 
 citations = Citations.load('citations.bib', package='q2_feature_table')
 plugin = Plugin(
@@ -227,7 +228,10 @@ plugin.methods.register_function(
     description="Combines feature data objects which may or may not "
                 "contain data for the same features. If different feature "
                 "data is present for the same feature id in the inputs, "
-                "the data from the first will be propagated to the result."
+                "the data from the first will be propagated to the result.",
+    examples={
+        'merge_seqs': feature_table_merge_seqs
+    }
 )
 
 

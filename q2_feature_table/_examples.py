@@ -6,10 +6,18 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import os
+import pkg_resources
+
 import numpy as np
 from biom import Table
 
 from qiime2 import Artifact
+
+
+def _get_data_from_tests(path):
+    return pkg_resources.resource_filename('q2_feature_table.tests',
+                                           os.path.join('data', path))
 
 
 def ft1_factory():
@@ -61,4 +69,19 @@ def feature_table_merge_three_tables_example(use):
             overlap_method='sum'
         ),
         use.UsageOutputNames(merged_table='merged_table'),
+    )
+
+
+def feature_table_merge_seqs(use):
+    seqs1 = Artifact.load(_get_data_from_tests('rep-seqs-dada2.qza'))
+    seqs2 = Artifact.load(_get_data_from_tests('rep-seqs-deblur.qza'))
+
+    merged_data, = use.action(
+        use.UsageAction('feature_table', 'merge_seqs'),
+        use.UsageInputs(
+            data=[seqs1, seqs2]
+        ),
+        use.UsageOutputNames(
+            merged_data='merged_data'
+        )
     )
