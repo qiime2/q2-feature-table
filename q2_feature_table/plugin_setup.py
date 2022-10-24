@@ -17,7 +17,13 @@ from q2_types.feature_data import (
     FeatureData, Sequence, Taxonomy, AlignedSequence)
 from ._examples import (feature_table_merge_example,
                         feature_table_merge_three_tables_example,
-                        feature_table_merge_seqs)
+                        feature_table_merge_seqs,
+                        feature_table_filter_samples_metadata1,
+                        feature_table_filter_samples_metadata2,
+                        feature_table_filter_samples_metadata3,
+                        feature_table_filter_samples_metadata4,
+                        feature_table_filter_samples_metadata5,
+                        feature_table_filter_samples_min_features,)
 
 citations = Citations.load('citations.bib', package='q2_feature_table')
 plugin = Plugin(
@@ -342,7 +348,14 @@ plugin.methods.register_function(
     description="Filter samples from table based on frequency and/or "
                 "metadata. Any features with a frequency of zero after sample "
                 "filtering will also be removed. See the filtering tutorial "
-                "on https://docs.qiime2.org for additional details."
+                "on https://docs.qiime2.org for additional details.",
+    examples={
+        'filter_to_subject1': feature_table_filter_samples_metadata1,
+        'filter_to_skin': feature_table_filter_samples_metadata2,
+        'filter_to_subject1_gut': feature_table_filter_samples_metadata3,
+        'filter_to_gut_or_abx': feature_table_filter_samples_metadata4,
+        'filter_to_subject1_not_gut': feature_table_filter_samples_metadata5,
+        'filter_min_features': feature_table_filter_samples_min_features}
 )
 
 plugin.methods.register_function(
