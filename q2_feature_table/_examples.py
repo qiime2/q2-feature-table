@@ -71,8 +71,9 @@ def feature_table_merge_three_tables_example(use):
 
 
 def feature_table_merge_seqs(use):
-    dada2_seqs = use.init_artifact_from_url('seqs1', rep_seqs_dada2_url)
-    deblur_seqs = use.init_artifact_from_url('seqs2', rep_seqs_deblur_url)
+    dada2_seqs = use.init_artifact_from_url('dada2_seqs', rep_seqs_dada2_url)
+    deblur_seqs = \
+        use.init_artifact_from_url('deblur_seqs', rep_seqs_deblur_url)
 
     merged_data, = use.action(
         use.UsageAction('feature_table', 'merge_seqs'),
