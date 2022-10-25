@@ -217,6 +217,9 @@ def feature_table_filter_features_conditionally(use):
         'feature_table', moving_pics_ft_url
     )
 
+    use.comment("Retain only features with at least 1%% abundance in at "
+                "least 34%% of samples.")
+
     filtered_table, = use.action(
         use.UsageAction(plugin_id='feature_table',
                         action_id='filter_features_conditionally'),

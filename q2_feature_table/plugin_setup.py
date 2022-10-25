@@ -390,7 +390,7 @@ plugin.methods.register_function(
                  "frequency of zero after feature filtering will also be "
                  "removed."),
     examples={
-        'retain_features_1_percent_abundance_in_34_percent_samples':
+        '1':
         feature_table_filter_features_conditionally
     }
 )
