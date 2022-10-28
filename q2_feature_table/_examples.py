@@ -230,6 +230,7 @@ def feature_table_filter_features_conditionally(use):
         use.UsageOutputNames(filtered_table='filtered_table')
     )
 
+
 def feature_table_group_samples(use):
     feature_table = use.init_artifact_from_url(
         'feature_table', moving_pics_ft_url
