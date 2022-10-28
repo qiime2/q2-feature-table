@@ -9,17 +9,18 @@
 import numpy as np
 from biom import Table
 
+import qiime2
 from qiime2 import Artifact
 
 
-rep_seqs_dada2_url = 'https://docs.qiime2.org/{epoch}/data/tutorials/' \
-                     'moving-pictures/rep-seqs-dada2.qza'
-rep_seqs_deblur_url = 'https://docs.qiime2.org/{epoch}/data/tutorials/' \
-                      'moving-pictures/rep-seqs-deblur.qza'
-moving_pics_ft_url = 'https://docs.qiime2.org/{epoch}/data/tutorials/' \
-                     'moving-pictures/table.qza'
-moving_pics_md_url = 'https://data.qiime2.org/{epoch}/tutorials/' \
-                     'moving-pictures/sample_metadata.tsv'
+rep_seqs_dada2_url = (f'https://docs.qiime2.org/{qiime2.__release__}/data/'
+                      'tutorials/moving-pictures/rep-seqs-dada2.qza')
+rep_seqs_deblur_url = (f'https://docs.qiime2.org/{qiime2.__release__}/data/'
+                       'tutorials/moving-pictures/rep-seqs-deblur.qza')
+moving_pics_ft_url = (f'https://docs.qiime2.org/{qiime2.__release__}/data/'
+                      'tutorials/moving-pictures/table.qza')
+moving_pics_md_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
+                      'tutorials/moving-pictures/sample_metadata.tsv')
 
 
 def ft1_factory():
@@ -227,4 +228,27 @@ def feature_table_filter_features_conditionally(use):
                         abundance=0.01,
                         prevalence=0.34),
         use.UsageOutputNames(filtered_table='filtered_table')
+    )
+
+def feature_table_group_samples(use):
+    feature_table = use.init_artifact_from_url(
+        'feature_table', moving_pics_ft_url
+    )
+    metadata = use.init_metadata_from_url(
+        'sample_metadata', moving_pics_md_url,
+    )
+    metadata_col = use.get_metadata_column('body-site', 'body-site', metadata)
+
+    use.comment("Combine samples from the same body-site into single sample. "
+                "Feature frequencies will be the median across the samples "
+                "being combined, rounded up to the nearest whole number.")
+
+    filtered_table, = use.action(
+        use.UsageAction(plugin_id='feature_table',
+                        action_id='group'),
+        use.UsageInputs(table=feature_table,
+                        metadata=metadata_col,
+                        mode='median-ceiling',
+                        axis='sample'),
+        use.UsageOutputNames(grouped_table='body_site_table')
     )
