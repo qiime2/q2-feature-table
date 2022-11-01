@@ -13,12 +13,12 @@ import qiime2
 from qiime2 import Artifact
 
 
-rep_seqs_dada2_url = (f'https://docs.qiime2.org/{qiime2.__release__}/data/'
-                      'tutorials/moving-pictures/rep-seqs-dada2.qza')
-rep_seqs_deblur_url = (f'https://docs.qiime2.org/{qiime2.__release__}/data/'
-                       'tutorials/moving-pictures/rep-seqs-deblur.qza')
-moving_pics_ft_url = (f'https://docs.qiime2.org/{qiime2.__release__}/data/'
-                      'tutorials/moving-pictures/table.qza')
+rep_seqs_dada2_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
+                      'tutorials/metadata/rep-seqs.qza')
+rep_seqs_deblur_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
+                       'tutorials/phylogeny/rep-seqs.qza')
+moving_pics_ft_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
+                      'tutorials/filtering/table.qza')
 moving_pics_md_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
                       'tutorials/moving-pictures/sample_metadata.tsv')
 
