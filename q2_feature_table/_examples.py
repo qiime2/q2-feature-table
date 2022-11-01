@@ -13,10 +13,10 @@ import qiime2
 from qiime2 import Artifact
 
 
-rep_seqs_dada2_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
-                      'tutorials/metadata/rep-seqs.qza')
-rep_seqs_deblur_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
-                       'tutorials/phylogeny/rep-seqs.qza')
+rep_seqs_1_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
+                  'tutorials/metadata/rep-seqs.qza')
+rep_seqs_2_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
+                  'tutorials/phylogeny/rep-seqs.qza')
 moving_pics_ft_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
                       'tutorials/filtering/table.qza')
 moving_pics_md_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
@@ -76,9 +76,9 @@ def feature_table_merge_three_tables_example(use):
 
 
 def feature_table_merge_seqs(use):
-    seqs1 = use.init_artifact_from_url('seqs1', rep_seqs_dada2_url)
+    seqs1 = use.init_artifact_from_url('seqs1', rep_seqs_1_url)
     seqs2 = \
-        use.init_artifact_from_url('seqs2', rep_seqs_deblur_url)
+        use.init_artifact_from_url('seqs2', rep_seqs_2_url)
 
     merged_data, = use.action(
         use.UsageAction('feature_table', 'merge_seqs'),
