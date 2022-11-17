@@ -17,6 +17,9 @@ rep_seqs_1_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
                   'tutorials/metadata/rep-seqs.qza')
 rep_seqs_2_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
                   'tutorials/phylogeny/rep-seqs.qza')
+taxonomy_1_url = ('https://docs.qiime2.org/jupyterbooks/cancer-microbiome-'
+                  'intervention-tutorial/data/030-tutorial-downstream/020-'
+                  'taxonomy/taxonomy.qza')
 moving_pics_ft_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
                       'tutorials/filtering/table.qza')
 moving_pics_md_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
@@ -87,6 +90,23 @@ def feature_table_merge_seqs(use):
         ),
         use.UsageOutputNames(
             merged_data='merged_data'
+        )
+    )
+
+
+def feature_table_merge_taxa(use):
+    # TODO: Would probably be better to have two different artifacts here
+    tax1 = use.init_artifact_from_url('tax1', taxonomy_1_url)
+    tax2 = \
+        use.init_artifact_from_url('tax2', taxonomy_1_url)
+
+    merged_taxa, = use.action(
+        use.UsageAction('feature_table', 'merge_taxa'),
+        use.UsageInputs(
+            data=[tax1, tax2]
+        ),
+        use.UsageOutputNames(
+            merged_taxa='merged_taxa'
         )
     )
 
