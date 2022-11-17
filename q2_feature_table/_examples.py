@@ -94,6 +94,88 @@ def feature_table_merge_seqs(use):
     )
 
 
+def feature_table_filter_seqs_metadata1(use):
+    seqs = use.init_artifact_from_url(
+        'seqs', rep_seqs_1_url
+    )
+    sample_metadata = use.init_metadata_from_url(
+        'sample_metadata', moving_pics_md_url
+    )
+
+    filtered_seqs, = use.action(
+        use.UsageAction(plugin_id='feature_table', action_id='filter_seqs'),
+        use.UsageInputs(table=seqs, metadata=sample_metadata,
+                        where='[subject]="subject-1"'),
+        use.UsageOutputNames(filtered_seqs='filtered_seqs')
+    )
+
+
+def feature_table_filter_seqs_metadata2(use):
+    feature_table = use.init_artifact_from_url(
+        'feature_table', rep_seqs_1_url
+    )
+    sample_metadata = use.init_metadata_from_url(
+        'sample_metadata', moving_pics_md_url
+    )
+
+    filtered_seqs, = use.action(
+        use.UsageAction(plugin_id='feature_table', action_id='filter_seqs'),
+        use.UsageInputs(table=feature_table, metadata=sample_metadata,
+                        where='[body-site] IN ("left palm", "right palm")'),
+        use.UsageOutputNames(filtered_seqs='filtered_seqs')
+    )
+
+
+def feature_table_filter_seqs_metadata3(use):
+    feature_table = use.init_artifact_from_url(
+        'feature_table', rep_seqs_1_url
+    )
+    sample_metadata = use.init_metadata_from_url(
+        'sample_metadata', moving_pics_md_url
+    )
+
+    filtered_seqs, = use.action(
+        use.UsageAction(plugin_id='feature_table', action_id='filter_seqs'),
+        use.UsageInputs(table=feature_table, metadata=sample_metadata,
+                        where=r'[subject]="subject-1" AND [body-site]="gut"'),
+        use.UsageOutputNames(filtered_seqs='filtered_seqs')
+    )
+
+
+def feature_table_filter_seqs_metadata4(use):
+    feature_table = use.init_artifact_from_url(
+        'feature_table', rep_seqs_1_url
+    )
+    sample_metadata = use.init_metadata_from_url(
+        'sample_metadata', moving_pics_md_url
+    )
+
+    filtered_seqs, = use.action(
+        use.UsageAction(plugin_id='feature_table', action_id='filter_seqs'),
+        use.UsageInputs(
+            table=feature_table, metadata=sample_metadata,
+            where=r'[body-site]="gut" OR [reported-antibiotic-usage]="Yes"'),
+        use.UsageOutputNames(filtered_seqs='filtered_seqs')
+    )
+
+
+def feature_table_filter_seqs_metadata5(use):
+    feature_table = use.init_artifact_from_url(
+        'feature_table', rep_seqs_1_url
+    )
+    sample_metadata = use.init_metadata_from_url(
+        'sample_metadata', moving_pics_md_url
+    )
+
+    filtered_seqs, = use.action(
+        use.UsageAction(plugin_id='feature_table', action_id='filter_seqs'),
+        use.UsageInputs(
+            table=feature_table, metadata=sample_metadata,
+            where=r'[subject]="subject-1" AND NOT [body-site]="gut"'),
+        use.UsageOutputNames(filtered_seqs='filtered_seqs')
+    )
+
+
 def feature_table_merge_taxa(use):
     # TODO: Would probably be better to have two different artifacts here
     tax1 = use.init_artifact_from_url('tax1', taxonomy_1_url)
