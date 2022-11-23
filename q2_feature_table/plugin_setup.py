@@ -15,8 +15,20 @@ from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
 from q2_types.feature_data import (
     FeatureData, Sequence, Taxonomy, AlignedSequence)
-from .examples import (feature_table_merge_example,
-                       feature_table_merge_three_tables_example)
+from ._examples import (feature_table_merge_two_tables,
+                        feature_table_merge_three_tables,
+                        feature_table_merge_taxa,
+                        feature_table_merge_seqs,
+                        feature_table_filter_samples_to_subject1,
+                        feature_table_filter_samples_to_skin,
+                        feature_table_filter_samples_to_subject1_gut,
+                        feature_table_filter_samples_to_gut_or_abx,
+                        feature_table_filter_samples_to_subject1_not_gut,
+                        feature_table_filter_samples_min_features,
+                        feature_table_filter_samples_min_frequency,
+                        feature_table_filter_features_min_samples,
+                        feature_table_filter_features_conditionally,
+                        feature_table_group_samples)
 
 citations = Citations.load('citations.bib', package='q2_feature_table')
 plugin = Plugin(
@@ -171,7 +183,8 @@ plugin.methods.register_function(
     },
     name="Group samples or features by a metadata column",
     description="Group samples or features in a feature table using metadata "
-                "to define the mapping of IDs to a group."
+                "to define the mapping of IDs to a group.",
+    examples={'group_samples': feature_table_group_samples}
 )
 
 i_table, p_overlap_method, o_table = TypeMap({
@@ -204,8 +217,9 @@ plugin.methods.register_function(
     },
     name="Combine multiple tables",
     description="Combines feature tables using the `overlap_method` provided.",
-    examples={'basic': feature_table_merge_example,
-              'three_tables': feature_table_merge_three_tables_example},
+    examples={'feature_table_merge_two_tables': feature_table_merge_two_tables,
+              'feature_table_merge_three_tables':
+              feature_table_merge_three_tables},
 )
 
 
@@ -227,7 +241,10 @@ plugin.methods.register_function(
     description="Combines feature data objects which may or may not "
                 "contain data for the same features. If different feature "
                 "data is present for the same feature id in the inputs, "
-                "the data from the first will be propagated to the result."
+                "the data from the first will be propagated to the result.",
+    examples={
+        'feature_table_merge_seqs': feature_table_merge_seqs
+    }
 )
 
 
@@ -249,7 +266,10 @@ plugin.methods.register_function(
     description="Combines a pair of feature data objects which may or may not "
                 "contain data for the same features. If different feature "
                 "data is present for the same feature id in the inputs, "
-                "the data from the first will be propagated to the result."
+                "the data from the first will be propagated to the result.",
+    examples={
+        'feature_table_merge_taxa': feature_table_merge_taxa
+    }
 )
 
 T1 = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
@@ -338,7 +358,16 @@ plugin.methods.register_function(
     description="Filter samples from table based on frequency and/or "
                 "metadata. Any features with a frequency of zero after sample "
                 "filtering will also be removed. See the filtering tutorial "
-                "on https://docs.qiime2.org for additional details."
+                "on https://docs.qiime2.org for additional details.",
+    examples={
+        'filter_to_subject1': feature_table_filter_samples_to_subject1,
+        'filter_to_skin': feature_table_filter_samples_to_skin,
+        'filter_to_subject1_gut': feature_table_filter_samples_to_subject1_gut,
+        'filter_to_gut_or_abx': feature_table_filter_samples_to_gut_or_abx,
+        'filter_to_subject1_not_gut':
+        feature_table_filter_samples_to_subject1_not_gut,
+        'filter_min_features': feature_table_filter_samples_min_features,
+        'filter_min_frequency': feature_table_filter_samples_min_frequency}
 )
 
 plugin.methods.register_function(
@@ -367,7 +396,11 @@ plugin.methods.register_function(
                  "relative abundance of at least `abundance` in at least "
                  "`prevalence` number of samples). Any samples with a "
                  "frequency of zero after feature filtering will also be "
-                 "removed.")
+                 "removed."),
+    examples={
+        'feature_table_filter_features_conditionally':
+        feature_table_filter_features_conditionally
+    }
 )
 
 
@@ -419,7 +452,10 @@ plugin.methods.register_function(
     description="Filter features from table based on frequency and/or "
                 "metadata. Any samples with a frequency of zero after feature "
                 "filtering will also be removed. See the filtering tutorial "
-                "on https://docs.qiime2.org for additional details."
+                "on https://docs.qiime2.org for additional details.",
+    examples={
+     'filter_features_min_samples': feature_table_filter_features_min_samples
+    }
 )
 
 
