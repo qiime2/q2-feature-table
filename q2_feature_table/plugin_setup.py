@@ -17,6 +17,7 @@ from q2_types.feature_data import (
     FeatureData, Sequence, Taxonomy, AlignedSequence)
 from ._examples import (feature_table_merge_two_tables,
                         feature_table_merge_three_tables,
+                        feature_table_merge_taxa,
                         feature_table_merge_seqs,
                         feature_table_filter_samples_to_subject1,
                         feature_table_filter_samples_to_skin,
@@ -265,7 +266,10 @@ plugin.methods.register_function(
     description="Combines a pair of feature data objects which may or may not "
                 "contain data for the same features. If different feature "
                 "data is present for the same feature id in the inputs, "
-                "the data from the first will be propagated to the result."
+                "the data from the first will be propagated to the result.",
+    examples={
+        'feature_table_merge_taxa': feature_table_merge_taxa
+    }
 )
 
 T1 = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])

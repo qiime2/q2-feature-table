@@ -88,13 +88,13 @@ def feature_table_merge_taxa(use):
     tax2 = \
         use.init_artifact_from_url('tax2', taxonomy_1_url)
 
-    merged_taxa, = use.action(
+    merged_data, = use.action(
         use.UsageAction('feature_table', 'merge_taxa'),
         use.UsageInputs(
             data=[tax1, tax2]
         ),
         use.UsageOutputNames(
-            merged_taxa='merged_taxa'
+            merged_data='merged_data'
         )
     )
 
