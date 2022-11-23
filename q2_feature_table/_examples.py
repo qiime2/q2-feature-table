@@ -54,7 +54,7 @@ def ft3_factory():
               ['S7', 'S8', 'S9']))
 
 
-def feature_table_merge_example(use):
+def feature_table_merge_two_tables(use):
     feature_table1 = use.init_artifact('feature_table1', ft1_factory)
     feature_table2 = use.init_artifact('feature_table2', ft2_factory)
 
@@ -66,7 +66,7 @@ def feature_table_merge_example(use):
     )
 
 
-def feature_table_merge_three_tables_example(use):
+def feature_table_merge_three_tables(use):
     feature_table1 = use.init_artifact('feature_table1', ft1_factory)
     feature_table2 = use.init_artifact('feature_table2', ft2_factory)
     feature_table3 = use.init_artifact('feature_table3', ft3_factory)

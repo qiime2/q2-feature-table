@@ -15,8 +15,8 @@ from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
 from q2_types.feature_data import (
     FeatureData, Sequence, Taxonomy, AlignedSequence)
-from ._examples import (feature_table_merge_example,
-                        feature_table_merge_three_tables_example,
+from ._examples import (feature_table_merge_two_tables,
+                        feature_table_merge_three_tables,
                         feature_table_merge_seqs,
                         feature_table_filter_samples_to_subject1,
                         feature_table_filter_samples_to_skin,
@@ -216,8 +216,9 @@ plugin.methods.register_function(
     },
     name="Combine multiple tables",
     description="Combines feature tables using the `overlap_method` provided.",
-    examples={'basic': feature_table_merge_example,
-              'three_tables': feature_table_merge_three_tables_example},
+    examples={'feature_table_merge_two_tables': feature_table_merge_two_tables,
+              'feature_table_merge_three_tables':
+              feature_table_merge_three_tables},
 )
 
 
