@@ -24,6 +24,10 @@ moving_pics_ft_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
                       'tutorials/filtering/table.qza')
 moving_pics_md_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
                       'tutorials/moving-pictures/sample_metadata.tsv')
+rep_seqs_dada2_url = 'https://docs.qiime2.org/2022.8/data/tutorials/' \
+                     'moving-pictures/rep-seqs-dada2.qza'
+rep_seqs_deblur_url = 'https://docs.qiime2.org/2022.8/data/tutorials/' \
+                      'moving-pictures/rep-seqs-deblur.qza'
 
 
 def ft1_factory():
@@ -95,6 +99,21 @@ def feature_table_merge_taxa(use):
     )
 
 
+def feature_table_merge_seqs(use):
+    dada2_seqs = use.init_artifact_from_url('seqs1', rep_seqs_dada2_url)
+    deblur_seqs = use.init_artifact_from_url('seqs2', rep_seqs_deblur_url)
+
+    merged_data, = use.action(
+        use.UsageAction('feature_table', 'merge_seqs'),
+        use.UsageInputs(
+            data=[dada2_seqs, deblur_seqs]
+        ),
+        use.UsageOutputNames(
+            merged_data='merged_data'
+        )
+    )
+
+
 def feature_table_filter_samples_min_features(use):
     feature_table = use.init_artifact_from_url(
         'feature_table', moving_pics_ft_url
@@ -121,7 +140,7 @@ def feature_table_filter_samples_min_frequency(use):
     )
 
 
-def feature_table_filter_samples_metadata1(use):
+def feature_table_filter_samples_to_subject1(use):
     feature_table = use.init_artifact_from_url(
         'feature_table', moving_pics_ft_url
     )
@@ -137,7 +156,7 @@ def feature_table_filter_samples_metadata1(use):
     )
 
 
-def feature_table_filter_samples_metadata2(use):
+def feature_table_filter_samples_to_skin(use):
     feature_table = use.init_artifact_from_url(
         'feature_table', moving_pics_ft_url
     )
@@ -153,7 +172,7 @@ def feature_table_filter_samples_metadata2(use):
     )
 
 
-def feature_table_filter_samples_metadata3(use):
+def feature_table_filter_samples_to_subject1_gut(use):
     feature_table = use.init_artifact_from_url(
         'feature_table', moving_pics_ft_url
     )
@@ -169,7 +188,7 @@ def feature_table_filter_samples_metadata3(use):
     )
 
 
-def feature_table_filter_samples_metadata4(use):
+def feature_table_filter_samples_to_gut_or_abx(use):
     feature_table = use.init_artifact_from_url(
         'feature_table', moving_pics_ft_url
     )
@@ -186,7 +205,7 @@ def feature_table_filter_samples_metadata4(use):
     )
 
 
-def feature_table_filter_samples_metadata5(use):
+def feature_table_filter_samples_to_subject1_not_gut(use):
     feature_table = use.init_artifact_from_url(
         'feature_table', moving_pics_ft_url
     )

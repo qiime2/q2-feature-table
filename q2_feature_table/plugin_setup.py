@@ -18,11 +18,11 @@ from q2_types.feature_data import (
 from ._examples import (feature_table_merge_example,
                         feature_table_merge_three_tables_example,
                         feature_table_merge_seqs,
-                        feature_table_filter_samples_metadata1,
-                        feature_table_filter_samples_metadata2,
-                        feature_table_filter_samples_metadata3,
-                        feature_table_filter_samples_metadata4,
-                        feature_table_filter_samples_metadata5,
+                        feature_table_filter_samples_to_subject1,
+                        feature_table_filter_samples_to_skin,
+                        feature_table_filter_samples_to_subject1_gut,
+                        feature_table_filter_samples_to_gut_or_abx,
+                        feature_table_filter_samples_to_subject1_not_gut,
                         feature_table_filter_samples_min_features,
                         feature_table_filter_samples_min_frequency,
                         feature_table_filter_features_min_samples,
@@ -241,7 +241,7 @@ plugin.methods.register_function(
                 "data is present for the same feature id in the inputs, "
                 "the data from the first will be propagated to the result.",
     examples={
-        'merge_seqs': feature_table_merge_seqs
+        'feature_table_merge_seqs': feature_table_merge_seqs
     }
 )
 
@@ -355,11 +355,12 @@ plugin.methods.register_function(
                 "filtering will also be removed. See the filtering tutorial "
                 "on https://docs.qiime2.org for additional details.",
     examples={
-        'filter_to_subject1': feature_table_filter_samples_metadata1,
-        'filter_to_skin': feature_table_filter_samples_metadata2,
-        'filter_to_subject1_gut': feature_table_filter_samples_metadata3,
-        'filter_to_gut_or_abx': feature_table_filter_samples_metadata4,
-        'filter_to_subject1_not_gut': feature_table_filter_samples_metadata5,
+        'filter_to_subject1': feature_table_filter_samples_to_subject1,
+        'filter_to_skin': feature_table_filter_samples_to_skin,
+        'filter_to_subject1_gut': feature_table_filter_samples_to_subject1_gut,
+        'filter_to_gut_or_abx': feature_table_filter_samples_to_gut_or_abx,
+        'filter_to_subject1_not_gut':
+        feature_table_filter_samples_to_subject1_not_gut,
         'filter_min_features': feature_table_filter_samples_min_features,
         'filter_min_frequency': feature_table_filter_samples_min_frequency}
 )
@@ -392,7 +393,7 @@ plugin.methods.register_function(
                  "frequency of zero after feature filtering will also be "
                  "removed."),
     examples={
-        '1':
+        'feature_table_filter_features_conditionally':
         feature_table_filter_features_conditionally
     }
 )
