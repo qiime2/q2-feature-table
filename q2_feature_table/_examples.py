@@ -26,7 +26,7 @@ moving_pics_md_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
                       'tutorials/moving-pictures/sample_metadata.tsv')
 rep_seqs_dada2_url = 'https://docs.qiime2.org/2022.8/data/tutorials/' \
                      'moving-pictures/rep-seqs-dada2.qza'
-rep_seqs_deblur_url = 'https://docs.qiime2.org/2022.8/data/tutorials/' \
+rep_seqs_deblur_url = 'https://data.qiime2.org/usage-examples/' \
                       'moving-pictures/rep-seqs-deblur.qza'
 
 
