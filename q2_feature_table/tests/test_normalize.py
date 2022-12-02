@@ -35,10 +35,14 @@ class RarefyTests(TestCase):
         self.assertEqual(rt.shape, (2, 3))
 
         # IMPORTANT: samples below subsample depth should be removed
-        for n_draws in range(11, 50, 5):
+        for n_draws in range(11, 21):
             rt = rarefy(t, n_draws, with_replacement=True)
             npt.assert_array_equal(rt.sum('sample'),
                                    np.array([n_draws] * 2))
+        for n_draws in range(21, 50):
+            rt = rarefy(t, n_draws, with_replacement=True)
+            npt.assert_array_equal(rt.sum('sample'),
+                                   np.array([n_draws] * 1))
 
     def test_rarefy_depth_error(self):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
