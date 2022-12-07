@@ -11,6 +11,9 @@ import biom
 
 def rarefy(table: biom.Table, sampling_depth: int,
            with_replacement: bool = False) -> biom.Table:
+    if with_replacement:
+        table = table.filter(lambda v, i, m: v.sum() >= sampling_depth,
+                             inplace=False, axis='sample')
     table = table.subsample(sampling_depth, axis='sample', by_id=False,
                             with_replacement=with_replacement)
 
