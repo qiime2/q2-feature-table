@@ -65,6 +65,8 @@ def feature_table_merge_two_tables(use):
         use.UsageOutputNames(merged_table='merged_table'),
     )
 
+    merged_table.assert_output_type('FeatureTable[Frequency]')
+
 
 def feature_table_merge_three_tables(use):
     feature_table1 = use.init_artifact('feature_table1', ft1_factory)
@@ -80,6 +82,8 @@ def feature_table_merge_three_tables(use):
         ),
         use.UsageOutputNames(merged_table='merged_table'),
     )
+
+    merged_table.assert_output_type('FeatureTable[Frequency]')
 
 
 def feature_table_merge_taxa(use):
@@ -98,6 +102,8 @@ def feature_table_merge_taxa(use):
         )
     )
 
+    merged_data.assert_output_type('FeatureData[Taxonomy]')
+
 
 def feature_table_merge_seqs(use):
     dada2_seqs = use.init_artifact_from_url('seqs1', rep_seqs_dada2_url)
@@ -113,6 +119,8 @@ def feature_table_merge_seqs(use):
         )
     )
 
+    merged_data.assert_output_type('FeatureData[Sequence]')
+
 
 def feature_table_filter_samples_min_features(use):
     feature_table = use.init_artifact_from_url(
@@ -126,6 +134,8 @@ def feature_table_filter_samples_min_features(use):
         use.UsageOutputNames(filtered_table='filtered_table')
     )
 
+    filtered_table.assert_output_type('FeatureTable[Frequency]')
+
 
 def feature_table_filter_samples_min_frequency(use):
     feature_table = use.init_artifact_from_url(
@@ -138,6 +148,8 @@ def feature_table_filter_samples_min_frequency(use):
                         min_frequency=1500),
         use.UsageOutputNames(filtered_table='filtered_table')
     )
+
+    filtered_table.assert_output_type('FeatureTable[Frequency]')
 
 
 def feature_table_filter_samples_to_subject1(use):
@@ -155,6 +167,8 @@ def feature_table_filter_samples_to_subject1(use):
         use.UsageOutputNames(filtered_table='filtered_table')
     )
 
+    filtered_table.assert_output_type('FeatureTable[Frequency]')
+
 
 def feature_table_filter_samples_to_skin(use):
     feature_table = use.init_artifact_from_url(
@@ -171,6 +185,8 @@ def feature_table_filter_samples_to_skin(use):
         use.UsageOutputNames(filtered_table='filtered_table')
     )
 
+    filtered_table.assert_output_type('FeatureTable[Frequency]')
+
 
 def feature_table_filter_samples_to_subject1_gut(use):
     feature_table = use.init_artifact_from_url(
@@ -186,6 +202,8 @@ def feature_table_filter_samples_to_subject1_gut(use):
                         where=r'[subject]="subject-1" AND [body-site]="gut"'),
         use.UsageOutputNames(filtered_table='filtered_table')
     )
+
+    filtered_table.assert_output_type('FeatureTable[Frequency]')
 
 
 def feature_table_filter_samples_to_gut_or_abx(use):
@@ -204,6 +222,8 @@ def feature_table_filter_samples_to_gut_or_abx(use):
         use.UsageOutputNames(filtered_table='filtered_table')
     )
 
+    filtered_table.assert_output_type('FeatureTable[Frequency]')
+
 
 def feature_table_filter_samples_to_subject1_not_gut(use):
     feature_table = use.init_artifact_from_url(
@@ -221,6 +241,8 @@ def feature_table_filter_samples_to_subject1_not_gut(use):
         use.UsageOutputNames(filtered_table='filtered_table')
     )
 
+    filtered_table.assert_output_type('FeatureTable[Frequency]')
+
 
 def feature_table_filter_features_min_samples(use):
     feature_table = use.init_artifact_from_url(
@@ -234,6 +256,8 @@ def feature_table_filter_features_min_samples(use):
                         min_samples=2),
         use.UsageOutputNames(filtered_table='filtered_table')
     )
+
+    filtered_table.assert_output_type('FeatureTable[Frequency]')
 
 
 def feature_table_filter_features_conditionally(use):
@@ -252,6 +276,8 @@ def feature_table_filter_features_conditionally(use):
                         prevalence=0.34),
         use.UsageOutputNames(filtered_table='filtered_table')
     )
+
+    filtered_table.assert_output_type('FeatureTable[Frequency]')
 
 
 def feature_table_group_samples(use):
@@ -276,3 +302,33 @@ def feature_table_group_samples(use):
                         axis='sample'),
         use.UsageOutputNames(grouped_table='body_site_table')
     )
+
+    filtered_table.assert_output_type('FeatureTable[Frequency]')
+
+
+def feature_table_summarize(use):
+    feature_table = use.init_artifact_from_url(
+        'feature_table', moving_pics_ft_url
+    )
+
+    viz, = use.action(
+        use.UsageAction('feature_table', 'summarize'),
+        use.UsageInputs(table=feature_table),
+        use.UsageOutputNames(visualization='table')
+    )
+
+    viz.assert_output_type('Visualization')
+
+
+def feature_table_tabulate_seqs(use):
+    rep_seqs = use.init_artifact_from_url(
+        'rep_seqs', rep_seqs_1_url
+    )
+
+    viz, = use.action(
+        use.UsageAction('feature_table', 'tabulate_seqs'),
+        use.UsageInputs(data=rep_seqs),
+        use.UsageOutputNames(visualization='rep-seqs')
+    )
+
+    viz.assert_output_type('Visualization')

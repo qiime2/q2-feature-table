@@ -10,25 +10,13 @@ from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
                            Choices, MetadataColumn, Categorical, List,
                            Citations, TypeMatch, TypeMap)
 
-import q2_feature_table
 from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
 from q2_types.feature_data import (
     FeatureData, Sequence, Taxonomy, AlignedSequence)
-from ._examples import (feature_table_merge_two_tables,
-                        feature_table_merge_three_tables,
-                        feature_table_merge_taxa,
-                        feature_table_merge_seqs,
-                        feature_table_filter_samples_to_subject1,
-                        feature_table_filter_samples_to_skin,
-                        feature_table_filter_samples_to_subject1_gut,
-                        feature_table_filter_samples_to_gut_or_abx,
-                        feature_table_filter_samples_to_subject1_not_gut,
-                        feature_table_filter_samples_min_features,
-                        feature_table_filter_samples_min_frequency,
-                        feature_table_filter_features_min_samples,
-                        feature_table_filter_features_conditionally,
-                        feature_table_group_samples)
+
+import q2_feature_table
+import q2_feature_table._examples as ex
 
 citations = Citations.load('citations.bib', package='q2_feature_table')
 plugin = Plugin(
@@ -183,7 +171,7 @@ plugin.methods.register_function(
     name="Group samples or features by a metadata column",
     description="Group samples or features in a feature table using metadata "
                 "to define the mapping of IDs to a group.",
-    examples={'group_samples': feature_table_group_samples}
+    examples={'group_samples': ex.feature_table_group_samples}
 )
 
 i_table, p_overlap_method, o_table = TypeMap({
@@ -216,9 +204,10 @@ plugin.methods.register_function(
     },
     name="Combine multiple tables",
     description="Combines feature tables using the `overlap_method` provided.",
-    examples={'feature_table_merge_two_tables': feature_table_merge_two_tables,
+    examples={'feature_table_merge_two_tables':
+              ex.feature_table_merge_two_tables,
               'feature_table_merge_three_tables':
-              feature_table_merge_three_tables},
+              ex.feature_table_merge_three_tables},
 )
 
 
@@ -242,7 +231,7 @@ plugin.methods.register_function(
                 "data is present for the same feature id in the inputs, "
                 "the data from the first will be propagated to the result.",
     examples={
-        'feature_table_merge_seqs': feature_table_merge_seqs
+        'feature_table_merge_seqs': ex.feature_table_merge_seqs
     }
 )
 
@@ -267,7 +256,7 @@ plugin.methods.register_function(
                 "data is present for the same feature id in the inputs, "
                 "the data from the first will be propagated to the result.",
     examples={
-        'feature_table_merge_taxa': feature_table_merge_taxa
+        'feature_table_merge_taxa': ex.feature_table_merge_taxa
     }
 )
 
@@ -359,14 +348,15 @@ plugin.methods.register_function(
                 "filtering will also be removed. See the filtering tutorial "
                 "on https://docs.qiime2.org for additional details.",
     examples={
-        'filter_to_subject1': feature_table_filter_samples_to_subject1,
-        'filter_to_skin': feature_table_filter_samples_to_skin,
-        'filter_to_subject1_gut': feature_table_filter_samples_to_subject1_gut,
-        'filter_to_gut_or_abx': feature_table_filter_samples_to_gut_or_abx,
+        'filter_to_subject1': ex.feature_table_filter_samples_to_subject1,
+        'filter_to_skin': ex.feature_table_filter_samples_to_skin,
+        'filter_to_subject1_gut':
+        ex.feature_table_filter_samples_to_subject1_gut,
+        'filter_to_gut_or_abx': ex.feature_table_filter_samples_to_gut_or_abx,
         'filter_to_subject1_not_gut':
-        feature_table_filter_samples_to_subject1_not_gut,
-        'filter_min_features': feature_table_filter_samples_min_features,
-        'filter_min_frequency': feature_table_filter_samples_min_frequency}
+        ex.feature_table_filter_samples_to_subject1_not_gut,
+        'filter_min_features': ex.feature_table_filter_samples_min_features,
+        'filter_min_frequency': ex.feature_table_filter_samples_min_frequency}
 )
 
 plugin.methods.register_function(
@@ -398,7 +388,7 @@ plugin.methods.register_function(
                  "removed."),
     examples={
         'feature_table_filter_features_conditionally':
-        feature_table_filter_features_conditionally
+        ex.feature_table_filter_features_conditionally
     }
 )
 
@@ -453,7 +443,8 @@ plugin.methods.register_function(
                 "filtering will also be removed. See the filtering tutorial "
                 "on https://docs.qiime2.org for additional details.",
     examples={
-     'filter_features_min_samples': feature_table_filter_features_min_samples
+     'filter_features_min_samples':
+     ex.feature_table_filter_features_min_samples
     }
 )
 
@@ -510,7 +501,10 @@ plugin.visualizers.register_function(
     input_descriptions={'table': 'The feature table to be summarized.'},
     parameter_descriptions={'sample_metadata': 'The sample metadata.'},
     name="Summarize table",
-    description="Generate visual and tabular summaries of a feature table."
+    description="Generate visual and tabular summaries of a feature table.",
+    examples={
+        'feature_table_summarize': ex.feature_table_summarize,
+    }
 )
 
 plugin.visualizers.register_function(
@@ -523,7 +517,10 @@ plugin.visualizers.register_function(
     description="Generate tabular view of feature identifier to sequence "
                 "mapping, including links to BLAST each sequence against "
                 "the NCBI nt database.",
-    citations=[citations['NCBI'], citations['NCBI-BLAST']]
+    citations=[citations['NCBI'], citations['NCBI-BLAST']],
+    examples={
+        'feature_table_tabulate_seqs': ex.feature_table_tabulate_seqs,
+    }
 )
 
 plugin.visualizers.register_function(
