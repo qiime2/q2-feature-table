@@ -9,21 +9,20 @@
 import numpy as np
 from biom import Table
 
-import qiime2
 from qiime2 import Artifact
 
 
-rep_seqs_1_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
-                  'tutorials/metadata/rep-seqs.qza')
-rep_seqs_2_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
-                  'tutorials/phylogeny/rep-seqs.qza')
+rep_seqs_1_url = ('https://data.qiime2.org/usage-examples/'
+                  'metadata/rep-seqs.qza')
+rep_seqs_2_url = ('https://data.qiime2.org/usage-examples/'
+                  'phylogeny/rep-seqs.qza')
 taxonomy_1_url = ('https://docs.qiime2.org/jupyterbooks/cancer-microbiome-'
                   'intervention-tutorial/data/030-tutorial-downstream/020-'
                   'taxonomy/taxonomy.qza')
-moving_pics_ft_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
-                      'tutorials/filtering/table.qza')
-moving_pics_md_url = (f'https://data.qiime2.org/{qiime2.__release__}/'
-                      'tutorials/moving-pictures/sample_metadata.tsv')
+moving_pics_ft_url = ('https://data.qiime2.org/usage-examples/'
+                      'filtering/table.qza')
+moving_pics_md_url = ('https://data.qiime2.org/usage-examples/'
+                      'moving-pictures/sample-metadata.tsv')
 rep_seqs_dada2_url = 'https://data.qiime2.org/usage-examples/' \
                      'moving-pictures/rep-seqs-dada2.qza'
 rep_seqs_deblur_url = 'https://data.qiime2.org/usage-examples/' \
