@@ -41,7 +41,7 @@ class TestCoreFeatures(unittest.TestCase):
             index_contents = fh.read()
 
         self.assertIn('Sample count: %d' % exp_sample_count, index_contents)
-        self.assertIn('Feature count: %d' % exp_feature_count, index_contents)
+        self.assertIn('Frequency: %d' % exp_feature_count, index_contents)
         if exp_no_core:
             self.assertIn('No core features', index_contents)
 
