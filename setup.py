@@ -11,7 +11,7 @@ import versioneer
 
 setup(
     name="q2-feature-table",
-    version=versioneer.get_version(),
+    version='2023.2.1.dev50',
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
     package_data={'q2_feature_table': ['citations.bib'],
