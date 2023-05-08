@@ -29,6 +29,7 @@ plugin = Plugin(
                  'by feature tables, such as filtering, merging, and '
                  'transforming tables.')
 )
+T1 = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
 
 plugin.methods.register_function(
     function=q2_feature_table.rarefy,
@@ -121,10 +122,10 @@ plugin.methods.register_function(
 
 plugin.methods.register_function(
     function=q2_feature_table.transpose,
-    inputs={'table': FeatureTable[Frequency]},
+    inputs={'table': FeatureTable[T1]},
     parameters={},
     outputs=[('transposed_feature_table',
-             FeatureTable[Frequency])],
+             FeatureTable[T1])],
     input_descriptions={
         'table': 'The feature table to be transposed.'
     },
@@ -260,7 +261,6 @@ plugin.methods.register_function(
     }
 )
 
-T1 = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
 
 plugin.methods.register_function(
     function=q2_feature_table.rename_ids,
