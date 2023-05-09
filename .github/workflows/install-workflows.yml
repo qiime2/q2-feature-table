@@ -1,4 +1,4 @@
-## VERSION 2
+## VERSION 3
 name: Install QIIME 2 workflows to your repository
 
 on:
@@ -67,5 +67,6 @@ jobs:
           cp -r ../template-repo/qiime2-workflows/* ./.github/
           git config --global user.name "q2d2"
           git config --global user.email "q2d2.noreply@gmail.com"
+          git add .github
           git commit -am "ci: adding new workflows"
           git push
