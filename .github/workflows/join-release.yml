@@ -1,0 +1,4 @@
+name: Join a QIIME 2 release
+
+on:
+  workflow_dispatch: {}
