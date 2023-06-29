@@ -8,7 +8,7 @@
 
 from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
                            Choices, MetadataColumn, Categorical, List,
-                           Citations, TypeMatch, TypeMap)
+                           Citations, TypeMatch, TypeMap, Collection)
 
 from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
@@ -606,4 +606,32 @@ plugin.visualizers.register_function(
                         'with.',
     },
     citations=[citations['Hunter2007Matplotlib']]
+)
+
+plugin.methods.register_function(
+    function=q2_feature_table.split,
+    inputs={'table': FeatureTable[T1]},
+    parameters={
+        'metadata': MetadataColumn[Categorical],
+        'filter_empty_features': Bool
+    },
+    outputs=[
+        ('tables', Collection[FeatureTable[T1]])
+    ],
+    input_descriptions={
+        'table': 'The table to split.'
+    },
+    parameter_descriptions={
+        'metadata': 'A column defining the groups. Each unique value will '
+                    'define a split feature table.',
+        'filter_empty_features': 'If true, features which are not present in '
+                                 'a split feature table are dropped.',
+    },
+    output_descriptions={
+        'tables': 'Feature tables split based on metadata values.'
+    },
+    name='Split one feature table into many',
+    description='Splits one feature table into many feature tables, where '
+                'splits are defined by values in metadata column.',
+    examples={}
 )
