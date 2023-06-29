@@ -90,9 +90,24 @@ class SplitTests(unittest.TestCase):
         table = Table(np.array([[0, 0, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = split(table, metadata=md_column)
+        actual = split(table, metadata=md_column, filter_empty_features=True)
         expected1 = Table(np.array([[1, 1]]),
                           ['O2'],
+                          ['S1', 'S2'])
+        expected2 = Table(np.array([[3], [2]]),
+                          ['O1', 'O2'],
+                          ['S3',])
+        self.assertEqual(actual, {'a': expected1, 'b': expected2})
+
+        md_column = qiime2.CategoricalMetadataColumn(
+            pd.Series(['a', 'a', 'b'], name='foo',
+                      index=pd.Index(['S1', 'S2', 'S3'], name='id')))
+        table = Table(np.array([[0, 0, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = split(table, metadata=md_column, filter_empty_features=False)
+        expected1 = Table(np.array([[0, 0], [1, 1]]),
+                          ['O1', 'O2'],
                           ['S1', 'S2'])
         expected2 = Table(np.array([[3], [2]]),
                           ['O1', 'O2'],
