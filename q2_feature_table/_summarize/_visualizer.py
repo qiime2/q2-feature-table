@@ -135,10 +135,10 @@ def summarize(output_dir: str, table: biom.Table,
     feature_frequencies.sort_values(inplace=True, ascending=False)
     sample_frequencies.to_csv(
         os.path.join(output_dir, 'sample-frequency-detail.csv'),
-                     header = False)
+        header=False)
     feature_frequencies.to_csv(
         os.path.join(output_dir, 'feature-frequency-detail.csv'),
-        header = False)
+        header=False)
 
     feature_frequencies = feature_frequencies.astype(int) \
         .apply('{:,}'.format).to_frame('Frequency')
