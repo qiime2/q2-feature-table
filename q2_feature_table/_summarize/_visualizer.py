@@ -134,9 +134,11 @@ def summarize(output_dir: str, table: biom.Table,
     sample_frequencies.sort_values(inplace=True, ascending=False)
     feature_frequencies.sort_values(inplace=True, ascending=False)
     sample_frequencies.to_csv(
-        os.path.join(output_dir, 'sample-frequency-detail.csv'))
+        os.path.join(output_dir, 'sample-frequency-detail.csv'),
+                     header = False)
     feature_frequencies.to_csv(
-        os.path.join(output_dir, 'feature-frequency-detail.csv'))
+        os.path.join(output_dir, 'feature-frequency-detail.csv'),
+        header = False)
 
     feature_frequencies = feature_frequencies.astype(int) \
         .apply('{:,}'.format).to_frame('Frequency')
@@ -272,7 +274,6 @@ def _frequencies(table, axis):
 
 def _frequency_summary(table, axis='sample'):
     frequencies = _frequencies(table, axis=axis)
-
     summary = pd.Series([frequencies.min(), frequencies.quantile(0.25),
                          frequencies.median(), frequencies.quantile(0.75),
                          frequencies.max(), frequencies.mean()],
