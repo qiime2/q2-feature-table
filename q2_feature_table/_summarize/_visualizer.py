@@ -274,6 +274,7 @@ def _frequencies(table, axis):
 
 def _frequency_summary(table, axis='sample'):
     frequencies = _frequencies(table, axis=axis)
+
     summary = pd.Series([frequencies.min(), frequencies.quantile(0.25),
                          frequencies.median(), frequencies.quantile(0.75),
                          frequencies.max(), frequencies.mean()],
