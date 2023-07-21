@@ -628,7 +628,8 @@ plugin.methods.register_function(
                                  'a split feature table are dropped.',
     },
     output_descriptions={
-        'tables': 'Feature tables split based on metadata values.'
+        'tables': ('Directory where feature tables split based on metadata '
+                   'values should be written.')
     },
     name='Split one feature table into many',
     description='Splits one feature table into many feature tables, where '
