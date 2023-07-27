@@ -67,6 +67,23 @@ class SplitTests(unittest.TestCase):
         self.assertEqual(actual,
                          {'a': expected1, 'b': expected2, 'c': expected3})
 
+    def test_invalid_values(self):
+        table = Table(np.array([[5, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+
+        md_column = qiime2.CategoricalMetadataColumn(
+            pd.Series(['a', 'b c', 'a'], name='foo',
+                      index=pd.Index(['S1', 'S2', 'S3'], name='id')))
+        with self.assertRaisesRegex(ValueError, 'Invalid value.*b c'):
+            split(table, metadata=md_column)
+
+        md_column = qiime2.CategoricalMetadataColumn(
+            pd.Series(['@a', '-a', '!a'], name='foo',
+                      index=pd.Index(['S1', 'S2', 'S3'], name='id')))
+        with self.assertRaisesRegex(ValueError, 'Invalid value.*: !a, @a'):
+            split(table, metadata=md_column)
+
     def test_missing_data_samples_dropped(self):
         md_column = qiime2.CategoricalMetadataColumn(
             pd.Series(['a', 'b', np.nan], name='foo',
