@@ -75,13 +75,13 @@ class SplitTests(unittest.TestCase):
         md_column = qiime2.CategoricalMetadataColumn(
             pd.Series(['a', 'b c', 'a'], name='foo',
                       index=pd.Index(['S1', 'S2', 'S3'], name='id')))
-        with self.assertRaisesRegex(ValueError, 'Invalid value.*b c'):
+        with self.assertRaisesRegex(KeyError, 'invalid.*: b c'):
             split(table, metadata=md_column)
 
         md_column = qiime2.CategoricalMetadataColumn(
             pd.Series(['@a', '-a', '!a'], name='foo',
                       index=pd.Index(['S1', 'S2', 'S3'], name='id')))
-        with self.assertRaisesRegex(ValueError, 'Invalid value.*: !a, @a'):
+        with self.assertRaisesRegex(KeyError, 'invalid.*: !a, @a'):
             split(table, metadata=md_column)
 
     def test_missing_data_samples_dropped(self):
