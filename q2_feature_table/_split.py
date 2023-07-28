@@ -25,7 +25,7 @@ def split(table: biom.Table,
             "One or more invalid metadata column values identified during "
             "feature table splitting. All metadata column values must be "
             "valid ResultCollection keys when used for splitting a feature "
-            f"table. The original error message is as follows:\n{str(e)}")
+            f"table. The original error message is as follows: {str(e)}")
 
     result = {}
     for group, sample_ids in indices.items():
