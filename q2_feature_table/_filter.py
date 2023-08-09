@@ -144,3 +144,30 @@ def filter_features_conditionally(table: biom.Table,
     new_table = table.filter(filter_ids, axis='observation', inplace=False)
 
     return new_table
+
+
+def filter_features_conditionally_feature_table(table: biom.Table,
+                                  abundance: float,
+                                  prevalence: float,
+                                  ) -> biom.Table:
+    """
+    A function to perform joint filtering because it makes life better
+    """
+    num_observations, num_samples = table.shape
+    prevalence = prevalence * num_samples
+
+    # Calculates the filtering parameters on the original table
+    def _filter_f(values, id_, metadata):
+        return (values >= abundance).sum() >= prevalence
+
+    # Normalized the table to get the prevalance
+    # Copy is because biom really wants to normalize the original table. By
+    # copying and not using inplace, the original table is preserved.
+    # Redundant, but better safe that sorry.
+    table_norm = table.copy().norm(axis='sample', inplace=False)
+    table_norm.filter(_filter_f, axis='observation', inplace=True)
+    filter_ids = table_norm.ids(axis='observation')
+
+    new_table = table.filter(filter_ids, axis='observation', inplace=False)
+
+    return new_table
