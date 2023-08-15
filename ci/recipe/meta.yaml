@@ -45,6 +45,9 @@ test:
     - q2_feature_table
     - qiime2.plugins.feature_table
 
+  commands:
+    - py.test --pyargs q2_feature_table
+
 about:
   home: https://qiime2.org
   license: BSD-3-Clause
