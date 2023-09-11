@@ -91,6 +91,13 @@
             <th>Feature ID</th>
             <th data-tsorter="numeric">Sequence Length</th>
             <th data-tsorter="link">Sequence</th>
+            {% if taxonomy is not None %}
+              <th>Taxonomy</th>
+            {% endif %}
+            {% if metadata is not None %}
+              {% for #TABLEHEADER# in metadata %}
+              {% endfor %}
+            {% endif %}
           </tr>
         </thead>
         <tbody>
@@ -99,7 +106,7 @@
             <td>{{ sequence.id }}</td>
             <td>{{ sequence.len }}</td>
             <td><samp><a target="_blank" href="{{ sequence.url }}" rel="noopener noreferrer">{{ sequence.seq }}</a></samp></td>
-            {% if output_mapping is not None %}
+            {% if metadata is not None %}
               {{ for col in output_mapping[sequence.id] }}
                 <td>{{ col }}</td>
               {{ endfor }}

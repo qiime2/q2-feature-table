@@ -31,11 +31,12 @@ TEMPLATES = pkg_resources.resource_filename('q2_feature_table', '_summarize')
 
 
 def tabulate_seqs(output_dir: str, data: DNAIterator, 
-        taxonomy: DNAIterator = None, metadata: qiime2.Metadata = None) \
+        taxonomy: pd.DataFrame = None, metadata: qiime2.Metadata = None) \
         -> None:
     sequences = []
     seq_lengths = []
     output_mapping = {}
+    metadata_df = metadata.to_dataframe()
     with open(os.path.join(output_dir, 'sequences.fasta'), 'w') as fh:
         for sequence in data:
             skbio.io.write(sequence, format='fasta', into=fh)
@@ -46,13 +47,6 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
                               'url': _blast_url_template % str_seq,
                               'seq': str_seq})
             seq_lengths.append(seq_len)
-            if taxonomy is not None:
-                output_mapping.append({sequence.metadata['id'], 
-                    taxonomy}) #access actual element
-            if metadata is not None:
-                for key in metadata.columns:
-                    output_mapping.append({sequence.metadata['id'],
-                        metadata[key]}) #access actual value
 
 
     seq_len_stats = _compute_descriptive_stats(seq_lengths)
@@ -60,8 +54,10 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
 
     index = os.path.join(TEMPLATES, 'tabulate_seqs_assets', 'index.html')
     context={'data': sequences, 'stats':seq_len_stats}
-    if taxonomy is not None or metadata is not None:
-        context.append({'additional_cols', output_mapping})
+    if taxonomy is not None:
+        context['taxonomy'] = taxonomy
+    if metadata is not None:
+        context['metadata'] = metadata_df
     q2templates.render(index, output_dir, context=context)
 
     js = os.path.join(
