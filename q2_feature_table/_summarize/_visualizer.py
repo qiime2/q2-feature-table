@@ -30,12 +30,11 @@ _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
 TEMPLATES = pkg_resources.resource_filename('q2_feature_table', '_summarize')
 
 
-def tabulate_seqs(output_dir: str, data: DNAIterator, 
-        taxonomy: pd.DataFrame = None, metadata: qiime2.Metadata = None) \
-        -> None:
+def tabulate_seqs(output_dir: str, data: DNAIterator,
+                  taxonomy: pd.DataFrame = None,
+                  metadata: qiime2.Metadata = None) -> None:
     sequences = []
     seq_lengths = []
-    output_mapping = {}
     metadata_df = metadata.to_dataframe()
     with open(os.path.join(output_dir, 'sequences.fasta'), 'w') as fh:
         for sequence in data:
@@ -48,12 +47,11 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
                               'seq': str_seq})
             seq_lengths.append(seq_len)
 
-
     seq_len_stats = _compute_descriptive_stats(seq_lengths)
     _write_tsvs_of_descriptive_stats(seq_len_stats, output_dir)
 
     index = os.path.join(TEMPLATES, 'tabulate_seqs_assets', 'index.html')
-    context={'data': sequences, 'stats':seq_len_stats}
+    context = {'data': sequences, 'stats': seq_len_stats}
     if taxonomy is not None:
         context['taxonomy'] = taxonomy
     if metadata is not None:

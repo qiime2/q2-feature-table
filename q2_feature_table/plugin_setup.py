@@ -508,9 +508,9 @@ plugin.visualizers.register_function(
 
 plugin.visualizers.register_function(
     function=q2_feature_table.tabulate_seqs,
-    inputs={'data': FeatureData[Sequence | AlignedSequence], 
-    "taxonomy": FeatureData[Taxonomy]},
-    parameters={'metadata':Metadata},
+    inputs={'data': FeatureData[Sequence | AlignedSequence],
+            'taxonomy': FeatureData[Taxonomy]},
+    parameters={'metadata': Metadata},
     input_descriptions={'data': 'The feature sequences to be tabulated.'},
     parameter_descriptions={},
     name='View sequence associated with each feature',
