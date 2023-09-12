@@ -512,8 +512,9 @@ plugin.visualizers.register_function(
             'taxonomy': FeatureData[Taxonomy]},
     parameters={'metadata': Metadata},
     input_descriptions={
-        'data': 'The feature sequences to be tabulated.', 'taxonomy':
-        'The taxonomic classifications of the tabulated features.'},
+        'data': 'The feature sequences to be tabulated.',
+        'taxonomy': 'The taxonomic classifications of the tabulated features.'
+        },
     parameter_descriptions={
         'metadata': 'Any additional metadata for the tabulated features.'},
     name='View sequence associated with each feature',
