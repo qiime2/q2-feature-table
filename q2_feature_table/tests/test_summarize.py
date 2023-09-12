@@ -160,6 +160,60 @@ class TabulateSeqsTests(TestCase):
                 self.assertTrue(
                     'href="seven_number_summary.tsv"' in fh.read())
 
+    def test_optional_inputs(self):
+        seqs = DNAIterator(skbio.DNA(a, metadata=b)for a, b in (
+            ('A', {'id': 'seq01'}),
+            ('AA', {'id': 'seq02'}),
+            ('AAA', {'id': 'seq03'}),
+            ('AAAA', {'id': 'seq04'}),
+            ('AAAA', {'id': 'seq05'}),
+            ('AAA', {'id': 'seq06'}),
+            ('AA', {'id': 'seq07'}),
+            ('AAAAAAAAAA', {'id': 'seq08'})))
+
+        metadata = pd.DataFrame(index=['seq01', 'seq02',
+                                       'seq03', 'seq04',
+                                       'seq05', 'seq06',
+                                       'seq07', 'seq08'],
+                                columns=['att1', 'att2'],
+                                data=[('00', '01'), ('10', '11'),
+                                      ('03', '04'), ('12', '13'),
+                                      ('05', '06'), ('14', '15'),
+                                      ('07', '08'), ('16', '17')])
+
+        taxonomy = pd.DataFrame([('a;b;c;d', '1.0'), ('a;b;c;f', '0.7')
+                                 ('a;b;h;d', '0.3'), ('a;b;d;f', '0.7')
+                                 ('a;b;e;d', '0.4'), ('a;b;c;f', '0.6')
+                                 ('a;b;t;d', '1.0'), ('a;b;d;f', '0.5')],
+                                index=['seq01', 'seq02', 'seq03', 'seq04',
+                                       'seq05', 'seq06', 'seq07', 'seq08'],
+                                columns=['Taxon', 'Confidence'])
+
+        metadata = qiime2.Metadata(metadata)
+
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate_seqs(output_dir, seqs, metadata=metadata,
+                          taxonomy=taxonomy)
+
+            expected_fp = os.path.join(output_dir, 'index.html')
+            with open(expected_fp) as fh:
+                file_text = fh.read()
+                self.assertTrue('<td>8</td>' in file_text)
+                self.assertTrue('<td>1</td>' in file_text)
+                self.assertTrue('<td>10</td>' in file_text)
+                self.assertTrue('<td>3.62</td>' in file_text)
+                self.assertTrue('<td>9</td>' in file_text)
+                self.assertTrue('<td>1</td>' in file_text)
+                self.assertTrue('<td>1</td>' in file_text)
+                self.assertTrue('<td>2</td>' in file_text)
+                self.assertTrue('<td>3</td>' in file_text)
+                self.assertTrue('<td>4</td>' in file_text)
+                self.assertTrue('<td>6</td>' in file_text)
+                self.assertTrue('<td>1.0</td>' in file_text)
+                self.assertTrue('<td>a;b;c;d</td>' in file_text)
+                self.assertTrue('<td>0.4</td>' in file_text)
+                self.assertTrue('<td>0.7</td>' in file_text)
+
 
 class SummarizeTests(TestCase):
 
