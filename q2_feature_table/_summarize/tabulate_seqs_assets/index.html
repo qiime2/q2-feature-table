@@ -91,6 +91,16 @@
             <th>Feature ID</th>
             <th data-tsorter="numeric">Sequence Length</th>
             <th data-tsorter="link">Sequence</th>
+            {% if taxonomy is defined %}
+              {% for col in taxonomy.columns %}
+            <th>{{ col }}</th>
+              {% endfor %}
+            {% endif %}
+            {% if metadata is defined %}
+              {% for name in metadata.columns %}
+            <th> {{ name }} </th>
+              {% endfor %}
+            {% endif %}
           </tr>
         </thead>
         <tbody>
@@ -99,6 +109,16 @@
             <td>{{ sequence.id }}</td>
             <td>{{ sequence.len }}</td>
             <td><samp><a target="_blank" href="{{ sequence.url }}" rel="noopener noreferrer">{{ sequence.seq }}</a></samp></td>
+            {% if taxonomy is defined %}
+              {% for col in taxonomy.columns %}
+            <td>{{ taxonomy.loc[sequence.id, col] }}</td>
+              {% endfor %}
+            {% endif %}
+            {% if metadata is defined %}
+              {% for name in metadata.columns %}
+            <td>{{ metadata.loc[sequence.id, name] }}</td>
+              {% endfor %}
+            {% endif %}
           </tr>
         {% endfor %}
         </tbody>

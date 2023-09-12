@@ -30,7 +30,9 @@ _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
 TEMPLATES = pkg_resources.resource_filename('q2_feature_table', '_summarize')
 
 
-def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
+def tabulate_seqs(output_dir: str, data: DNAIterator,
+                  taxonomy: pd.DataFrame = None,
+                  metadata: qiime2.Metadata = None) -> None:
     sequences = []
     seq_lengths = []
     with open(os.path.join(output_dir, 'sequences.fasta'), 'w') as fh:
@@ -43,12 +45,17 @@ def tabulate_seqs(output_dir: str, data: DNAIterator) -> None:
                               'url': _blast_url_template % str_seq,
                               'seq': str_seq})
             seq_lengths.append(seq_len)
+
     seq_len_stats = _compute_descriptive_stats(seq_lengths)
     _write_tsvs_of_descriptive_stats(seq_len_stats, output_dir)
 
     index = os.path.join(TEMPLATES, 'tabulate_seqs_assets', 'index.html')
-    q2templates.render(index, output_dir, context={'data': sequences,
-                                                   'stats': seq_len_stats})
+    context = {'data': sequences, 'stats': seq_len_stats}
+    if taxonomy is not None:
+        context['taxonomy'] = taxonomy
+    if metadata is not None:
+        context['metadata'] = metadata.to_dataframe()
+    q2templates.render(index, output_dir, context=context)
 
     js = os.path.join(
         TEMPLATES, 'tabulate_seqs_assets', 'js', 'tsorter.min.js')

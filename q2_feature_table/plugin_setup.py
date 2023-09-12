@@ -17,7 +17,6 @@ from q2_types.feature_data import (
 
 import q2_feature_table
 import q2_feature_table._examples as ex
-
 citations = Citations.load('citations.bib', package='q2_feature_table')
 plugin = Plugin(
     name='feature-table',
@@ -509,10 +508,15 @@ plugin.visualizers.register_function(
 
 plugin.visualizers.register_function(
     function=q2_feature_table.tabulate_seqs,
-    inputs={'data': FeatureData[Sequence | AlignedSequence]},
-    parameters={},
-    input_descriptions={'data': 'The feature sequences to be tabulated.'},
-    parameter_descriptions={},
+    inputs={'data': FeatureData[Sequence | AlignedSequence],
+            'taxonomy': FeatureData[Taxonomy]},
+    parameters={'metadata': Metadata},
+    input_descriptions={
+        'data': 'The feature sequences to be tabulated.',
+        'taxonomy': 'The taxonomic classifications of the tabulated features.'
+        },
+    parameter_descriptions={
+        'metadata': 'Any additional metadata for the tabulated features.'},
     name='View sequence associated with each feature',
     description="Generate tabular view of feature identifier to sequence "
                 "mapping, including links to BLAST each sequence against "
