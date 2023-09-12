@@ -35,8 +35,6 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
                   metadata: qiime2.Metadata = None) -> None:
     sequences = []
     seq_lengths = []
-    if metadata is not None:
-        metadata_df = metadata.to_dataframe()
     with open(os.path.join(output_dir, 'sequences.fasta'), 'w') as fh:
         for sequence in data:
             skbio.io.write(sequence, format='fasta', into=fh)
@@ -56,7 +54,7 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
     if taxonomy is not None:
         context['taxonomy'] = taxonomy
     if metadata is not None:
-        context['metadata'] = metadata_df
+        context['metadata'] = metadata.to_dataframe()
     q2templates.render(index, output_dir, context=context)
 
     js = os.path.join(

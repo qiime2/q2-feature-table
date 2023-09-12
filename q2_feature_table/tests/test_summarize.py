@@ -199,7 +199,6 @@ class TabulateSeqsTests(TestCase):
             expected_fp = os.path.join(output_dir, 'index.html')
             with open(expected_fp) as fh:
                 file_text = fh.read()
-                print(file_text)
                 self.assertTrue('<td>8</td>' in file_text)
                 self.assertTrue('<td>1</td>' in file_text)
                 self.assertTrue('<td>10</td>' in file_text)
