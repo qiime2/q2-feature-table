@@ -511,8 +511,11 @@ plugin.visualizers.register_function(
     inputs={'data': FeatureData[Sequence | AlignedSequence],
             'taxonomy': FeatureData[Taxonomy]},
     parameters={'metadata': Metadata},
-    input_descriptions={'data': 'The feature sequences to be tabulated.'},
-    parameter_descriptions={},
+    input_descriptions={
+        'data': 'The feature sequences to be tabulated.', 'taxonomy':
+        'The taxonomic classifications of the tabulated features.'},
+    parameter_descriptions={
+        'metadata': 'Any additional metadata for the tabulated features.'},
     name='View sequence associated with each feature',
     description="Generate tabular view of feature identifier to sequence "
                 "mapping, including links to BLAST each sequence against "
