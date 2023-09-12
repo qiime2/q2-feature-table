@@ -115,9 +115,9 @@
               {% endfor %}
             {% endif %}
             {% if metadata is not None %}
-              {{ for name in metadata.columns }}
+              {% for name in metadata.columns %}
                 <td>{{ metadata.loc[name] [sequence.id] }}</td>
-              {{ endfor }}
+              {% endfor %}
             {% endif %}
           </tr>
         {% endfor %}
