@@ -176,14 +176,15 @@ class TabulateSeqsTests(TestCase):
                                        'seq05', 'seq06',
                                        'seq07', 'seq08'],
                                 columns=['att1', 'att2'],
-                                data=[('00', '01'), ('10', '11'),
-                                      ('03', '04'), ('12', '13'),
-                                      ('05', '06'), ('14', '15'),
-                                      ('07', '08'), ('16', '17')])
+                                data=[['00', '01'], ['10', '11'],
+                                      ['03', '04'], ['12', '13'],
+                                      ['05', '06'], ['14', '15'],
+                                      ['07', '08'], ['16', '17']])
+        metadata.index.name = 'feature id'
 
-        taxonomy = pd.DataFrame([('a;b;c;d', '1.0'), ('a;b;c;f', '0.7')
-                                 ('a;b;h;d', '0.3'), ('a;b;d;f', '0.7')
-                                 ('a;b;e;d', '0.4'), ('a;b;c;f', '0.6')
+        taxonomy = pd.DataFrame([('a;b;c;d', '1.0'), ('a;b;c;f', '0.7'),
+                                 ('a;b;h;d', '0.3'), ('a;b;d;f', '0.7'),
+                                 ('a;b;e;d', '0.4'), ('a;b;c;f', '0.6'),
                                  ('a;b;t;d', '1.0'), ('a;b;d;f', '0.5')],
                                 index=['seq01', 'seq02', 'seq03', 'seq04',
                                        'seq05', 'seq06', 'seq07', 'seq08'],
@@ -198,6 +199,7 @@ class TabulateSeqsTests(TestCase):
             expected_fp = os.path.join(output_dir, 'index.html')
             with open(expected_fp) as fh:
                 file_text = fh.read()
+                print(file_text)
                 self.assertTrue('<td>8</td>' in file_text)
                 self.assertTrue('<td>1</td>' in file_text)
                 self.assertTrue('<td>10</td>' in file_text)

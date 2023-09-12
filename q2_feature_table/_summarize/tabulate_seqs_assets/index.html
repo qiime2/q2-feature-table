@@ -91,14 +91,14 @@
             <th>Feature ID</th>
             <th data-tsorter="numeric">Sequence Length</th>
             <th data-tsorter="link">Sequence</th>
-            {% if taxonomy is not None %}
+            {% if taxonomy is defined %}
               {% for col in taxonomy.columns %}
-                <th>{{ col }}</th>
+            <th>{{ col }}</th>
               {% endfor %}
             {% endif %}
-            {% if metadata is not None %}
+            {% if metadata is defined %}
               {% for name in metadata.columns %}
-                <th> {{ name }} </th>
+            <th> {{ name }} </th>
               {% endfor %}
             {% endif %}
           </tr>
@@ -109,14 +109,14 @@
             <td>{{ sequence.id }}</td>
             <td>{{ sequence.len }}</td>
             <td><samp><a target="_blank" href="{{ sequence.url }}" rel="noopener noreferrer">{{ sequence.seq }}</a></samp></td>
-            {% if taxonomy is not None %}
+            {% if taxonomy is defined %}
               {% for col in taxonomy.columns %}
-                <td>{{ taxonomy.loc[col] [sequence.id] }}</td>
+            <td>{{ taxonomy.loc[sequence.id, col] }}</td>
               {% endfor %}
             {% endif %}
-            {% if metadata is not None %}
+            {% if metadata is defined %}
               {% for name in metadata.columns %}
-                <td>{{ metadata.loc[name] [sequence.id] }}</td>
+            <td>{{ metadata.loc[sequence.id, name] }}</td>
               {% endfor %}
             {% endif %}
           </tr>
