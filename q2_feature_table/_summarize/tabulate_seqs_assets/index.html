@@ -92,8 +92,8 @@
             <th data-tsorter="numeric">Sequence Length</th>
             <th data-tsorter="link">Sequence</th>
             {% if taxonomy is defined %}
-              {% for member in taxonomy %}
-              <!-- EDIT HERE, Add Taxon Column for each taxonomy -->
+              {% for i in range(taxonomy.size) %}
+            <th>Taxon {{i}}</th>
               {% endfor %}
             {% endif %}
             {% if metadata is defined %}
@@ -106,20 +106,28 @@
         <tbody>
         {% for sequence in display_sequences %}
           <tr>
-            <!-- ADD UNION CHECK HERE -->
             <td>{{ sequence }}</td>
             <td>{{ data[sequence].len }}</td>
-            <td><samp><a target="_blank" href="{{ sequence.url }}" rel="noopener noreferrer">{{ sequence.seq }}</a></samp></td>
-            <!-- FIX TAXONOMY HERE -->
+            <td><samp><a target="_blank" href="{{ sequence.url }}" rel="noopener noreferrer">{{ data[sequence].seq }}</a></samp></td>
             {% if taxonomy is defined %}
-              {% for col in taxonomy.columns %}
-            <td>{{ taxonomy.loc[sequence.id, col] }}</td>
+              {% for member in taxonomy %}
+                {% if sequence in member.index %}
+            <td>{{ member.loc[sequence, "Taxon"] }}</td>
+                {% else %}
+            <td></td>
+                {% endif %}
               {% endfor %}
             {% endif %}
             {% if metadata is defined %}
-              {% for name in metadata.columns %}
-            <td>{{ metadata.loc[sequence.id, name] }}</td>
-              {% endfor %}
+              {% if sequence in metadata.index %}
+                {% for name in metadata.columns %}
+            <td>{{ metadata.loc[sequence, name] }}</td>
+                {% endfor %}
+              {% else %}
+                {%for name in metadata.columns %}
+            <td></td>
+                {% endfor %}
+              {% endif %}
             {% endif %}
           </tr>
         {% endfor %}

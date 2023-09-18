@@ -191,6 +191,7 @@ class TabulateSeqsTests(TestCase):
                                 columns=['Taxon', 'Confidence'])
 
         metadata = qiime2.Metadata(metadata)
+        taxonomy = pd.Series([taxonomy])
 
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs, metadata=metadata,
@@ -210,10 +211,10 @@ class TabulateSeqsTests(TestCase):
                 self.assertTrue('<td>3</td>' in file_text)
                 self.assertTrue('<td>4</td>' in file_text)
                 self.assertTrue('<td>6</td>' in file_text)
-                self.assertTrue('<td>1.0</td>' in file_text)
+                self.assertTrue('<td>a;b;e;d</td>' in file_text)
                 self.assertTrue('<td>a;b;c;d</td>' in file_text)
-                self.assertTrue('<td>0.4</td>' in file_text)
-                self.assertTrue('<td>0.7</td>' in file_text)
+                self.assertTrue('<td>08</td>' in file_text)
+                self.assertTrue('<td>17</td>' in file_text)
 
 
 class SummarizeTests(TestCase):
