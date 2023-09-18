@@ -63,10 +63,10 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
     if taxonomy is not None:
         for member in taxonomy:
             if merge_method == 'union':
-                display_sequences = display_sequences.union(metadata_df.index)
+                display_sequences = display_sequences.union(member.index)
             elif merge_method == 'intersect':
                 display_sequences = display_sequences.intersection(
-                    metadata_df.index)
+                    member.index)
             elif merge_method == 'strict':
                 if set(member.index) != display_sequences:
                     raise Exception('Merge method is strict and IDs do not \
