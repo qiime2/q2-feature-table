@@ -314,6 +314,46 @@ class TabulateSeqsTests(TestCase):
                 self.assertFalse('<td>14</td>' in file_text)
                 self.assertTrue('<td>10</td>' in file_text)
 
+    def test_optional_input_strict_fail(self):
+        seqs = DNAIterator(skbio.DNA(a, metadata=b)for a, b in (
+            ('A', {'id': 'seq01'}),
+            ('AA', {'id': 'seq02'}),
+            ('AAA', {'id': 'seq03'}),
+            ('AAAA', {'id': 'seq04'}),
+            ('AAAA', {'id': 'seq05'}),
+            ('AAA', {'id': 'seq06'}),
+            ('AA', {'id': 'seq07'}),
+            ('AAAAAAAAAA', {'id': 'seq08'})))
+
+        metadata = pd.DataFrame(index=['seq01', 'seq02',
+                                       'seq15', 'seq04',
+                                       'seq05', 'seq90',
+                                       'seq48', 'seq08'],
+                                columns=['att1', 'att2'],
+                                data=[['00', '01'], ['10', '11'],
+                                      ['03', '04'], ['12', '13'],
+                                      ['05', '06'], ['14', '15'],
+                                      ['07', '08'], ['16', '17']])
+        metadata.index.name = 'feature id'
+
+        taxonomy = pd.DataFrame([('a;b;c;d', '1.0'), ('a;b;c;f', '0.7'),
+                                 ('a;b;h;d', '0.3'), ('a;b;d;f', '0.7'),
+                                 ('a;b;e;d', '0.4'), ('a;b;c;f', '0.6'),
+                                 ('a;b;t;d', '1.0'), ('a;b;d;f', '0.5')],
+                                index=['seq17', 'seq02', 'seq03', 'seq48',
+                                       'seq05', 'seq19', 'seq07', 'seq08'],
+                                columns=['Taxon', 'Confidence'])
+
+        try:
+            with tempfile.TemporaryDirectory() as output_dir:
+                tabulate_seqs(output_dir, seqs, metadata=metadata,
+                              taxonomy=taxonomy, merge_method="intersect")
+                # Did not error out, this is a problem
+                self.assertTrue(False)
+        except Exception:
+            # Should error out
+            self.assertTrue(True)
+
 
 class SummarizeTests(TestCase):
 
