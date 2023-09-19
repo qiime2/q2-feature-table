@@ -66,10 +66,7 @@ def _filter_table(table, min_frequency, max_frequency, min_nonzero,
     # filter on the opposite axis to remove any entities that now have a
     # frequency of zero
     if filter_opposite_axis:
-        filter_fn2 = _get_biom_filter_function(
-            ids_to_keep=table.ids(axis=_other_axis_map[axis]), min_frequency=0,
-            max_frequency=None, min_nonzero=1, max_nonzero=None)
-        table.filter(filter_fn2, axis=_other_axis_map[axis], inplace=True)
+        table.remove_empty(axis=_other_axis_map[axis], inplace=True)
 
     if not allow_empty_table:
         _validate_nonempty_table(table)
