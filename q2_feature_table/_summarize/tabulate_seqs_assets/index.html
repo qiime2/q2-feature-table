@@ -93,12 +93,12 @@
             <th data-tsorter="link">Sequence</th>
             {% if taxonomy is defined %}
               {% for i in range(taxonomy.size) %}
-            <th>Taxon {{i}}</th>
+            <th data-tsorter="default">Taxon {{i}}</th>
               {% endfor %}
             {% endif %}
             {% if metadata is defined %}
               {% for name in metadata.columns %}
-            <th> {{ name }} </th>
+            <th data-tsorter="default">{{ name }}</th>
               {% endfor %}
             {% endif %}
           </tr>
