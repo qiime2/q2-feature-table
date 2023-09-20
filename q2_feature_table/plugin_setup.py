@@ -509,7 +509,7 @@ plugin.visualizers.register_function(
 plugin.visualizers.register_function(
     function=q2_feature_table.tabulate_seqs,
     inputs={'data': FeatureData[Sequence | AlignedSequence],
-            'taxonomy': List[FeatureData[Taxonomy]]},
+            'taxonomy': Collection[FeatureData[Taxonomy]]},
     parameters={'metadata': Metadata, 'merge_method': Str},
     input_descriptions={
         'data': 'The feature sequences to be tabulated.',

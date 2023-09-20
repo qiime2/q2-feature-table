@@ -191,7 +191,8 @@ class TabulateSeqsTests(TestCase):
                                 columns=['Taxon', 'Confidence'])
 
         metadata = qiime2.Metadata(metadata)
-        taxonomy = pd.Series([taxonomy])
+        taxonomy = {"Taxon Name": [taxonomy]}
+        taxonomy = pd.DataFrame.from_dict(taxonomy)
 
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs, metadata=metadata,
@@ -247,7 +248,8 @@ class TabulateSeqsTests(TestCase):
                                 columns=['Taxon', 'Confidence'])
 
         metadata = qiime2.Metadata(metadata)
-        taxonomy = pd.Series([taxonomy])
+        taxonomy = {"Taxon Name": [taxonomy]}
+        taxonomy = pd.DataFrame.from_dict(taxonomy)
 
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs, metadata=metadata,
@@ -302,7 +304,8 @@ class TabulateSeqsTests(TestCase):
                                 columns=['Taxon', 'Confidence'])
 
         metadata = qiime2.Metadata(metadata)
-        taxonomy = pd.Series([taxonomy])
+        taxonomy = {"Taxon Name": [taxonomy]}
+        taxonomy = pd.DataFrame.from_dict(taxonomy)
 
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs, metadata=metadata,
@@ -343,6 +346,8 @@ class TabulateSeqsTests(TestCase):
                                 index=['seq17', 'seq02', 'seq03', 'seq48',
                                        'seq05', 'seq19', 'seq07', 'seq08'],
                                 columns=['Taxon', 'Confidence'])
+        taxonomy = {"Taxon Name": [taxonomy]}
+        taxonomy = pd.DataFrame.from_dict(taxonomy)
 
         try:
             with tempfile.TemporaryDirectory() as output_dir:

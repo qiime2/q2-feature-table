@@ -92,8 +92,8 @@
             <th data-tsorter="numeric">Sequence Length</th>
             <th data-tsorter="link">Sequence</th>
             {% if taxonomy is defined %}
-              {% for i in range(taxonomy.size) %}
-            <th data-tsorter="default">Taxon {{i}}</th>
+              {% for name in taxonomy.keys() %}
+            <th data-tsorter="default">{{name}}</th>
               {% endfor %}
             {% endif %}
             {% if metadata is defined %}
@@ -115,7 +115,8 @@
             <td></td>
             {% endif %}
             {% if taxonomy is defined %}
-              {% for member in taxonomy %}
+              {% for name in taxonomy.columns %}
+                {% set member = taxonomy[name][0] %}
                 {% if sequence in member.index %}            
             <td>{{ member.loc[sequence, "Taxon"] }}</td>
                 {% else %}
