@@ -33,7 +33,7 @@ TEMPLATES = pkg_resources.resource_filename('q2_feature_table', '_summarize')
 def tabulate_seqs(output_dir: str, data: DNAIterator,
                   taxonomy: pd.DataFrame = None,
                   metadata: qiime2.Metadata = None,
-                  merge_method: str = "strict") -> None:
+                  merge_method: str = 'strict') -> None:
 
     display_sequences = set()
     sequences = {}
@@ -62,7 +62,6 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
                 raise Exception('Merge method is strict and IDs do not match')
     if taxonomy is not None:
         for name in taxonomy.keys():
-            print(taxonomy[name][0].index)
             if merge_method == 'union':
                 display_sequences = display_sequences.union(
                     taxonomy[name][0].index)

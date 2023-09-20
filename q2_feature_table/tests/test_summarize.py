@@ -346,18 +346,15 @@ class TabulateSeqsTests(TestCase):
                                 index=['seq17', 'seq02', 'seq03', 'seq48',
                                        'seq05', 'seq19', 'seq07', 'seq08'],
                                 columns=['Taxon', 'Confidence'])
+        metadata = qiime2.Metadata(metadata)
         taxonomy = {"Taxon Name": [taxonomy]}
         taxonomy = pd.DataFrame.from_dict(taxonomy)
 
-        try:
+        with self.assertRaisesRegex(Exception, "Merge method is strict"):
             with tempfile.TemporaryDirectory() as output_dir:
                 tabulate_seqs(output_dir, seqs, metadata=metadata,
-                              taxonomy=taxonomy, merge_method="intersect")
+                              taxonomy=taxonomy)
                 # Did not error out, this is a problem
-                self.assertTrue(False)
-        except Exception:
-            # Should error out
-            self.assertTrue(True)
 
 
 class SummarizeTests(TestCase):
