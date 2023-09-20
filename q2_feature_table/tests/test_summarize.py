@@ -263,7 +263,7 @@ class TabulateSeqsTests(TestCase):
                 self.assertTrue('<td>3.62</td>' in file_text)
                 self.assertTrue('<td>9</td>' in file_text)
                 self.assertTrue('<td>1</td>' in file_text)
-                self.assertTrue('<td>1</td>' in file_text)
+                self.assertTrue('seq17' in file_text)
                 self.assertTrue('<td>2</td>' in file_text)
                 self.assertTrue('<td>3</td>' in file_text)
                 self.assertTrue('<td>4</td>' in file_text)
@@ -271,7 +271,7 @@ class TabulateSeqsTests(TestCase):
                 self.assertTrue('<td>a;b;e;d</td>' in file_text)
                 self.assertTrue('<td>a;b;c;d</td>' in file_text)
                 self.assertTrue('<td>08</td>' in file_text)
-                self.assertTrue('<td>17</td>' in file_text)
+                self.assertTrue('Taxon Name' in file_text)
 
     def test_optional_inputs_intersect(self):
         seqs = DNAIterator(skbio.DNA(a, metadata=b)for a, b in (
