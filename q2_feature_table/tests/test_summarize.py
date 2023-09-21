@@ -191,8 +191,7 @@ class TabulateSeqsTests(TestCase):
                                 columns=['Taxon', 'Confidence'])
 
         metadata = qiime2.Metadata(metadata)
-        taxonomy = {"Taxon Name": [taxonomy]}
-        taxonomy = pd.DataFrame.from_dict(taxonomy)
+        taxonomy = {"Taxon Name": taxonomy}
 
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs, metadata=metadata,
@@ -311,8 +310,7 @@ class TabulateSeqsTests(TestCase):
                                 columns=['Taxon', 'Confidence'])
 
         metadata = qiime2.Metadata(metadata)
-        taxonomy = {"Taxon Name": [taxonomy]}
-        taxonomy = pd.DataFrame.from_dict(taxonomy)
+        taxonomy = {"Taxon Name": taxonomy}
 
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs, metadata=metadata,
@@ -354,8 +352,7 @@ class TabulateSeqsTests(TestCase):
                                        'seq05', 'seq19', 'seq07', 'seq08'],
                                 columns=['Taxon', 'Confidence'])
         metadata = qiime2.Metadata(metadata)
-        taxonomy = {"Taxon Name": [taxonomy]}
-        taxonomy = pd.DataFrame.from_dict(taxonomy)
+        taxonomy = {"Taxon Name": taxonomy}
 
         with self.assertRaisesRegex(Exception, "Merge method is strict"):
             with tempfile.TemporaryDirectory() as output_dir:
