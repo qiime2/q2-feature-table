@@ -61,15 +61,14 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
             if set(metadata_df.index) != display_sequences:
                 raise Exception('Merge method is strict and IDs do not match')
     if taxonomy is not None:
-        for name in taxonomy.keys():
+        for member in taxonomy.values():
             if merge_method == 'union':
-                display_sequences = display_sequences.union(
-                    taxonomy[name][0].index)
+                display_sequences = display_sequences.union(member.index)
             elif merge_method == 'intersect':
                 display_sequences = display_sequences.intersection(
-                    taxonomy[name][0].index)
+                    member.index)
             elif merge_method == 'strict':
-                if set(taxonomy[name][0].index) != display_sequences:
+                if set(member.index) != display_sequences:
                     raise Exception('Merge method is strict and IDs do not \
                         match')
 
@@ -83,7 +82,6 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
     if metadata is not None:
         context['metadata'] = metadata_df
     context['display_sequences'] = display_sequences
-    context['union'] = True if merge_method == 'union' else False
     q2templates.render(index, output_dir, context=context)
 
     js = os.path.join(

@@ -255,9 +255,8 @@ class TabulateSeqsTests(TestCase):
                                  columns=['Taxon', 'Confidence'])
 
         metadata = qiime2.Metadata(metadata)
-        taxonomy = {"Taxon Name": [taxonomy],
-                    "Taxon 2 Name": [taxonomy2]}
-        taxonomy = pd.DataFrame.from_dict(taxonomy)
+        taxonomy = {"Taxon Name": taxonomy,
+                    "Taxon 2 Name": taxonomy2}
 
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs, metadata=metadata,
