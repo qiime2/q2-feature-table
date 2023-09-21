@@ -111,15 +111,15 @@
             <td><samp><a target="_blank" href="{{ sequence.url }}" rel="noopener noreferrer">{{ data[sequence].seq }}</a></samp></td>
             <td>{{ data[sequence].len }}</td>
             {% else %}
-            <td></td>
-            <td></td>
+            <td>-</td>
+            <td>-</td>
             {% endif %}
             {% if taxonomy is defined %}
               {% for member in taxonomy.values() %}
                 {% if sequence in member.index %}            
             <td>{{ member.loc[sequence, "Taxon"] }}</td>
                 {% else %}
-            <td></td>
+            <td>-</td>
                 {% endif %}
               {% endfor %}
             {% endif %}
@@ -130,7 +130,7 @@
                 {% endfor %}
               {% else %}
                 {%for name in metadata.columns %}
-            <td></td>
+            <td>-</td>
                 {% endfor %}
               {% endif %}
             {% endif %}
