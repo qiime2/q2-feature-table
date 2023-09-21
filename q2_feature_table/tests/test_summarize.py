@@ -254,8 +254,8 @@ class TabulateSeqsTests(TestCase):
                                  columns=['Taxon', 'Confidence'])
 
         metadata = qiime2.Metadata(metadata)
-        taxonomy = {"Taxon Name": taxonomy,
-                    "Taxon 2 Name": taxonomy2}
+        taxonomy = {"foo": taxonomy,
+                    "bar": taxonomy2}
 
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs, metadata=metadata,
@@ -277,7 +277,8 @@ class TabulateSeqsTests(TestCase):
                 self.assertTrue('<td>a;b;e;d</td>' in file_text)
                 self.assertTrue('<td>a;b;c;d</td>' in file_text)
                 self.assertTrue('<td>08</td>' in file_text)
-                self.assertTrue('Taxon Name' in file_text)
+                self.assertTrue('foo' in file_text)
+                self.assertTrue('bar' in file_text)
 
     def test_optional_inputs_intersect(self):
         seqs = DNAIterator(skbio.DNA(a, metadata=b)for a, b in (
@@ -310,7 +311,7 @@ class TabulateSeqsTests(TestCase):
                                 columns=['Taxon', 'Confidence'])
 
         metadata = qiime2.Metadata(metadata)
-        taxonomy = {"Taxon Name": taxonomy}
+        taxonomy = {"foo": taxonomy}
 
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs, metadata=metadata,
