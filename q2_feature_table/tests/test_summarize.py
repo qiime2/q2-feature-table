@@ -246,9 +246,17 @@ class TabulateSeqsTests(TestCase):
                                 index=['seq17', 'seq02', 'seq03', 'seq48',
                                        'seq05', 'seq19', 'seq07', 'seq08'],
                                 columns=['Taxon', 'Confidence'])
+        taxonomy2 = pd.DataFrame([('a;b;c;d', '1.0'), ('a;b;c;f', '0.7'),
+                                 ('a;b;h;d', '0.3'), ('a;b;d;f', '0.7'),
+                                 ('a;b;e;d', '0.4'), ('a;b;c;f', '0.6'),
+                                 ('a;b;t;d', '1.0'), ('a;b;d;f', '0.5')],
+                                 index=['seq99', 'seq02', 'seq44', 'seq48',
+                                        'seq05', 'seq67', 'seq07', 'seq08'],
+                                 columns=['Taxon', 'Confidence'])
 
         metadata = qiime2.Metadata(metadata)
-        taxonomy = {"Taxon Name": [taxonomy]}
+        taxonomy = {"Taxon Name": [taxonomy],
+                    "Taxon 2 Name": [taxonomy2]}
         taxonomy = pd.DataFrame.from_dict(taxonomy)
 
         with tempfile.TemporaryDirectory() as output_dir:
