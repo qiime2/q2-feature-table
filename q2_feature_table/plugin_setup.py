@@ -174,15 +174,19 @@ plugin.methods.register_function(
     examples={'group_samples': ex.feature_table_group_samples}
 )
 
+# maps input types to relevant overlap methods and output types
 i_table, p_overlap_method, o_table = TypeMap({
     (FeatureTable[Frequency],
-     Str % Choices(sorted(q2_feature_table.overlap_methods()))):
+     Str % Choices(sorted(q2_feature_table.overlap_methods() - {'union'}))):
     FeatureTable[Frequency],
     (FeatureTable[RelativeFrequency],
-     # We don't want to allow summing of RelativeFrequency tables, so remove
-     # that option from the overlap methods
-     Str % Choices(sorted(q2_feature_table.overlap_methods() - {'sum'}))):
-    FeatureTable[RelativeFrequency]
+     Str % Choices(sorted(q2_feature_table.overlap_methods()
+                          - {'union', 'sum'}))):
+    FeatureTable[RelativeFrequency],
+    (FeatureTable[PresenceAbsence],
+     Str % Choices(sorted(q2_feature_table.overlap_methods()
+                          - {'average', 'sum'}))):
+    FeatureTable[PresenceAbsence]
 })
 
 plugin.methods.register_function(
