@@ -6,10 +6,12 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import pkg_resources
+
 import numpy as np
 from biom import Table
 
-from qiime2 import Artifact
+from qiime2 import Artifact, ResultCollection
 
 
 rep_seqs_1_url = ('https://data.qiime2.org/usage-examples/'
@@ -27,6 +29,13 @@ rep_seqs_dada2_url = 'https://data.qiime2.org/usage-examples/' \
                      'moving-pictures/rep-seqs-dada2.qza'
 rep_seqs_deblur_url = 'https://data.qiime2.org/usage-examples/' \
                       'moving-pictures/rep-seqs-deblur.qza'
+moving_pics_taxon_path = 'gg1-taxonomy.qza'
+local_taxonomy_path = 'gg2-taxonomy.qza'
+
+
+def get_data_path(filename):
+    return pkg_resources.resource_filename('q2_feature_table.tests',
+                                           'data/%s' % filename)
 
 
 def ft1_factory():
@@ -51,6 +60,18 @@ def ft3_factory():
         Table(np.array([[0, 4, 9], [4, 4, 8]]),
               ['O1', 'O4'],
               ['S7', 'S8', 'S9']))
+
+
+def taxon_collection_factory():
+    return ResultCollection({
+        'GG1': Artifact.load(get_data_path(moving_pics_taxon_path)),
+        'GG2': Artifact.load(get_data_path(local_taxonomy_path))
+        }
+    )
+
+
+def moving_pics_taxonomy_factory():
+    return Artifact.load(get_data_path(moving_pics_taxon_path))
 
 
 def feature_table_merge_two_tables(use):
@@ -328,6 +349,42 @@ def feature_table_tabulate_seqs(use):
         use.UsageAction('feature_table', 'tabulate_seqs'),
         use.UsageInputs(data=rep_seqs),
         use.UsageOutputNames(visualization='rep-seqs')
+    )
+
+    viz.assert_output_type('Visualization')
+
+
+def feature_table_tabulate_seqs_single_taxon(use):
+    rep_seqs = use.init_artifact_from_url(
+        'rep_seqs_single_taxon', rep_seqs_dada2_url
+    )
+
+    taxonomy = use.init_artifact(
+        'single_taxonomy', moving_pics_taxonomy_factory
+    )
+
+    viz, = use.action(
+        use.UsageAction('feature_table', 'tabulate_seqs'),
+        use.UsageInputs(data=rep_seqs, taxonomy=[taxonomy]),
+        use.UsageOutputNames(visualization='rep-seqs')
+    )
+
+    viz.assert_output_type('Visualization')
+
+
+def feature_table_tabulate_seqs_multi_taxon(use):
+    rep_seqs = use.init_artifact_from_url(
+        'rep_seqs_multi_taxon', rep_seqs_dada2_url
+    )
+
+    taxonomy = use.init_artifact_collection(
+        'multi_taxonomy', taxon_collection_factory
+    )
+
+    viz, = use.action(
+        use.UsageAction('feature_table', 'tabulate_seqs'),
+        use.UsageInputs(data=rep_seqs, taxonomy=taxonomy),
+        use.UsageOutputNames(visualization='rep_seqs')
     )
 
     viz.assert_output_type('Visualization')

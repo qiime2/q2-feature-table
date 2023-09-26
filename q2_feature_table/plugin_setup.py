@@ -528,6 +528,10 @@ plugin.visualizers.register_function(
     citations=[citations['NCBI'], citations['NCBI-BLAST']],
     examples={
         'feature_table_tabulate_seqs': ex.feature_table_tabulate_seqs,
+        'feature_table_tabulate_seqs_single_taxon':
+            ex.feature_table_tabulate_seqs_single_taxon,
+        'feature_table_tabulate_seqs_multi_taxon':
+            ex.feature_table_tabulate_seqs_multi_taxon
     }
 )
 
