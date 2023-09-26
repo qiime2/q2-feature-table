@@ -29,8 +29,8 @@ rep_seqs_dada2_url = 'https://data.qiime2.org/usage-examples/' \
                      'moving-pictures/rep-seqs-dada2.qza'
 rep_seqs_deblur_url = 'https://data.qiime2.org/usage-examples/' \
                       'moving-pictures/rep-seqs-deblur.qza'
-moving_pics_taxon_path = 'gg1-taxonomy.qza'
-local_taxonomy_path = 'gg2-taxonomy.qza'
+moving_pics_taxon_path = 'moving-pics-taxonomy-gg-13-8.qza'
+local_taxonomy_path = 'moving-pics-taxonomy-gg-2.qza'
 
 
 def get_data_path(filename):
