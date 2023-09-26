@@ -89,35 +89,50 @@
         <thead>
           <tr>
             <th>Feature ID</th>
-            <th data-tsorter="numeric">Sequence Length</th>
-            <th data-tsorter="link">Sequence</th>
+            <th data-tsorter="numeric">Sequence</th>
+            <th data-tsorter="link">Sequence Length</th>
             {% if taxonomy is defined %}
-              {% for col in taxonomy.columns %}
-            <th>{{ col }}</th>
+              {% for name in taxonomy.keys() %}
+            <th data-tsorter="text">Taxon: {{name}}</th>
               {% endfor %}
             {% endif %}
             {% if metadata is defined %}
               {% for name in metadata.columns %}
-            <th> {{ name }} </th>
+            <th data-tsorter="text">{{ name }}</th>
               {% endfor %}
             {% endif %}
           </tr>
         </thead>
         <tbody>
-        {% for sequence in data %}
+        {% for sequence in display_sequences %}
           <tr>
-            <td>{{ sequence.id }}</td>
-            <td>{{ sequence.len }}</td>
-            <td><samp><a target="_blank" href="{{ sequence.url }}" rel="noopener noreferrer">{{ sequence.seq }}</a></samp></td>
+            <td>{{ sequence }}</td>
+            {% if sequence in data %}
+            <td><samp><a target="_blank" href="{{ sequence.url }}" rel="noopener noreferrer">{{ data[sequence].seq }}</a></samp></td>
+            <td>{{ data[sequence].len }}</td>
+            {% else %}
+            <td>-</td>
+            <td>-</td>
+            {% endif %}
             {% if taxonomy is defined %}
-              {% for col in taxonomy.columns %}
-            <td>{{ taxonomy.loc[sequence.id, col] }}</td>
+              {% for member in taxonomy.values() %}
+                {% if sequence in member.index %}            
+            <td>{{ member.loc[sequence, "Taxon"] }}</td>
+                {% else %}
+            <td>-</td>
+                {% endif %}
               {% endfor %}
             {% endif %}
             {% if metadata is defined %}
-              {% for name in metadata.columns %}
-            <td>{{ metadata.loc[sequence.id, name] }}</td>
-              {% endfor %}
+              {% if sequence in metadata.index %}
+                {% for name in metadata.columns %}
+            <td>{{ metadata.loc[sequence, name] }}</td>
+                {% endfor %}
+              {% else %}
+                {%for name in metadata.columns %}
+            <td>-</td>
+                {% endfor %}
+              {% endif %}
             {% endif %}
           </tr>
         {% endfor %}

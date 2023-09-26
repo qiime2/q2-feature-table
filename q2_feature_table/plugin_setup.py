@@ -513,14 +513,18 @@ plugin.visualizers.register_function(
 plugin.visualizers.register_function(
     function=q2_feature_table.tabulate_seqs,
     inputs={'data': FeatureData[Sequence | AlignedSequence],
-            'taxonomy': FeatureData[Taxonomy]},
-    parameters={'metadata': Metadata},
+            'taxonomy': Collection[FeatureData[Taxonomy]]},
+    parameters={'metadata': Metadata,
+                'merge_method': Str % Choices(
+                    ['strict', 'union', 'intersect'])},
     input_descriptions={
         'data': 'The feature sequences to be tabulated.',
         'taxonomy': 'The taxonomic classifications of the tabulated features.'
         },
     parameter_descriptions={
-        'metadata': 'Any additional metadata for the tabulated features.'},
+     'metadata': 'Any additional metadata for the tabulated features.',
+     'merge_method': 'Method that joins data sets'
+    },
     name='View sequence associated with each feature',
     description="Generate tabular view of feature identifier to sequence "
                 "mapping, including links to BLAST each sequence against "
@@ -528,6 +532,10 @@ plugin.visualizers.register_function(
     citations=[citations['NCBI'], citations['NCBI-BLAST']],
     examples={
         'feature_table_tabulate_seqs': ex.feature_table_tabulate_seqs,
+        'feature_table_tabulate_seqs_single_taxon':
+            ex.feature_table_tabulate_seqs_single_taxon,
+        'feature_table_tabulate_seqs_multi_taxon':
+            ex.feature_table_tabulate_seqs_multi_taxon
     }
 )
 
