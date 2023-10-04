@@ -217,6 +217,20 @@ def summarize(output_dir: str, table: biom.Table,
     plt.close('all')
 
 
+def tabulate_feature_frequencies(table: biom.Table) -> qiime2.Metadata:
+    feature_summary, feature_frequencies = _frequency_summary(
+        table, axis='observation')
+    feature_frequencies = feature_frequencies.apply('{:,}'.format).to_frame()
+    return qiime2.Metadata(feature_frequencies)
+
+
+def tabulate_sample_frequencies(table: biom.Table) -> qiime2.Metadata:
+    sample_summary, sample_frequencies = _frequency_summary(
+        table, axis='sample')
+    sample_frequencies = sample_frequencies.apply('{:,}'.format).to_frame()
+    return qiime2.Metadata(sample_frequencies)
+
+
 def _compute_descriptive_stats(lst: list):
     """Basic descriptive statistics and a (parametric) seven-number summary.
 
