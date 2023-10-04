@@ -654,7 +654,7 @@ plugin.methods.register_function(
     examples={}
 )
 
-plugin.actions.register_function(
+plugin.methods.register_function(
     function=q2_feature_table.tabulate_feature_frequencies,
     inputs={'table': FeatureTable[Frequency]},
     parameters={},
@@ -666,12 +666,12 @@ plugin.actions.register_function(
         'metadata': 'Metadata generated from frequency data'
     },
     name='Tabulate feature frequencies',
-    description='Tabulates feature frequencies from a feature table'
+    description='Tabulates feature frequencies from a feature table '
                 'and generates metadata',
     examples={}
 )
 
-plugin.actions.register_function(
+plugin.methods.register_function(
     function=q2_feature_table.tabulate_sample_frequencies,
     inputs={'table': FeatureTable[Frequency]},
     parameters={},
@@ -683,7 +683,7 @@ plugin.actions.register_function(
         'metadata': 'Metadata generated from frequency data'
     },
     name='Tabulate sample frequencies',
-    description='Tabulates feature frequencies from a feature table'
+    description='Tabulates feature frequencies from a feature table '
                 'and generates metadata',
     examples={}
 )
