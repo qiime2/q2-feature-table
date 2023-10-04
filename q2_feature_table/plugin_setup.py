@@ -14,6 +14,7 @@ from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
 from q2_types.feature_data import (
     FeatureData, Sequence, Taxonomy, AlignedSequence)
+from q2_types.metadata import ImmutableMetadata
 
 import q2_feature_table
 import q2_feature_table._examples as ex
@@ -646,5 +647,39 @@ plugin.methods.register_function(
     name='Split one feature table into many',
     description='Splits one feature table into many feature tables, where '
                 'splits are defined by values in metadata column.',
+    examples={}
+)
+
+plugin.actions.register_function(
+    function=q2_feature_table.tabulate_feature_frequencies,
+    inputs={'table': FeatureTable[Frequency]},
+    parameters={},
+    outputs={'metadata': ImmutableMetadata},
+    input_descriptions={
+        'table': 'A table containing feature frequency information'
+    },
+    output_descriptions={
+        'metadata': 'Metadata generated from frequency data'
+    },
+    name='Tabulate feature frequencies',
+    description='Tabulates feature frequencies from a feature table'
+                'and generates metadata',
+    examples={}
+)
+
+plugin.actions.register_function(
+    function=q2_feature_table.tabulate_sample_frequencies,
+    inputs={'table': FeatureTable[Frequency]},
+    parameters={},
+    outputs={'metadata': ImmutableMetadata},
+    input_descriptions={
+        'table': 'A table containing sample frequency information'
+    },
+    output_descriptions={
+        'metadata': 'Metadata generated from frequency data'
+    },
+    name='Tabulate sample frequencies',
+    description='Tabulates feature frequencies from a feature table'
+                'and generates metadata',
     examples={}
 )

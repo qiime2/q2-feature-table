@@ -9,7 +9,8 @@
 from ._normalize import rarefy
 from ._subsample import subsample
 from ._transform import (presence_absence, relative_frequency, transpose)
-from ._summarize import (summarize, tabulate_seqs)
+from ._summarize import (summarize, tabulate_seqs, tabulate_sample_frequencies,
+                         tabulate_feature_frequencies)
 from ._merge import (merge, merge_seqs, merge_taxa, overlap_methods)
 from ._filter import (filter_samples, filter_features, filter_seqs,
                       filter_features_conditionally)
@@ -28,4 +29,5 @@ __all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'transpose',
            'filter_features', 'merge_taxa', 'tabulate_seqs', 'overlap_methods',
            'core_features', 'group', 'heatmap', 'heatmap_choices',
            'filter_seqs', 'subsample', 'rename_ids',
-           'filter_features_conditionally', 'split']
+           'filter_features_conditionally', 'split',
+           'tabulate_feature_frequencies', 'tabulate_sample_frequencies']
