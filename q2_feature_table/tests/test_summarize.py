@@ -18,7 +18,9 @@ import qiime2
 from q2_types.feature_data import DNAIterator
 import csv
 
-from q2_feature_table import tabulate_seqs, summarize
+from q2_feature_table import (
+        tabulate_seqs, summarize,
+        tabulate_feature_frequencies, tabulate_sample_frequencies)
 from q2_feature_table._summarize._visualizer import _compute_descriptive_stats
 from q2_feature_table._summarize._visualizer import _frequencies
 from q2_feature_table._summarize._vega_spec import vega_spec
@@ -514,6 +516,15 @@ class SummarizeTests(TestCase):
                {'frequency': 50, 'id': '1', 'metadata': {'a': None}}]
 
         self.assertEqual(spec['data'][0]['values'], exp)
+
+
+class TabulateSampleFrequencyTests(TestCase):
+
+    def test_basic_case(self):
+        table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
+                           ['O1', 'O2'],
+                           ['S1', 'S2', 'S3'])
+        tabulate_sample_frequencies(table)
 
 
 if __name__ == "__main__":
