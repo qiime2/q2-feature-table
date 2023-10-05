@@ -527,5 +527,14 @@ class TabulateSampleFrequencyTests(TestCase):
         tabulate_sample_frequencies(table)
 
 
+class TabulateFeatureFrequencyTests(TestCase):
+
+    def test_basic_case(self):
+        table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
+                           ['O1', 'O2'],
+                           ['S1', 'S2', 'S3'])
+        tabulate_feature_frequencies(table)
+
+
 if __name__ == "__main__":
     main()
