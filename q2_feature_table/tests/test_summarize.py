@@ -530,6 +530,7 @@ class TabulateSampleFrequencyTests(TestCase):
         self.assertTrue('S1' in metadata.index)
         self.assertTrue('S2' in metadata.index)
         self.assertTrue('S3' in metadata.index)
+        self.assertTrue('50.0' in str(metadata))
 
 
 class TabulateFeatureFrequencyTests(TestCase):
@@ -540,6 +541,9 @@ class TabulateFeatureFrequencyTests(TestCase):
                            ['S1', 'S2', 'S3'])
         metadata = tabulate_feature_frequencies(table).to_dataframe()
         self.assertTrue('Frequency' in metadata.columns)
+        self.assertTrue('O1' in metadata.index)
+        self.assertTrue('O2' in metadata.index)
+        self.assertTrue('75.0' in str(metadata))
 
 
 if __name__ == "__main__":
