@@ -218,17 +218,17 @@ def summarize(output_dir: str, table: biom.Table,
 
 
 def tabulate_feature_frequencies(table: biom.Table) -> qiime2.Metadata:
-    feature_summary, feature_frequencies = _frequency_summary(
-        table, axis='observation')
-    feature_frequencies = feature_frequencies.apply('{:,}'.format).to_frame()
+    feature_frequencies = _frequencies(table, 'observation')
+    feature_frequencies = feature_frequencies.apply(
+        '{:,}'.format).to_frame('Frequency')
     feature_frequencies.index.name = "Feature ID"
     return qiime2.Metadata(feature_frequencies)
 
 
 def tabulate_sample_frequencies(table: biom.Table) -> qiime2.Metadata:
-    sample_summary, sample_frequencies = _frequency_summary(
-        table, axis='sample')
-    sample_frequencies = sample_frequencies.apply('{:,}'.format).to_frame()
+    sample_frequencies = _frequencies(table, 'sample')
+    sample_frequencies = sample_frequencies.apply(
+        '{:,}'.format).to_frame('Frequency')
     sample_frequencies.index.name = "Sample ID"
     return qiime2.Metadata(sample_frequencies)
 

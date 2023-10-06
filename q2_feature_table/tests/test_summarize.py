@@ -524,7 +524,12 @@ class TabulateSampleFrequencyTests(TestCase):
         table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
-        tabulate_sample_frequencies(table)
+        metadata = tabulate_sample_frequencies(table).to_dataframe()
+
+        self.assertTrue('Frequency' in metadata.columns)
+        self.assertTrue('S1' in metadata.index)
+        self.assertTrue('S2' in metadata.index)
+        self.assertTrue('S3' in metadata.index)
 
 
 class TabulateFeatureFrequencyTests(TestCase):
@@ -533,7 +538,8 @@ class TabulateFeatureFrequencyTests(TestCase):
         table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
-        tabulate_feature_frequencies(table)
+        metadata = tabulate_feature_frequencies(table).to_dataframe()
+        self.assertTrue('Frequency' in metadata.columns)
 
 
 if __name__ == "__main__":
