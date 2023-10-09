@@ -233,8 +233,7 @@ def tabulate_sample_frequencies(table: biom.Table) -> qiime2.Metadata:
     return qiime2.Metadata(sample_frequencies)
 
 
-def summarize_plus(ctx, output_dir: str, table: biom.Table,
-                   metadata: qiime2.Metadata = None):
+def summarize_plus(ctx, table, metadata=None):
     _feature_frequencies = ctx.get_action('feature_table',
                                           'tabulate_feature_frequencies')
     _sample_frequencies = ctx.get_action('feature_table',
@@ -244,7 +243,7 @@ def summarize_plus(ctx, output_dir: str, table: biom.Table,
 
     feature_metadata = _feature_frequencies(table)
     sample_metadata = _sample_frequencies(table)
-    visualized_data = _visualizer(output_dir, table, metadata)
+    visualized_data = _visualizer(table, metadata)
 
     return (feature_metadata, sample_metadata, visualized_data)
 
