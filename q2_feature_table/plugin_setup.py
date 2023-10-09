@@ -8,7 +8,8 @@
 
 from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
                            Choices, MetadataColumn, Categorical, List,
-                           Citations, TypeMatch, TypeMap, Collection)
+                           Citations, TypeMatch, TypeMap, Collection,
+                           Visualization)
 
 from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
@@ -686,4 +687,26 @@ plugin.methods.register_function(
     description='Tabulates feature frequencies from a feature table '
                 'and generates metadata',
     examples={}
+)
+
+plugin.pipelines.register_function(
+    function=q2_feature_table.summarize_plus,
+    inputs={'table': FeatureTable[Frequency | RelativeFrequency |
+                                  PresenceAbsence]},
+    parameters={'metadata': Metadata},
+    outputs={'frequency_metadata': ImmutableMetadata,
+             'sample_metadata': ImmutableMetadata,
+             'visualized_data': Visualization},
+    input_descriptions={
+        'table': 'The feature table to be summarized.'
+    },
+    parameter_descriptions={'sample_metadata': 'The sample metadata.'},
+    output_descriptions={'frequency_metadata': 'Metadata pertaining to '
+                         'feature frequencies',
+                         'sample_metadata': 'Metadata pertaining to '
+                         'sample frequencies',
+                         'visualized_data': 'Visual summary of feature table'},
+    name="Summarize table plus",
+    description="Generate visual and tabular summaries of a feature table. "
+                "Tabulate sample and feature frequencies as metadata",
 )

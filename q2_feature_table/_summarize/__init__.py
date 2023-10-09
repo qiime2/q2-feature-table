@@ -8,8 +8,10 @@
 
 from ._visualizer import (summarize, tabulate_seqs,
                           tabulate_feature_frequencies,
-                          tabulate_sample_frequencies)
+                          tabulate_sample_frequencies,
+                          summarize_plus)
 
 __all__ = ['summarize', 'tabulate_seqs',
            'tabulate_feature_frequencies',
-           'tabulate_sample_frequencies']
+           'tabulate_sample_frequencies',
+           'summarize_plus']
