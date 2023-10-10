@@ -657,14 +657,15 @@ plugin.methods.register_function(
 
 plugin.methods.register_function(
     function=q2_feature_table.tabulate_feature_frequencies,
-    inputs={'table': FeatureTable[Frequency]},
+    inputs={'table': FeatureTable[Frequency | PresenceAbsence |
+                                  RelativeFrequency]},
     parameters={},
-    outputs={'metadata': ImmutableMetadata},
+    outputs={'feature_frequencies': ImmutableMetadata},
     input_descriptions={
-        'table': 'A table containing feature frequency information'
+        'table': 'The input feature table.'
     },
     output_descriptions={
-        'metadata': 'Metadata generated from frequency data'
+        'feature_frequencies': 'Per-sample and total frequencies per feature.'
     },
     name='Tabulate feature frequencies',
     description='Tabulates feature frequencies from a feature table '
@@ -674,17 +675,18 @@ plugin.methods.register_function(
 
 plugin.methods.register_function(
     function=q2_feature_table.tabulate_sample_frequencies,
-    inputs={'table': FeatureTable[Frequency]},
+    inputs={'table': FeatureTable[Frequency | PresenceAbsence |
+                                  RelativeFrequency]},
     parameters={},
-    outputs={'metadata': ImmutableMetadata},
+    outputs={'sample_frequencies': ImmutableMetadata},
     input_descriptions={
-        'table': 'A table containing sample frequency information'
+        'table': 'The input feature table.'
     },
     output_descriptions={
-        'metadata': 'Metadata generated from frequency data'
+        'sample_frequencies': 'Per-feature and total frequencies per sample.'
     },
     name='Tabulate sample frequencies',
-    description='Tabulates feature frequencies from a feature table '
+    description='Tabulate sample count and total frequency per feature.'
                 'and generates metadata',
     examples={}
 )
@@ -701,9 +703,9 @@ plugin.pipelines.register_function(
         'table': 'The feature table to be summarized.'
     },
     parameter_descriptions={'metadata': 'The sample metadata.'},
-    output_descriptions={'frequency_metadata': 'Metadata pertaining to ' +
+    output_descriptions={'frequency_metadata': 'Metadata generated from ' +
                          'feature frequencies',
-                         'sample_metadata': 'Metadata pertaining to ' +
+                         'sample_metadata': 'Metadata generated from ' +
                          'sample frequencies',
                          'visualized_data': 'Visual summary of feature table'},
     name="Summarize table plus",

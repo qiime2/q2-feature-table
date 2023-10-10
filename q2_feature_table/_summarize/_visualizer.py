@@ -241,11 +241,11 @@ def summarize_plus(ctx, table, metadata=None):
     _visualizer = ctx.get_action('feature_table',
                                  'summarize')
 
-    feature_metadata, = _feature_frequencies(table)
-    sample_metadata, = _sample_frequencies(table)
+    feature_frequencies, = _feature_frequencies(table)
+    sample_frequencies, = _sample_frequencies(table)
     visualized_data, = _visualizer(table, metadata)
 
-    return feature_metadata, sample_metadata, visualized_data
+    return feature_frequencies, sample_frequencies, visualized_data
 
 
 def _compute_descriptive_stats(lst: list):

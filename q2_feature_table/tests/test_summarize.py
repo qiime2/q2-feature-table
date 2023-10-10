@@ -20,7 +20,8 @@ import csv
 
 from q2_feature_table import (
         tabulate_seqs, summarize,
-        tabulate_feature_frequencies, tabulate_sample_frequencies)
+        tabulate_feature_frequencies, tabulate_sample_frequencies,
+        summarize_plus)
 from q2_feature_table._summarize._visualizer import _compute_descriptive_stats
 from q2_feature_table._summarize._visualizer import _frequencies
 from q2_feature_table._summarize._vega_spec import vega_spec
@@ -524,13 +525,12 @@ class TabulateSampleFrequencyTests(TestCase):
         table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
-        metadata = tabulate_sample_frequencies(table).to_dataframe()
+        obs = tabulate_sample_frequencies(table).to_dataframe()
 
-        self.assertTrue('Frequency' in metadata.columns)
-        self.assertTrue('S1' in metadata.index)
-        self.assertTrue('S2' in metadata.index)
-        self.assertTrue('S3' in metadata.index)
-        self.assertTrue('50.0' in str(metadata))
+        exp = pd.DataFrame({'Frequency': ['50.0', '50.0', '50.0']},
+                           index=['S1', 'S2', 'S3'])
+        exp.index.name = 'Sample ID'
+        pd.testing.assert_frame_equal(exp, obs)
 
 
 class TabulateFeatureFrequencyTests(TestCase):
@@ -539,11 +539,18 @@ class TabulateFeatureFrequencyTests(TestCase):
         table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
-        metadata = tabulate_feature_frequencies(table).to_dataframe()
-        self.assertTrue('Frequency' in metadata.columns)
-        self.assertTrue('O1' in metadata.index)
-        self.assertTrue('O2' in metadata.index)
-        self.assertTrue('75.0' in str(metadata))
+        obs = tabulate_feature_frequencies(table).to_dataframe()
+
+        exp = pd.DataFrame({'Frequency': ['75.0', '75.0']},
+                           index=['O1', 'O2'])
+        exp.index.name = 'Feature ID'
+        pd.testing.assert_frame_equal(exp, obs)
+
+
+class SummarizePlusTests(TestCase):
+
+    def test_basic(self):
+        pass
 
 
 if __name__ == "__main__":
