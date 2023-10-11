@@ -696,17 +696,17 @@ plugin.pipelines.register_function(
     inputs={'table': FeatureTable[Frequency | RelativeFrequency |
                                   PresenceAbsence]},
     parameters={'metadata': Metadata},
-    outputs={'frequency_metadata': ImmutableMetadata,
-             'sample_metadata': ImmutableMetadata,
+    outputs={'feature_frequencies': ImmutableMetadata,
+             'sample_frequencies': ImmutableMetadata,
              'visualized_data': Visualization},
     input_descriptions={
         'table': 'The feature table to be summarized.'
     },
     parameter_descriptions={'metadata': 'The sample metadata.'},
-    output_descriptions={'frequency_metadata': 'Metadata generated from ' +
-                         'feature frequencies',
-                         'sample_metadata': 'Metadata generated from ' +
-                         'sample frequencies',
+    output_descriptions={'feature_frequencies': 'Metadata generated from ' +
+                         'input table',
+                         'sample_frequencies': 'Metadata generated from ' +
+                         'input table',
                          'visualized_data': 'Visual summary of feature table'},
     name="Summarize table plus",
     description="Generate visual and tabular summaries of a feature table. "
