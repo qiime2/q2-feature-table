@@ -221,6 +221,10 @@ def tabulate_feature_frequencies(table: biom.Table) -> qiime2.Metadata:
     feature_frequencies = _frequencies(table, 'observation')
     feature_frequencies = feature_frequencies.apply(
         '{:,}'.format).to_frame('Frequency')
+    feature_qualitative_data = _compute_qualitative_summary(table)
+    samples_observed_in =\
+        pd.Series(feature_qualitative_data).astype(int).apply('{:,}'.format)
+    feature_frequencies["No. of Samples Observed In"] = samples_observed_in
     feature_frequencies.index.name = "Feature ID"
     return qiime2.Metadata(feature_frequencies)
 
