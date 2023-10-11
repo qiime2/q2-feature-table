@@ -528,7 +528,9 @@ class TabulateSampleFrequencyTests(TestCase):
                            ['S1', 'S2', 'S3'])
         obs = tabulate_sample_frequencies(table).to_dataframe()
 
-        exp = pd.DataFrame({'Frequency': ['50.0', '50.0', '50.0']},
+        exp = pd.DataFrame({'Frequency': ['50.0', '50.0', '50.0'],
+                            'No. of Associated Features':
+                            ['2', '2', '2']},
                            index=['S1', 'S2', 'S3'])
         exp.index.name = 'Sample ID'
         pd.testing.assert_frame_equal(exp, obs)
@@ -547,7 +549,6 @@ class TabulateFeatureFrequencyTests(TestCase):
                             ['3', '3']},
                            index=['O1', 'O2'])
         exp.index.name = 'Feature ID'
-        print(obs)
         pd.testing.assert_frame_equal(exp, obs)
 
 
@@ -582,7 +583,9 @@ class SummarizePlusTests(TestPluginBase):
         obs_feature = results[0].view(Metadata).to_dataframe()
         pd.testing.assert_frame_equal(exp_feature, obs_feature)
 
-        exp_sample = pd.DataFrame({'Frequency': ['50.0', '50.0', '50.0']},
+        exp_sample = pd.DataFrame({'Frequency': ['50.0', '50.0', '50.0'],
+                                  'No. of Associated Features':
+                                   ['2', '2', '2']},
                                   index=['S1', 'S2', 'S3'])
         exp_sample.index.name = "Sample ID"
         obs_sample = results[1].view(Metadata).to_dataframe()

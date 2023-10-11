@@ -233,6 +233,10 @@ def tabulate_sample_frequencies(table: biom.Table) -> qiime2.Metadata:
     sample_frequencies = _frequencies(table, 'sample')
     sample_frequencies = sample_frequencies.apply(
         '{:,}'.format).to_frame('Frequency')
+    sample_qualitative_data = _compute_qualitative_summary_sample(table)
+    samples_with_feature =\
+        pd.Series(sample_qualitative_data).astype(int).apply('{:,}'.format)
+    sample_frequencies["No. of Associated Features"] = samples_with_feature
     sample_frequencies.index.name = "Sample ID"
     return qiime2.Metadata(sample_frequencies)
 
@@ -335,6 +339,13 @@ def _compute_qualitative_summary(table):
     for count_vector, feature_id, _ in table.iter():
         sample_count[feature_id] = (count_vector != 0).sum()
     return sample_count
+
+
+def _compute_qualitative_summary_sample(table):
+    feature_count = {}
+    for count_vector, sample_id, _ in table.iter():
+        feature_count[sample_id] = (count_vector != 0).sum()
+    return feature_count
 
 
 def _frequencies(table, axis):
