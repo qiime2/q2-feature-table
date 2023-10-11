@@ -170,14 +170,14 @@ def summarize(output_dir: str, table: biom.Table,
     sample_frequencies.to_csv(
         os.path.join(output_dir, 'sample-frequency-detail.csv'),
         header=False)
-    feature_frequencies.to_csv(
-        os.path.join(output_dir, 'feature-frequency-detail.csv'),
-        header=False)
 
     feature_frequencies = feature_frequencies.astype(int) \
         .apply('{:,}'.format).to_frame('Frequency')
     feature_frequencies['# of Samples Observed In'] = \
         pd.Series(feature_qualitative_data).astype(int).apply('{:,}'.format)
+    feature_frequencies.to_csv(
+        os.path.join(output_dir, 'feature-frequency-detail.csv'),
+        header=False)
     feature_frequencies_table = q2templates.df_to_html(feature_frequencies)
     sample_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'sample-frequency-detail.html')
