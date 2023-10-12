@@ -668,8 +668,7 @@ plugin.methods.register_function(
         'feature_frequencies': 'Per-sample and total frequencies per feature.'
     },
     name='Tabulate feature frequencies',
-    description='Tabulates feature frequencies from a feature table '
-                'and generates metadata',
+    description='Tabulate feature count and total frequency per sample.',
     examples={}
 )
 
@@ -686,8 +685,7 @@ plugin.methods.register_function(
         'sample_frequencies': 'Per-feature and total frequencies per sample.'
     },
     name='Tabulate sample frequencies',
-    description='Tabulate sample count and total frequency per feature.'
-                'and generates metadata',
+    description='Tabulate sample count and total frequency per feature.',
     examples={}
 )
 
