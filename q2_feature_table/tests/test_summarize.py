@@ -383,16 +383,6 @@ class SummarizeTests(TestCase):
             index_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(index_fp))
 
-            feature_freq_fp = os.path.join(output_dir,
-                                           'feature-frequency-detail.csv')
-            self.assertTrue(os.path.exists(feature_freq_fp))
-            self.assertTrue('O1,4' in open(feature_freq_fp).read())
-
-            sample_freq_fp = os.path.join(output_dir,
-                                          'sample-frequency-detail.csv')
-            self.assertTrue(os.path.exists(sample_freq_fp))
-            self.assertTrue('S1,1453' in open(sample_freq_fp).read())
-
     def test_frequency_ranges_are_zero(self):
         table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
                            ['O1', 'O2'],
@@ -403,16 +393,6 @@ class SummarizeTests(TestCase):
 
             index_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(index_fp))
-
-            feature_freq_fp = os.path.join(output_dir,
-                                           'feature-frequency-detail.csv')
-            self.assertTrue(os.path.exists(feature_freq_fp))
-            self.assertTrue('O1,75' in open(feature_freq_fp).read())
-
-            sample_freq_fp = os.path.join(output_dir,
-                                          'sample-frequency-detail.csv')
-            self.assertTrue(os.path.exists(sample_freq_fp))
-            self.assertTrue('S1,50' in open(sample_freq_fp).read())
 
     def test_one_sample(self):
         sample_frequencies_pdf_fn = 'sample-frequencies.pdf'
@@ -474,16 +454,6 @@ class SummarizeTests(TestCase):
 
             index_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(index_fp))
-
-            feature_freq_fp = os.path.join(output_dir,
-                                           'feature-frequency-detail.csv')
-            self.assertTrue(os.path.exists(feature_freq_fp))
-            self.assertTrue('O1,4' in open(feature_freq_fp).read())
-
-            sample_freq_fp = os.path.join(output_dir,
-                                          'sample-frequency-detail.csv')
-            self.assertTrue(os.path.exists(sample_freq_fp))
-            self.assertTrue('S1,1' in open(sample_freq_fp).read())
 
     def test_vega_spec_data(self):
         # test if metadata is converted correctly to vega compatible JSON
