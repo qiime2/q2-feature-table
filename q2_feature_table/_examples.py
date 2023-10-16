@@ -430,3 +430,7 @@ def feature_table_summarize_plus(use):
                              sample_frequencies='sample_frequencies',
                              visualized_data='visual summary')
     )
+
+    feature_freqs.assert_output_type('ImmutableMetadata')
+    sample_freqs.assert_output_type('ImmutableMetadata')
+    viz.assert_output_type('ImmutableMetadata')
