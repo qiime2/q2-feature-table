@@ -669,7 +669,8 @@ plugin.methods.register_function(
     },
     name='Tabulate feature frequencies',
     description='Tabulate feature count and total frequency per sample.',
-    examples={}
+    examples={'feature_table_tabulate_feature_frequencies':
+              ex.feature_table_tabulate_feature_freqs}
 )
 
 plugin.methods.register_function(
@@ -686,7 +687,8 @@ plugin.methods.register_function(
     },
     name='Tabulate sample frequencies',
     description='Tabulate sample count and total frequency per feature.',
-    examples={}
+    examples={'feature_table_tabulate_sample_frequencies':
+              ex.feature_table_tabulate_sample_freqs}
 )
 
 plugin.pipelines.register_function(
@@ -709,4 +711,5 @@ plugin.pipelines.register_function(
     name="Summarize table plus",
     description="Generate visual and tabular summaries of a feature table. "
                 "Tabulate sample and feature frequencies as metadata",
+    examples={'feature_table_summarize_plus': ex.feature_table_summarize_plus}
 )

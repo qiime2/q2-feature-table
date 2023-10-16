@@ -388,3 +388,45 @@ def feature_table_tabulate_seqs_multi_taxon(use):
     )
 
     viz.assert_output_type('Visualization')
+
+
+def feature_table_tabulate_sample_freqs(use):
+    feature_table = use.init_artifact_from_url(
+        'feature_table', moving_pics_ft_url
+    )
+
+    viz, = use.action(
+        use.UsageAction('feature_table', 'tabulate_sample_frequencies'),
+        use.UsageInputs(table=feature_table),
+        use.UsageOutputNames(sample_frequencies='sample_frequencies')
+    )
+
+    viz.assert_output_type('ImmutableMetadata')
+
+
+def feature_table_tabulate_feature_freqs(use):
+    feature_table = use.init_artifact_from_url(
+        'feature_table', moving_pics_ft_url
+    )
+
+    viz, = use.action(
+        use.UsageAction('feature_table', 'tabulate_feature_frequencies'),
+        use.UsageInputs(table=feature_table),
+        use.UsageOutputNames(feature_frequencies='feature_frequencies')
+    )
+
+    viz.assert_output_type('ImmutableMetadata')
+
+
+def feature_table_summarize_plus(use):
+    feature_table = use.init_artifact_from_url(
+        'feature_table', moving_pics_ft_url
+    )
+
+    feature_freqs, sample_freqs, viz, = use.action(
+        use.UsageAction('feature_table', 'summarize_plus'),
+        use.UsageInputs(table=feature_table),
+        use.UsageOutputNames(feature_frequencies='feature_frequencies',
+                             sample_frequencies='sample_frequencies',
+                             visualized_data='visual summary')
+    )
