@@ -395,13 +395,13 @@ def feature_table_tabulate_sample_freqs(use):
         'feature_table', moving_pics_ft_url
     )
 
-    viz, = use.action(
+    sample_frequencies, = use.action(
         use.UsageAction('feature_table', 'tabulate_sample_frequencies'),
         use.UsageInputs(table=feature_table),
         use.UsageOutputNames(sample_frequencies='sample_frequencies')
     )
 
-    viz.assert_output_type('ImmutableMetadata')
+    sample_frequencies.assert_output_type('ImmutableMetadata')
 
 
 def feature_table_tabulate_feature_freqs(use):
@@ -409,13 +409,13 @@ def feature_table_tabulate_feature_freqs(use):
         'feature_table', moving_pics_ft_url
     )
 
-    viz, = use.action(
+    feature_frequencies, = use.action(
         use.UsageAction('feature_table', 'tabulate_feature_frequencies'),
         use.UsageInputs(table=feature_table),
         use.UsageOutputNames(feature_frequencies='feature_frequencies')
     )
 
-    viz.assert_output_type('ImmutableMetadata')
+    feature_frequencies.assert_output_type('ImmutableMetadata')
 
 
 def feature_table_summarize_plus(use):
@@ -433,4 +433,4 @@ def feature_table_summarize_plus(use):
 
     feature_freqs.assert_output_type('ImmutableMetadata')
     sample_freqs.assert_output_type('ImmutableMetadata')
-    viz.assert_output_type('ImmutableMetadata')
+    viz.assert_output_type('Visualization')
