@@ -493,14 +493,14 @@ class SummarizeTests(TestCase):
 class TabulateSampleFrequencyTests(TestCase):
 
     def test_basic_case(self):
-        table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
+        table = biom.Table(np.array([[0, 25, 25], [25, 25, 25]]),
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
         obs = tabulate_sample_frequencies(table).to_dataframe()
 
-        exp = pd.DataFrame({'Frequency': ['50.0', '50.0', '50.0'],
+        exp = pd.DataFrame({'Frequency': ['25.0', '50.0', '50.0'],
                             'No. of Associated Features':
-                            ['2', '2', '2']},
+                            ['1', '2', '2']},
                            index=['S1', 'S2', 'S3'])
         exp.index.name = 'Sample ID'
         pd.testing.assert_frame_equal(exp, obs)
@@ -509,14 +509,14 @@ class TabulateSampleFrequencyTests(TestCase):
 class TabulateFeatureFrequencyTests(TestCase):
 
     def test_basic_case(self):
-        table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
+        table = biom.Table(np.array([[25, 25, 0], [25, 25, 25]]),
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
         obs = tabulate_feature_frequencies(table).to_dataframe()
 
-        exp = pd.DataFrame({'Frequency': ['75.0', '75.0'],
+        exp = pd.DataFrame({'Frequency': ['50.0', '75.0'],
                             'No. of Samples Observed In':
-                            ['3', '3']},
+                            ['2', '3']},
                            index=['O1', 'O2'])
         exp.index.name = 'Feature ID'
         pd.testing.assert_frame_equal(exp, obs)
@@ -531,7 +531,7 @@ class SummarizePlusTests(TestPluginBase):
         self.summarize_plus = self.plugin.pipelines['summarize_plus']
 
     def test_basic(self):
-        table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
+        table = biom.Table(np.array([[25, 0, 25], [25, 25, 25]]),
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
         table = Artifact.import_data('FeatureTable[Frequency]', table)
@@ -542,20 +542,20 @@ class SummarizePlusTests(TestPluginBase):
                          'ImmutableMetadata')
         self.assertEqual(repr(results.sample_frequencies.type),
                          'ImmutableMetadata')
-        self.assertEqual(repr(results.visualized_data.type),
+        self.assertEqual(repr(results.summary.type),
                          'Visualization')
 
-        exp_feature = pd.DataFrame({'Frequency': ['75.0', '75.0'],
+        exp_feature = pd.DataFrame({'Frequency': ['50.0', '75.0'],
                                    'No. of Samples Observed In':
-                                    ['3', '3']},
+                                    ['2', '3']},
                                    index=['O1', 'O2'])
         exp_feature.index.name = "Feature ID"
         obs_feature = results[0].view(Metadata).to_dataframe()
         pd.testing.assert_frame_equal(exp_feature, obs_feature)
 
-        exp_sample = pd.DataFrame({'Frequency': ['50.0', '50.0', '50.0'],
+        exp_sample = pd.DataFrame({'Frequency': ['50.0', '25.0', '50.0'],
                                   'No. of Associated Features':
-                                   ['2', '2', '2']},
+                                   ['2', '1', '2']},
                                   index=['S1', 'S2', 'S3'])
         exp_sample.index.name = "Sample ID"
         obs_sample = results[1].view(Metadata).to_dataframe()

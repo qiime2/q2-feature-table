@@ -668,7 +668,7 @@ plugin.methods.register_function(
         'feature_frequencies': 'Per-sample and total frequencies per feature.'
     },
     name='Tabulate feature frequencies',
-    description='Tabulate feature count and total frequency per sample.',
+    description='Tabulate sample count and total frequency per feature.',
     examples={'feature_table_tabulate_feature_frequencies':
               ex.feature_table_tabulate_feature_freqs}
 )
@@ -683,10 +683,11 @@ plugin.methods.register_function(
         'table': 'The input feature table.'
     },
     output_descriptions={
-        'sample_frequencies': 'Per-feature and total frequencies per sample.'
+        'sample_frequencies': 'Observed feature count and total' +
+        ' frequencies per sample.'
     },
     name='Tabulate sample frequencies',
-    description='Tabulate sample count and total frequency per feature.',
+    description='Tabulate feature count and total frequency per sample.',
     examples={'feature_table_tabulate_sample_frequencies':
               ex.feature_table_tabulate_sample_freqs}
 )
@@ -698,18 +699,18 @@ plugin.pipelines.register_function(
     parameters={'metadata': Metadata},
     outputs={'feature_frequencies': ImmutableMetadata,
              'sample_frequencies': ImmutableMetadata,
-             'visualized_data': Visualization},
+             'summary': Visualization},
     input_descriptions={
         'table': 'The feature table to be summarized.'
     },
     parameter_descriptions={'metadata': 'The sample metadata.'},
     output_descriptions={'feature_frequencies': 'Per-sample and total ' +
                          'frequencies per feature.',
-                         'sample_frequencies': 'Per-feature and total ' +
-                         'frequencies per sample.',
-                         'visualized_data': 'Visual summary of feature table'},
+                         'sample_frequencies': 'Observed feature count and ' +
+                         'total frequencies per sample.',
+                         'summary': 'Visual summary of feature table'},
     name="Summarize table plus",
     description="Generate visual and tabular summaries of a feature table. "
-                "Tabulate sample and feature frequencies as metadata",
+                "Tabulate sample and feature frequencies.",
     examples={'feature_table_summarize_plus': ex.feature_table_summarize_plus}
 )
