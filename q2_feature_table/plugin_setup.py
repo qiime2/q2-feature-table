@@ -703,10 +703,10 @@ plugin.pipelines.register_function(
         'table': 'The feature table to be summarized.'
     },
     parameter_descriptions={'metadata': 'The sample metadata.'},
-    output_descriptions={'feature_frequencies': 'Metadata generated from ' +
-                         'input table',
-                         'sample_frequencies': 'Metadata generated from ' +
-                         'input table',
+    output_descriptions={'feature_frequencies': 'Per-sample and total ' +
+                         'frequencies per feature.',
+                         'sample_frequencies': 'Per-feature and total ' +
+                         'frequencies per sample.',
                          'visualized_data': 'Visual summary of feature table'},
     name="Summarize table plus",
     description="Generate visual and tabular summaries of a feature table. "
