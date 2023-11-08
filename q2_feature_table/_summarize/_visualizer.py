@@ -241,10 +241,10 @@ def summarize_plus(ctx, table, metadata=None):
         table_dimensions = table.view(pd.DataFrame).shape
 
     except ValueError:
-        raise ValueError('Cannot summarize a table with no Features')
+        raise ValueError('Cannot summarize a table with no features')
 
     if table_dimensions[0] == 0:
-        raise ValueError('Cannot summarize a table with no Samples')
+        raise ValueError('Cannot summarize a table with no samples')
 
     _feature_frequencies = ctx.get_action('feature_table',
                                           'tabulate_feature_frequencies')

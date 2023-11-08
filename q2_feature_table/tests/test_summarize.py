@@ -570,7 +570,7 @@ class SummarizePlusTests(TestPluginBase):
         with self.assertRaises(ValueError) as context:
             self.summarize_plus(table)
 
-            self.assertTrue('Cannot summarize a table with no Samples' in
+            self.assertTrue('Cannot summarize a table with no samples' in
                             context.exception)
 
     def test_no_features(self):
@@ -583,7 +583,7 @@ class SummarizePlusTests(TestPluginBase):
 
             self.summarize_plus(table)
 
-            self.assertTrue('Cannot summarize a table with no Features' in
+            self.assertTrue('Cannot summarize a table with no features' in
                             context.exception)
 
     def test_all_zeros(self):
