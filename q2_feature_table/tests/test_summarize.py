@@ -566,14 +566,25 @@ class SummarizePlusTests(TestPluginBase):
                            ['O1', 'O2'],
                            [])
         table = Artifact.import_data('FeatureTable[Frequency]', table)
-        self.summarize_plus(table)
+
+        with self.assertRaises(ValueError) as context:
+            self.summarize_plus(table)
+
+            self.assertTrue('Cannot summarize a table with no Samples' in
+                            context.exception)
 
     def test_no_features(self):
         table = biom.Table(np.array([]),
                            [],
                            ['S1', 'S2', 'S3'])
         table = Artifact.import_data('FeatureTable[Frequency]', table)
-        self.summarize_plus(table)
+
+        with self.assertRaises(ValueError) as context:
+
+            self.summarize_plus(table)
+
+            self.assertTrue('Cannot summarize a table with no Features' in
+                            context.exception)
 
     def test_all_zeros(self):
         table = biom.Table(np.array([[0, 0, 0], [0, 0, 0]]),
