@@ -561,6 +561,51 @@ class SummarizePlusTests(TestPluginBase):
         obs_sample = results[1].view(Metadata).to_dataframe()
         pd.testing.assert_frame_equal(exp_sample, obs_sample)
 
+    def test_no_samples(self):
+        table = biom.Table(np.array([[], []]),
+                           ['O1', 'O2'],
+                           [])
+        table = Artifact.import_data('FeatureTable[Frequency]', table)
+        self.summarize_plus(table)
+
+    def test_no_features(self):
+        table = biom.Table(np.array([]),
+                           [],
+                           ['S1', 'S2', 'S3'])
+        table = Artifact.import_data('FeatureTable[Frequency]', table)
+        self.summarize_plus(table)
+
+    def test_all_zeros(self):
+        table = biom.Table(np.array([[0, 0, 0], [0, 0, 0]]),
+                           ['O1', 'O2'],
+                           ['S1', 'S2', 'S3'])
+        table = Artifact.import_data('FeatureTable[Frequency]', table)
+        results = self.summarize_plus(table)
+
+        self.assertEqual(len(results), 3)
+        self.assertEqual(repr(results.feature_frequencies.type),
+                         'ImmutableMetadata')
+        self.assertEqual(repr(results.sample_frequencies.type),
+                         'ImmutableMetadata')
+        self.assertEqual(repr(results.summary.type),
+                         'Visualization')
+
+        exp_feature = pd.DataFrame({'Frequency': ['0.0', '0.0'],
+                                   'No. of Samples Observed In':
+                                    ['0', '0']},
+                                   index=['O1', 'O2'])
+        exp_feature.index.name = "Feature ID"
+        obs_feature = results[0].view(Metadata).to_dataframe()
+        pd.testing.assert_frame_equal(exp_feature, obs_feature)
+
+        exp_sample = pd.DataFrame({'Frequency': ['0.0', '0.0', '0.0'],
+                                  'No. of Associated Features':
+                                   ['0', '0', '0']},
+                                  index=['S1', 'S2', 'S3'])
+        exp_sample.index.name = "Sample ID"
+        obs_sample = results[1].view(Metadata).to_dataframe()
+        pd.testing.assert_frame_equal(exp_sample, obs_sample)
+
 
 if __name__ == "__main__":
     main()

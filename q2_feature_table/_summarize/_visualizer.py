@@ -236,6 +236,16 @@ def tabulate_sample_frequencies(table: biom.Table) -> qiime2.Metadata:
 
 
 def summarize_plus(ctx, table, metadata=None):
+
+    try:
+        table_dimensions = table.view(pd.DataFrame).shape
+
+    except ValueError:
+        raise ValueError('Cannot summarize a table with no Features')
+
+    if table_dimensions[0] == 0:
+        raise ValueError('Cannot summarize a table with no Samples')
+
     _feature_frequencies = ctx.get_action('feature_table',
                                           'tabulate_feature_frequencies')
     _sample_frequencies = ctx.get_action('feature_table',
@@ -245,9 +255,9 @@ def summarize_plus(ctx, table, metadata=None):
 
     feature_frequencies, = _feature_frequencies(table)
     sample_frequencies, = _sample_frequencies(table)
-    visualized_data, = _visualizer(table, metadata)
+    summary, = _visualizer(table, metadata)
 
-    return feature_frequencies, sample_frequencies, visualized_data
+    return feature_frequencies, sample_frequencies, summary
 
 
 def _compute_descriptive_stats(lst: list):

@@ -428,7 +428,7 @@ def feature_table_summarize_plus(use):
         use.UsageInputs(table=feature_table),
         use.UsageOutputNames(feature_frequencies='feature_frequencies',
                              sample_frequencies='sample_frequencies',
-                             visualized_data='visual summary')
+                             summary='visual summary')
     )
 
     feature_freqs.assert_output_type('ImmutableMetadata')
