@@ -311,7 +311,8 @@ plugin.methods.register_function(
                 'metadata': Metadata,
                 'where': Str,
                 'exclude_ids': Bool,
-                'filter_empty_features': Bool},
+                'filter_empty_features': Bool,
+                'allow_empty_table': Bool},
     outputs=[('filtered_table', FeatureTable[T1])],
     input_descriptions={
         'table': 'The feature table from which samples should be filtered.'
@@ -341,6 +342,9 @@ plugin.methods.register_function(
                        'table instead of being retained.',
         'filter_empty_features': 'If true, features which are not present in '
                                  'any retained samples are dropped.',
+        'allow_empty_table': 'If true, the filtered table may be empty. '
+                             'Otherwise, an error will be raised if the '
+                             'filtered table is empty.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by sample.'
@@ -406,7 +410,8 @@ plugin.methods.register_function(
                 'metadata': Metadata,
                 'where': Str,
                 'exclude_ids': Bool,
-                'filter_empty_samples': Bool},
+                'filter_empty_samples': Bool,
+                'allow_empty_table': Bool},
     outputs=[('filtered_table', FeatureTable[Frequency])],
     input_descriptions={
         'table': 'The feature table from which features should be filtered.'
@@ -436,6 +441,9 @@ plugin.methods.register_function(
                        'table instead of being retained.',
         'filter_empty_samples': 'If true, drop any samples where none of the '
                                 'retained features are present.',
+        'allow_empty_table': 'If true, the filtered table may be empty. '
+                                'Otherwise, an error will be raised if the '
+                                'filtered table is empty.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'
@@ -465,6 +473,7 @@ plugin.methods.register_function(
         'metadata': Metadata,
         'where': Str,
         'exclude_ids': Bool
+        # 'allow_empty_table': Bool
     },
     outputs=[('filtered_data', FeatureData[T2])],
     input_descriptions={
@@ -483,6 +492,9 @@ plugin.methods.register_function(
                        '(with or without the `where` parameter) or `table` '
                        'parameter will be excluded from the filtered '
                        'sequences instead of being retained.'
+        # 'allow_empty_table': 'If true, the filtered data may be empty. '
+        #                      'Otherwise, an error will be raised if the '
+        #                      'filtered data are empty.'
     },
     output_descriptions={
         'filtered_data': 'The resulting filtered sequences.'
