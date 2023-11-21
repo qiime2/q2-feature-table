@@ -8,12 +8,14 @@
 
 from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
                            Choices, MetadataColumn, Categorical, List,
-                           Citations, TypeMatch, TypeMap, Collection)
+                           Citations, TypeMatch, TypeMap, Collection,
+                           Visualization)
 
 from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
 from q2_types.feature_data import (
     FeatureData, Sequence, Taxonomy, AlignedSequence)
+from q2_types.metadata import ImmutableMetadata
 
 import q2_feature_table
 import q2_feature_table._examples as ex
@@ -651,4 +653,64 @@ plugin.methods.register_function(
     description='Splits one feature table into many feature tables, where '
                 'splits are defined by values in metadata column.',
     examples={}
+)
+
+plugin.methods.register_function(
+    function=q2_feature_table.tabulate_feature_frequencies,
+    inputs={'table': FeatureTable[Frequency | PresenceAbsence |
+                                  RelativeFrequency]},
+    parameters={},
+    outputs={'feature_frequencies': ImmutableMetadata},
+    input_descriptions={
+        'table': 'The input feature table.'
+    },
+    output_descriptions={
+        'feature_frequencies': 'Per-sample and total frequencies per feature.'
+    },
+    name='Tabulate feature frequencies',
+    description='Tabulate sample count and total frequency per feature.',
+    examples={'feature_table_tabulate_feature_frequencies':
+              ex.feature_table_tabulate_feature_freqs}
+)
+
+plugin.methods.register_function(
+    function=q2_feature_table.tabulate_sample_frequencies,
+    inputs={'table': FeatureTable[Frequency | PresenceAbsence |
+                                  RelativeFrequency]},
+    parameters={},
+    outputs={'sample_frequencies': ImmutableMetadata},
+    input_descriptions={
+        'table': 'The input feature table.'
+    },
+    output_descriptions={
+        'sample_frequencies': 'Observed feature count and total' +
+        ' frequencies per sample.'
+    },
+    name='Tabulate sample frequencies',
+    description='Tabulate feature count and total frequency per sample.',
+    examples={'feature_table_tabulate_sample_frequencies':
+              ex.feature_table_tabulate_sample_freqs}
+)
+
+plugin.pipelines.register_function(
+    function=q2_feature_table.summarize_plus,
+    inputs={'table': FeatureTable[Frequency | RelativeFrequency |
+                                  PresenceAbsence]},
+    parameters={'metadata': Metadata},
+    outputs={'feature_frequencies': ImmutableMetadata,
+             'sample_frequencies': ImmutableMetadata,
+             'summary': Visualization},
+    input_descriptions={
+        'table': 'The feature table to be summarized.'
+    },
+    parameter_descriptions={'metadata': 'The sample metadata.'},
+    output_descriptions={'feature_frequencies': 'Per-sample and total ' +
+                         'frequencies per feature.',
+                         'sample_frequencies': 'Observed feature count and ' +
+                         'total frequencies per sample.',
+                         'summary': 'Visual summary of feature table'},
+    name="Summarize table plus",
+    description="Generate visual and tabular summaries of a feature table. "
+                "Tabulate sample and feature frequencies.",
+    examples={'feature_table_summarize_plus': ex.feature_table_summarize_plus}
 )
