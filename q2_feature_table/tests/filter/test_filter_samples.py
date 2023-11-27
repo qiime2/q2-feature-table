@@ -68,8 +68,8 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, min_frequency=42)
-        self.assertTrue(actual.is_empty())
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table, min_frequency=42)
 
     def test_max_frequency(self):
         # no filtering
@@ -106,8 +106,8 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, max_frequency=0)
-        self.assertTrue(actual.is_empty())
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table, max_frequency=0)
 
     def test_filter_empty_features(self):
         # no filtering
@@ -147,9 +147,9 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, max_frequency=0,
-                                filter_empty_features=False)
-        self.assertTrue(actual.is_empty())
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table, max_frequency=0,
+                           filter_empty_features=False)
 
     def test_min_features(self):
         # no filtering
@@ -176,8 +176,8 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, min_features=3)
-        self.assertTrue(actual.is_empty())
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table, min_features=3)
 
     def test_max_features(self):
         # no filtering
@@ -204,8 +204,8 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, max_features=0)
-        self.assertTrue(actual.is_empty())
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table, max_features=0)
 
     def test_sample_metadata(self):
         # no filtering
@@ -242,8 +242,8 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, metadata=metadata)
-        self.assertTrue(actual.is_empty())
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table, metadata=metadata)
 
         # exclude none
         df = pd.DataFrame({'Subject': ['subject-1'],
@@ -289,9 +289,9 @@ class FilterSamplesTests(unittest.TestCase):
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='id'))
         metadata = qiime2.Metadata(df)
-        actual = filter_samples(table, metadata=metadata,
-                                exclude_ids=True)
-        self.assertTrue(actual.is_empty())
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table, metadata=metadata,
+                           exclude_ids=True)
 
     def test_sample_metadata_extra_ids(self):
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
@@ -363,8 +363,8 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1' AND Subject='subject-2'"
-        actual = filter_samples(table, metadata=metadata, where=where)
-        self.assertTrue(actual.is_empty())
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table, metadata=metadata, where=where)
 
         # filter none -> exclude none
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
@@ -426,11 +426,11 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1' OR Subject='subject-2'"
-        actual = filter_samples(table,
-                                metadata=metadata,
-                                where=where,
-                                exclude_ids=True)
-        self.assertTrue(actual.is_empty())
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table,
+                           metadata=metadata,
+                           where=where,
+                           exclude_ids=True)
 
     def test_combine_id_and_frequency_filters(self):
         # no filtering
@@ -626,12 +626,12 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table,
-                                metadata=metadata,
-                                exclude_ids=True,
-                                max_frequency=4,
-                                min_frequency=3)
-        self.assertTrue(actual.is_empty())
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table,
+                           metadata=metadata,
+                           exclude_ids=True,
+                           max_frequency=4,
+                           min_frequency=3)
 
         # where filter one -> exclude one,
         # min_frequency filter one,
@@ -644,13 +644,13 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1'"
-        actual = filter_samples(table,
-                                metadata=metadata,
-                                exclude_ids=True,
-                                where=where,
-                                max_frequency=4,
-                                min_frequency=3)
-        self.assertTrue(actual.is_empty())
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table,
+                           metadata=metadata,
+                           exclude_ids=True,
+                           where=where,
+                           max_frequency=4,
+                           min_frequency=3)
 
     def test_combine_exclude_ids_and_features_filters(self):
         # exclude one, min_features filter none
@@ -781,12 +781,12 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [0, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table,
-                                metadata=metadata,
-                                exclude_ids=True,
-                                min_features=1,
-                                max_features=1)
-        self.assertTrue(actual.is_empty())
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table,
+                           metadata=metadata,
+                           exclude_ids=True,
+                           min_features=1,
+                           max_features=1)
 
         # where filter one -> exclude one,
         # max_features filter one,
@@ -799,13 +799,30 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "SampleType='tongue'"
-        actual = filter_samples(table,
-                                metadata=metadata,
-                                where=where,
-                                exclude_ids=True,
-                                min_features=1,
-                                max_features=1)
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table,
+                           metadata=metadata,
+                           where=where,
+                           exclude_ids=True,
+                           min_features=1,
+                           max_features=1)
+
+    def test_allow_empty_table_true(self):
+        # filter all
+        table = Table(np.array([[0, 1, 3], [0, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table, min_frequency=42,
+                                allow_empty_table=True)
         self.assertTrue(actual.is_empty())
+
+    def test_allow_empty_table_false(self):
+        # filter all
+        table = Table(np.array([[0, 1, 3], [0, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        with self.assertRaisesRegex(ValueError, 'empty'):
+            filter_samples(table, min_frequency=42, allow_empty_table=False)
 
 
 if __name__ == "__main__":

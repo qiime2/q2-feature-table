@@ -40,6 +40,48 @@ class TestConditional(unittest.TestCase):
         npt.assert_array_equal(known.ids(axis='observation'),
                                test_.ids(axis='observation'))
 
+    def test_allow_empty_table_true(self):
+        # test True
+        table = biom.Table(
+            data=np.array([[0,   0,  10,   0,   0],
+                           [250, 250, 140,  90, 150],
+                           [250,  25, 100, 200, 100],
+                           [0, 225, 250, 210, 250]]),
+            sample_ids=['A', 'B', 'C', 'D', 'E'],
+            observation_ids=['bat', 'cat', 'rat', 'a-tat-tat']
+            )
+        known = biom.Table(
+            data=np.array([[0, 225, 250, 210, 250]]),
+            sample_ids=['A', 'B', 'C', 'D', 'E'],
+            observation_ids=['a-tat-tat']
+            )
+        test_ = filter_features_conditionally(table,
+                                              prevalence=0.8,
+                                              abundance=0.4,
+                                              allow_empty_table=True)
+        npt.assert_array_equal(known.matrix_data.toarray(),
+                               test_.matrix_data.toarray())
+        npt.assert_array_equal(known.ids(axis='sample'),
+                               test_.ids(axis='sample'))
+        npt.assert_array_equal(known.ids(axis='observation'),
+                               test_.ids(axis='observation'))
+
+    def test_allow_empty_table_false(self):
+        # test False
+        table = biom.Table(
+            data=np.array([[0,   0,  10,   0,   0],
+                           [250, 250, 140,  90, 150],
+                           [250,  25, 100, 200, 100],
+                           [0, 225, 250, 210, 250]]),
+            sample_ids=['A', 'B', 'C', 'D', 'E'],
+            observation_ids=['bat', 'cat', 'rat', 'a-tat-tat']
+            )
+        with self.assertRaises(ValueError):
+            filter_features_conditionally(table,
+                                          prevalence=0.9,
+                                          abundance=0.9,
+                                          allow_empty_table=False)
+
 
 if __name__ == "__main__":
     unittest.main()

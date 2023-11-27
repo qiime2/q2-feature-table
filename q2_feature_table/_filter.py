@@ -114,7 +114,6 @@ def filter_features(table: biom.Table, min_frequency: int = 0,
 def filter_seqs(data: pd.Series, table: biom.Table = None,
                 metadata: qiime2.Metadata = None, where: str = None,
                 exclude_ids: bool = False,
-                # allow_empty_table: bool = False
                 ) -> pd.Series:
     if table is not None and metadata is not None:
         raise ValueError('Filtering with metadata and filtering with a table '
@@ -134,13 +133,14 @@ def filter_seqs(data: pd.Series, table: biom.Table = None,
     filtered = data[data.index.isin(ids_to_keep)]
     if filtered.empty is True:
         raise ValueError('All features were filtered out of the data.')
+
     return filtered
 
 
 def filter_features_conditionally(table: biom.Table,
                                   abundance: float,
                                   prevalence: float,
-                                  # allow_empty_table: bool = False
+                                  allow_empty_table: bool = False
                                   ) -> biom.Table:
     """
     A function to perform joint filtering because it makes life better
@@ -161,5 +161,8 @@ def filter_features_conditionally(table: biom.Table,
     filter_ids = table_norm.ids(axis='observation')
 
     new_table = table.filter(filter_ids, axis='observation', inplace=False)
+
+    if not allow_empty_table:
+        _validate_nonempty_table(new_table)
 
     return new_table

@@ -370,8 +370,8 @@ plugin.methods.register_function(
     function=q2_feature_table.filter_features_conditionally,
     inputs={'table': FeatureTable[T1]},
     parameters={'prevalence': Float % Range(0, 1),
-                'abundance': Float % Range(0, 1)
-                },
+                'abundance': Float % Range(0, 1),
+                'allow_empty_table': Bool},
     outputs=[('filtered_table', FeatureTable[T1])],
     input_descriptions={
         'table': 'The feature table from which features should be filtered.'
@@ -381,7 +381,10 @@ plugin.methods.register_function(
                       'retained.'),
         'prevalence': ('The minimum portion of samples that a feature '
                        'must have a relative abundance of at least '
-                       '`abundance` to be retained.')
+                       '`abundance` to be retained.'),
+        'allow_empty_table': 'If true, the filtered table may be empty. '
+                             'Otherwise, an error will be raised if the '
+                             'filtered table is empty.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'
@@ -473,7 +476,6 @@ plugin.methods.register_function(
         'metadata': Metadata,
         'where': Str,
         'exclude_ids': Bool
-        # 'allow_empty_table': Bool
     },
     outputs=[('filtered_data', FeatureData[T2])],
     input_descriptions={
@@ -492,9 +494,6 @@ plugin.methods.register_function(
                        '(with or without the `where` parameter) or `table` '
                        'parameter will be excluded from the filtered '
                        'sequences instead of being retained.'
-        # 'allow_empty_table': 'If true, the filtered data may be empty. '
-        #                      'Otherwise, an error will be raised if the '
-        #                      'filtered data are empty.'
     },
     output_descriptions={
         'filtered_data': 'The resulting filtered sequences.'
