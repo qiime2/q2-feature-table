@@ -167,12 +167,6 @@ def summarize(output_dir: str, table: biom.Table,
     feature_qualitative_data = _compute_qualitative_summary(table)
     sample_frequencies.sort_values(inplace=True, ascending=False)
     feature_frequencies.sort_values(inplace=True, ascending=False)
-    sample_frequencies.to_csv(
-        os.path.join(output_dir, 'sample-frequency-detail.csv'),
-        header=False)
-    feature_frequencies.to_csv(
-        os.path.join(output_dir, 'feature-frequency-detail.csv'),
-        header=False)
 
     feature_frequencies = feature_frequencies.astype(int) \
         .apply('{:,}'.format).to_frame('Frequency')
@@ -215,6 +209,55 @@ def summarize(output_dir: str, table: biom.Table,
     q2templates.render(templates, output_dir, context=context)
 
     plt.close('all')
+
+
+def tabulate_feature_frequencies(table: biom.Table) -> qiime2.Metadata:
+    feature_frequencies = _frequencies(table, 'observation')
+    feature_frequencies = feature_frequencies.apply(
+        '{:,}'.format).to_frame('Frequency')
+    feature_qualitative_data = _compute_qualitative_summary(table)
+    samples_observed_in =\
+        pd.Series(feature_qualitative_data).astype(int).apply('{:,}'.format)
+    feature_frequencies["No. of Samples Observed In"] = samples_observed_in
+    feature_frequencies.index.name = "Feature ID"
+    return qiime2.Metadata(feature_frequencies)
+
+
+def tabulate_sample_frequencies(table: biom.Table) -> qiime2.Metadata:
+    sample_frequencies = _frequencies(table, 'sample')
+    sample_frequencies = sample_frequencies.apply(
+        '{:,}'.format).to_frame('Frequency')
+    sample_qualitative_data = _compute_qualitative_summary_sample(table)
+    samples_with_feature =\
+        pd.Series(sample_qualitative_data).astype(int).apply('{:,}'.format)
+    sample_frequencies["No. of Associated Features"] = samples_with_feature
+    sample_frequencies.index.name = "Sample ID"
+    return qiime2.Metadata(sample_frequencies)
+
+
+def summarize_plus(ctx, table, metadata=None):
+
+    try:
+        table_dimensions = table.view(pd.DataFrame).shape
+
+    except ValueError:
+        raise ValueError('Cannot summarize a table with no features')
+
+    if table_dimensions[0] == 0:
+        raise ValueError('Cannot summarize a table with no samples')
+
+    _feature_frequencies = ctx.get_action('feature_table',
+                                          'tabulate_feature_frequencies')
+    _sample_frequencies = ctx.get_action('feature_table',
+                                         'tabulate_sample_frequencies')
+    _visualizer = ctx.get_action('feature_table',
+                                 'summarize')
+
+    feature_frequencies, = _feature_frequencies(table)
+    sample_frequencies, = _sample_frequencies(table)
+    summary, = _visualizer(table, metadata)
+
+    return feature_frequencies, sample_frequencies, summary
 
 
 def _compute_descriptive_stats(lst: list):
@@ -300,6 +343,13 @@ def _compute_qualitative_summary(table):
     for count_vector, feature_id, _ in table.iter():
         sample_count[feature_id] = (count_vector != 0).sum()
     return sample_count
+
+
+def _compute_qualitative_summary_sample(table):
+    feature_count = {}
+    for count_vector, sample_id, _ in table.iter():
+        feature_count[sample_id] = (count_vector != 0).sum()
+    return feature_count
 
 
 def _frequencies(table, axis):

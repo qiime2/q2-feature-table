@@ -16,9 +16,13 @@ import pandas as pd
 import numpy as np
 import qiime2
 from q2_types.feature_data import DNAIterator
+from qiime2.plugin.testing import TestPluginBase
+from qiime2 import Artifact, Metadata
 import csv
 
-from q2_feature_table import tabulate_seqs, summarize
+from q2_feature_table import (
+        tabulate_seqs, summarize,
+        tabulate_feature_frequencies, tabulate_sample_frequencies)
 from q2_feature_table._summarize._visualizer import _compute_descriptive_stats
 from q2_feature_table._summarize._visualizer import _frequencies
 from q2_feature_table._summarize._vega_spec import vega_spec
@@ -379,16 +383,6 @@ class SummarizeTests(TestCase):
             index_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(index_fp))
 
-            feature_freq_fp = os.path.join(output_dir,
-                                           'feature-frequency-detail.csv')
-            self.assertTrue(os.path.exists(feature_freq_fp))
-            self.assertTrue('O1,4' in open(feature_freq_fp).read())
-
-            sample_freq_fp = os.path.join(output_dir,
-                                          'sample-frequency-detail.csv')
-            self.assertTrue(os.path.exists(sample_freq_fp))
-            self.assertTrue('S1,1453' in open(sample_freq_fp).read())
-
     def test_frequency_ranges_are_zero(self):
         table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
                            ['O1', 'O2'],
@@ -399,16 +393,6 @@ class SummarizeTests(TestCase):
 
             index_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(index_fp))
-
-            feature_freq_fp = os.path.join(output_dir,
-                                           'feature-frequency-detail.csv')
-            self.assertTrue(os.path.exists(feature_freq_fp))
-            self.assertTrue('O1,75' in open(feature_freq_fp).read())
-
-            sample_freq_fp = os.path.join(output_dir,
-                                          'sample-frequency-detail.csv')
-            self.assertTrue(os.path.exists(sample_freq_fp))
-            self.assertTrue('S1,50' in open(sample_freq_fp).read())
 
     def test_one_sample(self):
         sample_frequencies_pdf_fn = 'sample-frequencies.pdf'
@@ -471,16 +455,6 @@ class SummarizeTests(TestCase):
             index_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(index_fp))
 
-            feature_freq_fp = os.path.join(output_dir,
-                                           'feature-frequency-detail.csv')
-            self.assertTrue(os.path.exists(feature_freq_fp))
-            self.assertTrue('O1,4' in open(feature_freq_fp).read())
-
-            sample_freq_fp = os.path.join(output_dir,
-                                          'sample-frequency-detail.csv')
-            self.assertTrue(os.path.exists(sample_freq_fp))
-            self.assertTrue('S1,1' in open(sample_freq_fp).read())
-
     def test_vega_spec_data(self):
         # test if metadata is converted correctly to vega compatible JSON
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
@@ -514,6 +488,134 @@ class SummarizeTests(TestCase):
                {'frequency': 50, 'id': '1', 'metadata': {'a': None}}]
 
         self.assertEqual(spec['data'][0]['values'], exp)
+
+
+class TabulateSampleFrequencyTests(TestCase):
+
+    def test_basic_case(self):
+        table = biom.Table(np.array([[0, 25, 25], [25, 25, 25]]),
+                           ['O1', 'O2'],
+                           ['S1', 'S2', 'S3'])
+        obs = tabulate_sample_frequencies(table).to_dataframe()
+
+        exp = pd.DataFrame({'Frequency': ['25.0', '50.0', '50.0'],
+                            'No. of Associated Features':
+                            ['1', '2', '2']},
+                           index=['S1', 'S2', 'S3'])
+        exp.index.name = 'Sample ID'
+        pd.testing.assert_frame_equal(exp, obs)
+
+
+class TabulateFeatureFrequencyTests(TestCase):
+
+    def test_basic_case(self):
+        table = biom.Table(np.array([[25, 25, 0], [25, 25, 25]]),
+                           ['O1', 'O2'],
+                           ['S1', 'S2', 'S3'])
+        obs = tabulate_feature_frequencies(table).to_dataframe()
+
+        exp = pd.DataFrame({'Frequency': ['50.0', '75.0'],
+                            'No. of Samples Observed In':
+                            ['2', '3']},
+                           index=['O1', 'O2'])
+        exp.index.name = 'Feature ID'
+        pd.testing.assert_frame_equal(exp, obs)
+
+
+class SummarizePlusTests(TestPluginBase):
+
+    package = 'q2_feature_table'
+
+    def setUp(self):
+        super().setUp()
+        self.summarize_plus = self.plugin.pipelines['summarize_plus']
+
+    def test_basic(self):
+        table = biom.Table(np.array([[25, 0, 25], [25, 25, 25]]),
+                           ['O1', 'O2'],
+                           ['S1', 'S2', 'S3'])
+        table = Artifact.import_data('FeatureTable[Frequency]', table)
+        results = self.summarize_plus(table)
+
+        self.assertEqual(len(results), 3)
+        self.assertEqual(repr(results.feature_frequencies.type),
+                         'ImmutableMetadata')
+        self.assertEqual(repr(results.sample_frequencies.type),
+                         'ImmutableMetadata')
+        self.assertEqual(repr(results.summary.type),
+                         'Visualization')
+
+        exp_feature = pd.DataFrame({'Frequency': ['50.0', '75.0'],
+                                   'No. of Samples Observed In':
+                                    ['2', '3']},
+                                   index=['O1', 'O2'])
+        exp_feature.index.name = "Feature ID"
+        obs_feature = results[0].view(Metadata).to_dataframe()
+        pd.testing.assert_frame_equal(exp_feature, obs_feature)
+
+        exp_sample = pd.DataFrame({'Frequency': ['50.0', '25.0', '50.0'],
+                                  'No. of Associated Features':
+                                   ['2', '1', '2']},
+                                  index=['S1', 'S2', 'S3'])
+        exp_sample.index.name = "Sample ID"
+        obs_sample = results[1].view(Metadata).to_dataframe()
+        pd.testing.assert_frame_equal(exp_sample, obs_sample)
+
+    def test_no_samples(self):
+        table = biom.Table(np.array([[], []]),
+                           ['O1', 'O2'],
+                           [])
+        table = Artifact.import_data('FeatureTable[Frequency]', table)
+
+        with self.assertRaises(ValueError) as context:
+            self.summarize_plus(table)
+
+            self.assertTrue('Cannot summarize a table with no samples' in
+                            context.exception)
+
+    def test_no_features(self):
+        table = biom.Table(np.array([]),
+                           [],
+                           ['S1', 'S2', 'S3'])
+        table = Artifact.import_data('FeatureTable[Frequency]', table)
+
+        with self.assertRaises(ValueError) as context:
+
+            self.summarize_plus(table)
+
+            self.assertTrue('Cannot summarize a table with no features' in
+                            context.exception)
+
+    def test_all_zeros(self):
+        table = biom.Table(np.array([[0, 0, 0], [0, 0, 0]]),
+                           ['O1', 'O2'],
+                           ['S1', 'S2', 'S3'])
+        table = Artifact.import_data('FeatureTable[Frequency]', table)
+        results = self.summarize_plus(table)
+
+        self.assertEqual(len(results), 3)
+        self.assertEqual(repr(results.feature_frequencies.type),
+                         'ImmutableMetadata')
+        self.assertEqual(repr(results.sample_frequencies.type),
+                         'ImmutableMetadata')
+        self.assertEqual(repr(results.summary.type),
+                         'Visualization')
+
+        exp_feature = pd.DataFrame({'Frequency': ['0.0', '0.0'],
+                                   'No. of Samples Observed In':
+                                    ['0', '0']},
+                                   index=['O1', 'O2'])
+        exp_feature.index.name = "Feature ID"
+        obs_feature = results[0].view(Metadata).to_dataframe()
+        pd.testing.assert_frame_equal(exp_feature, obs_feature)
+
+        exp_sample = pd.DataFrame({'Frequency': ['0.0', '0.0', '0.0'],
+                                  'No. of Associated Features':
+                                   ['0', '0', '0']},
+                                  index=['S1', 'S2', 'S3'])
+        exp_sample.index.name = "Sample ID"
+        obs_sample = results[1].view(Metadata).to_dataframe()
+        pd.testing.assert_frame_equal(exp_sample, obs_sample)
 
 
 if __name__ == "__main__":

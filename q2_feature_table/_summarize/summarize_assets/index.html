@@ -37,10 +37,6 @@
     <div class="row">
       <div class="col-lg-6">
         {{ sample_summary_table }}
-        <p class="text-left">
-          Frequency per sample detail (<a href="sample-frequency-detail.csv">csv</a> |
-          <a href="sample-frequency-detail.html">html</a>)
-        </p>
       </div>
       {% if number_of_samples > 1 %}
       <div class="col-lg-6">
@@ -59,10 +55,6 @@
       <div class="col-lg-6">
         <h1>Frequency per feature</h1>
         {{ feature_summary_table }}
-        <p class="text-left">
-          Frequency per feature detail (<a href="feature-frequency-detail.csv">csv</a> |
-          <a href="feature-frequency-detail.html">html</a>)
-        </p>
       </div>
       {% if number_of_features > 1 %}
       <div class="col-lg-6">
