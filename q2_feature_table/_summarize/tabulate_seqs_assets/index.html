@@ -108,7 +108,7 @@
           <tr>
             <td>{{ sequence }}</td>
             {% if sequence in data %}
-            <td><samp><a target="_blank" href="{{ sequence.url }}" rel="noopener noreferrer">{{ data[sequence].seq }}</a></samp></td>
+            <td><samp><a target="_blank" href="{{ data[sequence].url }}" rel="noopener noreferrer">{{ data[sequence].seq }}</a></samp></td>
             <td>{{ data[sequence].len }}</td>
             {% else %}
             <td>-</td>
@@ -116,7 +116,7 @@
             {% endif %}
             {% if taxonomy is defined %}
               {% for member in taxonomy.values() %}
-                {% if sequence in member.index %}            
+                {% if sequence in member.index %}
             <td>{{ member.loc[sequence, "Taxon"] }}</td>
                 {% else %}
             <td>-</td>
