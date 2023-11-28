@@ -52,6 +52,11 @@ class FilterFeaturesTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'table is empty'):
             filter_features(table, min_frequency=5)
 
+        # filter all and allow empty table
+        actual = filter_features(table, min_frequency=5,
+                                 allow_empty_table=True)
+        self.assertTrue(actual.is_empty())
+
     def test_filter_empty_samples(self):
         # no filtering
         table = Table(np.array([[0, 1, 1], [1, 1, 2]]),
@@ -70,6 +75,12 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['S1', 'S2', 'S3'])
         with self.assertRaisesRegex(ValueError, 'table is empty'):
             filter_features(table, min_frequency=5, filter_empty_samples=False)
+
+        # filter all and allow empty table
+        actual = filter_features(table, min_frequency=5,
+                                 filter_empty_samples=False,
+                                 allow_empty_table=True)
+        self.assertTrue(actual.is_empty())
 
     def test_feature_metadata(self):
         # no filtering
@@ -107,6 +118,11 @@ class FilterFeaturesTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'table is empty'):
             filter_features(table, metadata=metadata)
 
+        # filter all and allow empty table
+        actual = filter_features(table, metadata=metadata,
+                                 allow_empty_table=True)
+        self.assertTrue(actual.is_empty())
+
         # exclude one
         df = pd.DataFrame({'SequencedGenome': ['yes']},
                           index=pd.Index(['O1'], name='id'))
@@ -131,6 +147,11 @@ class FilterFeaturesTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'table is empty'):
             filter_features(table, metadata=metadata, exclude_ids=True,
                             allow_empty_table=False)
+
+        # exclude all and allow empty table
+        actual = filter_features(table, metadata=metadata, exclude_ids=True,
+                                 allow_empty_table=True)
+        self.assertTrue(actual.is_empty())
 
     def test_where(self):
         # no filtering
@@ -173,6 +194,11 @@ class FilterFeaturesTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'table is empty'):
             filter_features(table, metadata=metadata, where=where,
                             allow_empty_table=False)
+
+        # Filter all and allow empty table
+        actual = filter_features(table, metadata=metadata, where=where,
+                                 allow_empty_table=True)
+        self.assertTrue(actual.is_empty())
 
         # filter one -> exclude one
         df = pd.DataFrame({'SequencedGenome': ['yes', 'no']},
