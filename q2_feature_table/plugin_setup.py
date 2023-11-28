@@ -385,7 +385,7 @@ plugin.methods.register_function(
                        'must have a relative abundance of at least '
                        '`abundance` to be retained.'),
         'allow_empty_table': 'If true, the filtered table may be empty. '
-                             'Otherwise, an error will be raised if the '
+                             'Default behavior is to raise an error if the '
                              'filtered table is empty.'
     },
     output_descriptions={
