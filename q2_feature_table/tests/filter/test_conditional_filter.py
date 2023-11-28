@@ -50,21 +50,11 @@ class TestConditional(unittest.TestCase):
             sample_ids=['A', 'B', 'C', 'D', 'E'],
             observation_ids=['bat', 'cat', 'rat', 'a-tat-tat']
             )
-        known = biom.Table(
-            data=np.array([[0, 225, 250, 210, 250]]),
-            sample_ids=['A', 'B', 'C', 'D', 'E'],
-            observation_ids=['a-tat-tat']
-            )
         test_ = filter_features_conditionally(table,
-                                              prevalence=0.8,
-                                              abundance=0.4,
+                                              prevalence=0.9,
+                                              abundance=0.9,
                                               allow_empty_table=True)
-        npt.assert_array_equal(known.matrix_data.toarray(),
-                               test_.matrix_data.toarray())
-        npt.assert_array_equal(known.ids(axis='sample'),
-                               test_.ids(axis='sample'))
-        npt.assert_array_equal(known.ids(axis='observation'),
-                               test_.ids(axis='observation'))
+        self.assertTrue(test_.is_empty())
 
     def test_allow_empty_table_false(self):
         # test False
@@ -76,7 +66,7 @@ class TestConditional(unittest.TestCase):
             sample_ids=['A', 'B', 'C', 'D', 'E'],
             observation_ids=['bat', 'cat', 'rat', 'a-tat-tat']
             )
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegex(ValueError, 'empty'):
             filter_features_conditionally(table,
                                           prevalence=0.9,
                                           abundance=0.9,
