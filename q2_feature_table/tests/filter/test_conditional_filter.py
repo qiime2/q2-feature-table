@@ -66,7 +66,7 @@ class TestConditional(unittest.TestCase):
             sample_ids=['A', 'B', 'C', 'D', 'E'],
             observation_ids=['bat', 'cat', 'rat', 'a-tat-tat']
             )
-        with self.assertRaisesRegex(ValueError, 'empty'):
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
             filter_features_conditionally(table,
                                           prevalence=0.9,
                                           abundance=0.9,

@@ -49,7 +49,7 @@ class FilterFeaturesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 1], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        with self.assertRaisesRegex(ValueError, 'empty'):
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
             filter_features(table, min_frequency=5)
 
     def test_filter_empty_samples(self):
@@ -68,7 +68,7 @@ class FilterFeaturesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 1], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        with self.assertRaisesRegex(ValueError, 'empty'):
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
             filter_features(table, min_frequency=5, filter_empty_samples=False)
 
     def test_feature_metadata(self):
@@ -104,7 +104,7 @@ class FilterFeaturesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        with self.assertRaisesRegex(ValueError, 'empty'):
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
             filter_features(table, metadata=metadata)
 
         # exclude one
@@ -128,7 +128,7 @@ class FilterFeaturesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        with self.assertRaisesRegex(ValueError, 'empty'):
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
             filter_features(table, metadata=metadata, exclude_ids=True,
                             allow_empty_table=False)
 
@@ -170,7 +170,7 @@ class FilterFeaturesTests(unittest.TestCase):
                       ['S1', 'S2', 'S3'])
         where = "SequencedGenome='yes' AND SequencedGenome='no'"
 
-        with self.assertRaisesRegex(ValueError, 'empty'):
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
             filter_features(table, metadata=metadata, where=where,
                             allow_empty_table=False)
 
