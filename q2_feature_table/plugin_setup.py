@@ -345,7 +345,7 @@ plugin.methods.register_function(
         'filter_empty_features': 'If true, features which are not present in '
                                  'any retained samples are dropped.',
         'allow_empty_table': 'If true, the filtered table may be empty. '
-                             'Otherwise, an error will be raised if the '
+                             'Default behavior is to raise an error if the '
                              'filtered table is empty.'
     },
     output_descriptions={
