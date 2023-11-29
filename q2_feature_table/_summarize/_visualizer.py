@@ -166,6 +166,12 @@ def summarize(output_dir: str, table: biom.Table,
 
     feature_qualitative_data = _compute_qualitative_summary(table)
     sample_frequencies.sort_values(inplace=True, ascending=False)
+
+    sample_frequencies_json = pd.Series(["{:,}".format(round(x, 1)) for x in
+                                         sample_frequencies])
+
+    print(sample_frequencies_json)
+
     feature_frequencies.sort_values(inplace=True, ascending=False)
 
     feature_frequencies = feature_frequencies.astype(int) \
@@ -190,7 +196,7 @@ def summarize(output_dir: str, table: biom.Table,
 
     # Create a JSON object containing the Sample Frequencies to build the
     # table in sample-frequency-detail.html
-    sample_frequencies_json = sample_frequencies.to_json()
+    sample_frequencies_json = sample_frequencies_json.to_json()
 
     templates = [index, sample_frequency_template, feature_frequency_template]
     context.update({'frequencies_list':
@@ -361,7 +367,7 @@ def _frequency_summary(table, axis='sample'):
 
     summary = pd.Series([frequencies.min(), frequencies.quantile(0.25),
                          frequencies.median(), frequencies.quantile(0.75),
-                         frequencies.max(), frequencies.mean()],
+                         frequencies.max(), round(frequencies.mean(), 1)],
                         index=['Minimum frequency', '1st quartile',
                                'Median frequency', '3rd quartile',
                                'Maximum frequency', 'Mean frequency'])
