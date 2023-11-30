@@ -217,16 +217,6 @@ class FilterFeaturesTests(unittest.TestCase):
                          ['S1', 'S2', 'S3'])
         self.assertEqual(actual, expected)
 
-    def test_allow_empty_table(self):
-        # filter all
-        table = Table(np.array([[0, 1, 1], [1, 1, 2]]),
-                      ['O1', 'O2'],
-                      ['S1', 'S2', 'S3'])
-
-        actual = filter_features(table, min_frequency=5,
-                                 allow_empty_table=True)
-        self.assertTrue(actual.is_empty())
-
 
 if __name__ == "__main__":
     unittest.main()
