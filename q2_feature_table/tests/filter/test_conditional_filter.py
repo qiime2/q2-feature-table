@@ -56,7 +56,6 @@ class TestConditional(unittest.TestCase):
         self.assertTrue(test_.is_empty())
 
     def test_allow_empty_table_false(self):
-        # test False
         table = biom.Table(
             data=np.array([[0,   0,  10,   0,   0],
                            [250, 250, 140,  90, 150],
