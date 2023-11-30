@@ -41,7 +41,6 @@ class TestConditional(unittest.TestCase):
                                test_.ids(axis='observation'))
 
     def test_allow_empty_table_true(self):
-        # test True
         table = biom.Table(
             data=np.array([[0,   0,  10,   0,   0],
                            [250, 250, 140,  90, 150],
