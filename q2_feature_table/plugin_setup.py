@@ -313,7 +313,8 @@ plugin.methods.register_function(
                 'metadata': Metadata,
                 'where': Str,
                 'exclude_ids': Bool,
-                'filter_empty_features': Bool},
+                'filter_empty_features': Bool,
+                'allow_empty_table': Bool},
     outputs=[('filtered_table', FeatureTable[T1])],
     input_descriptions={
         'table': 'The feature table from which samples should be filtered.'
@@ -343,6 +344,9 @@ plugin.methods.register_function(
                        'table instead of being retained.',
         'filter_empty_features': 'If true, features which are not present in '
                                  'any retained samples are dropped.',
+        'allow_empty_table': 'If true, the filtered table may be empty. '
+                             'Default behavior is to raise an error if the '
+                             'filtered table is empty.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by sample.'
@@ -368,8 +372,8 @@ plugin.methods.register_function(
     function=q2_feature_table.filter_features_conditionally,
     inputs={'table': FeatureTable[T1]},
     parameters={'prevalence': Float % Range(0, 1),
-                'abundance': Float % Range(0, 1)
-                },
+                'abundance': Float % Range(0, 1),
+                'allow_empty_table': Bool},
     outputs=[('filtered_table', FeatureTable[T1])],
     input_descriptions={
         'table': 'The feature table from which features should be filtered.'
@@ -379,7 +383,10 @@ plugin.methods.register_function(
                       'retained.'),
         'prevalence': ('The minimum portion of samples that a feature '
                        'must have a relative abundance of at least '
-                       '`abundance` to be retained.')
+                       '`abundance` to be retained.'),
+        'allow_empty_table': 'If true, the filtered table may be empty. '
+                             'Default behavior is to raise an error if the '
+                             'filtered table is empty.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'
@@ -408,7 +415,8 @@ plugin.methods.register_function(
                 'metadata': Metadata,
                 'where': Str,
                 'exclude_ids': Bool,
-                'filter_empty_samples': Bool},
+                'filter_empty_samples': Bool,
+                'allow_empty_table': Bool},
     outputs=[('filtered_table', FeatureTable[Frequency])],
     input_descriptions={
         'table': 'The feature table from which features should be filtered.'
@@ -438,6 +446,9 @@ plugin.methods.register_function(
                        'table instead of being retained.',
         'filter_empty_samples': 'If true, drop any samples where none of the '
                                 'retained features are present.',
+        'allow_empty_table': 'If true, the filtered table may be empty. '
+                                'Default behavior is to raise an error if the '
+                                'filtered table is empty.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'
