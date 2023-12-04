@@ -99,6 +99,7 @@ def summarize(output_dir: str, table: biom.Table,
 
     sample_summary, sample_frequencies = _frequency_summary(
         table, axis='sample')
+
     if number_of_samples > 1:
 
         # Calculate the bin count, with a minimum of 5 bins
@@ -167,10 +168,8 @@ def summarize(output_dir: str, table: biom.Table,
     feature_qualitative_data = _compute_qualitative_summary(table)
     sample_frequencies.sort_values(inplace=True, ascending=False)
 
-    sample_frequencies_json = pd.Series(["{:,}".format(round(x, 1)) for x in
+    sample_frequencies_json = pd.Series(["{:,}".format(int(x)) for x in
                                          sample_frequencies])
-
-    print(sample_frequencies_json)
 
     feature_frequencies.sort_values(inplace=True, ascending=False)
 
