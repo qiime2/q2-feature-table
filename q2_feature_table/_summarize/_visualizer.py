@@ -11,7 +11,6 @@ import pkg_resources
 import shutil
 
 import biom
-import math
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -371,7 +370,7 @@ def _frequency_summary(table: biom.Table, axis='sample'):
 
     for _, row in table.iterrows():
         for idx in row:
-            if idx > 0.0 and idx < 1.0:
+            if not idx.is_integer():
                 _round = False
                 break
         if not _round:
