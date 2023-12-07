@@ -11,6 +11,7 @@ import pkg_resources
 import shutil
 
 import biom
+import math
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -370,17 +371,28 @@ def _frequency_summary(table: biom.Table, axis='sample'):
 
     for _, row in table.iterrows():
         for idx in row:
-            if not idx.is_integer():
+            if idx > 0.0 and idx < 1.0:
                 _round = False
                 break
         if not _round:
             break
 
-    mean = round(frequencies.mean(), 1) if _round else frequencies.mean()
+    first = frequencies.quantile(0.25)
+    third = frequencies.quantile(0.75)
+    _fst = round(first, 1) if _round else round(first, 4)
+    _min = round(frequencies.min(), 1) if _round else round(
+        frequencies.min(), 4)
+    _thd = round(third, 1) if _round else round(third, 4)
+    _med = round(frequencies.median(), 1) if _round else round(
+        frequencies.median(), 4)
+    _max = round(frequencies.max(), 1) if _round else round(
+        frequencies.max(), 4)
+    mean = round(frequencies.mean(), 1) if _round else round(
+        frequencies.mean(), 4)
 
-    summary = pd.Series([frequencies.min(), frequencies.quantile(0.25),
-                         frequencies.median(), frequencies.quantile(0.75),
-                         frequencies.max(), mean],
+    summary = pd.Series([_min, _fst,
+                         _med, _thd,
+                         _max, mean],
                         index=['Minimum frequency', '1st quartile',
                                'Median frequency', '3rd quartile',
                                'Maximum frequency', 'Mean frequency'])
