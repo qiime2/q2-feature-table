@@ -361,12 +361,26 @@ def _frequencies(table, axis):
     return pd.Series(data=table.sum(axis=axis), index=table.ids(axis=axis))
 
 
-def _frequency_summary(table, axis='sample'):
+def _frequency_summary(table: biom.Table, axis='sample'):
     frequencies = _frequencies(table, axis=axis)
+
+    table = table.to_dataframe()
+
+    _round = True
+
+    for _, row in table.iterrows():
+        for idx in row:
+            if not idx.is_integer():
+                _round = False
+                break
+        if not _round:
+            break
+
+    mean = round(frequencies.mean(), 1) if _round else frequencies.mean()
 
     summary = pd.Series([frequencies.min(), frequencies.quantile(0.25),
                          frequencies.median(), frequencies.quantile(0.75),
-                         frequencies.max(), round(frequencies.mean(), 1)],
+                         frequencies.max(), mean],
                         index=['Minimum frequency', '1st quartile',
                                'Median frequency', '3rd quartile',
                                'Maximum frequency', 'Mean frequency'])
