@@ -31,8 +31,8 @@ class FilterSeqsTests(unittest.TestCase):
         md_full.index.name = 'FeatureID'
         self.md_full = qiime2.Metadata(md_full)
 
-    def filter_and_assertEqual(self, exp, md=None, exclude_ids=False,
-                               where=None):
+    def _filter_and_assertEqual(self, exp, md=None, exclude_ids=False,
+                                where=None):
         if md is None:
             md = self.md_full
         obs = filter_seqs(self.seqs, metadata=md,
@@ -41,13 +41,13 @@ class FilterSeqsTests(unittest.TestCase):
 
     def test_id_based_filtering(self):
         # filter none
-        self.filter_and_assertEqual(self.seqs,
-                                    md=qiime2.Metadata(self.df_lite))
+        self._filter_and_assertEqual(self.seqs,
+                                     md=qiime2.Metadata(self.df_lite))
 
         # filter one
         md = qiime2.Metadata(self.df_lite.drop(['O1']))
         exp = pd.Series(['GCTA', 'CCCC', 'TGTT'], index=['O2', 'O3', 'O4'])
-        self.filter_and_assertEqual(exp, md=md)
+        self._filter_and_assertEqual(exp, md=md)
 
         # filter all
         md = qiime2.Metadata(pd.DataFrame({},
@@ -58,12 +58,12 @@ class FilterSeqsTests(unittest.TestCase):
         # exclude none
         md = qiime2.Metadata(pd.DataFrame({},
                                           index=pd.Index(['foo'], name='id')))
-        self.filter_and_assertEqual(self.seqs, md=md, exclude_ids=True)
+        self._filter_and_assertEqual(self.seqs, md=md, exclude_ids=True)
 
         # exclude one
         md = qiime2.Metadata(self.df_lite.drop(['O1', 'O2', 'O3']))
         exp = pd.Series(['ACGT', 'GCTA', 'CCCC'], index=['O1', 'O2', 'O3'])
-        self.filter_and_assertEqual(exp, md=md, exclude_ids=True)
+        self._filter_and_assertEqual(exp, md=md, exclude_ids=True)
 
         # exclude all
         md = qiime2.Metadata(self.df_lite)
@@ -74,17 +74,17 @@ class FilterSeqsTests(unittest.TestCase):
         md = qiime2.Metadata(pd.DataFrame([],
                              index=pd.Index(['O1', 'O3', 'foo'], name='id')))
         exp = pd.Series(['ACGT', 'CCCC'], index=['O1', 'O3'])
-        self.filter_and_assertEqual(exp, md=md)
+        self._filter_and_assertEqual(exp, md=md)
 
     def test_where_param(self):
         # filter none
         where = "stuff='foo' OR stuff='bar' OR stuff='baz'"
-        self.filter_and_assertEqual(self.seqs, where=where)
+        self._filter_and_assertEqual(self.seqs, where=where)
 
         # filter one
         where = "stuff='foo' OR stuff='bar'"
         exp = pd.Series(['ACGT', 'GCTA', 'TGTT'], index=['O1', 'O2', 'O4'])
-        self.filter_and_assertEqual(exp, where=where)
+        self._filter_and_assertEqual(exp, where=where)
 
         # filter all
         where = "stuff='boo'"
@@ -93,12 +93,12 @@ class FilterSeqsTests(unittest.TestCase):
 
         # exclude none
         where = 'CAST(some_numbers AS INTEGER) < 0'
-        self.filter_and_assertEqual(self.seqs, exclude_ids=True, where=where)
+        self._filter_and_assertEqual(self.seqs, exclude_ids=True, where=where)
 
         # exclude one
         where = 'CAST(some_numbers AS INTEGER) > 3'
         exp = pd.Series(['ACGT', 'GCTA', 'CCCC'], index=['O1', 'O2', 'O3'])
-        self.filter_and_assertEqual(exp, exclude_ids=True, where=where)
+        self._filter_and_assertEqual(exp, exclude_ids=True, where=where)
 
         # exclude all
         where = 'CAST(some_numbers AS INTEGER) BETWEEN 0 AND 5'
