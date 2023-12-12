@@ -64,11 +64,18 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S3'])
         self.assertEqual(actual, expected)
 
-        # filter all
+        # filter all raising ValueError
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, min_frequency=42)
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_samples(table, min_frequency=42)
+
+        # filter all and allow empty table
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]), ['O1-alt', 'O2-alt'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table, min_frequency=42,
+                                allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
     def test_max_frequency(self):
@@ -102,11 +109,17 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S1'])
         self.assertEqual(actual, expected)
 
-        # filter all
+        # filter all raising ValueError
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, max_frequency=0)
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_samples(table, max_frequency=0)
+
+        # filter all and allow empty table
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]), ['O1-alt', 'O2-alt'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table, max_frequency=0, allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
     def test_filter_empty_features(self):
@@ -143,12 +156,20 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S1'])
         self.assertEqual(actual, expected)
 
-        # filter all
+        # filter all raising ValueError
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_samples(table, max_frequency=0,
+                           filter_empty_features=False)
+
+        # filter all and allow empty table
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]), ['O1-alt', 'O2-alt'],
+                      ['S1', 'S2', 'S3'])
         actual = filter_samples(table, max_frequency=0,
-                                filter_empty_features=False)
+                                filter_empty_features=False,
+                                allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
     def test_min_features(self):
@@ -172,11 +193,17 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S2', 'S3'])
         self.assertEqual(actual, expected)
 
-        # filter all
+        # filter all raising ValueError
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, min_features=3)
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_samples(table, min_features=3)
+
+        # filter all and allow empty table
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]), ['O1-alt', 'O2-alt'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table, min_features=3, allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
     def test_max_features(self):
@@ -200,11 +227,18 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S1'])
         self.assertEqual(actual, expected)
 
-        # filter all
+        # filter all raising ValueError
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, max_features=0)
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_samples(table, max_features=0)
+
+        # filter all and allow empty table
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1-alt', 'O2-alt'],
+                      ['S1', 'S2', 'S3'])
+        actual = filter_samples(table, max_features=0, allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
     def test_sample_metadata(self):
@@ -236,13 +270,20 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S2', 'S3'])
         self.assertEqual(actual, expected)
 
-        # filter all
+        # filter all raising ValueError
         df = pd.DataFrame({}, index=pd.Index(['foo'], name='id'))
         metadata = qiime2.Metadata(df)
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
-        actual = filter_samples(table, metadata=metadata)
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_samples(table, metadata=metadata)
+
+        # filter all and allow empty table
+        df = pd.DataFrame({}, index=pd.Index(['foo'], name='id'))
+        metadata = qiime2.Metadata(df)
+        actual = filter_samples(table, metadata=metadata,
+                                allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
         # exclude none
@@ -284,13 +325,23 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S3'])
         self.assertEqual(actual, expected)
 
-        # exclude all
+        # exclude all raising ValueError
+        df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
+                           'SampleType': ['gut', 'tongue', 'gut']},
+                          index=pd.Index(['S1', 'S2', 'S3'], name='id'))
+        metadata = qiime2.Metadata(df)
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_samples(table, metadata=metadata,
+                           exclude_ids=True)
+
+        # exclude all and allow empty table
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='id'))
         metadata = qiime2.Metadata(df)
         actual = filter_samples(table, metadata=metadata,
-                                exclude_ids=True)
+                                exclude_ids=True,
+                                allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
     def test_sample_metadata_extra_ids(self):
@@ -354,7 +405,7 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S1'])
         self.assertEqual(actual, expected)
 
-        # filter all
+        # filter all raising ValueError
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
@@ -363,7 +414,12 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1' AND Subject='subject-2'"
-        actual = filter_samples(table, metadata=metadata, where=where)
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_samples(table, metadata=metadata, where=where)
+
+        # filter all allowing empty table
+        actual = filter_samples(table, metadata=metadata, where=where,
+                                allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
         # filter none -> exclude none
@@ -417,7 +473,22 @@ class FilterSamplesTests(unittest.TestCase):
                          ['S3'])
         self.assertEqual(actual, expected)
 
-        # filter all -> exclude all
+        # filter all -> exclude all raising ValueError
+        df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
+                           'SampleType': ['gut', 'tongue', 'gut']},
+                          index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
+        metadata = qiime2.Metadata(df)
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        where = "Subject='subject-1' OR Subject='subject-2'"
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_samples(table,
+                           metadata=metadata,
+                           where=where,
+                           exclude_ids=True)
+
+        # exclude all and allow empty table
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue', 'gut']},
                           index=pd.Index(['S1', 'S2', 'S3'], name='#SampleID'))
@@ -429,7 +500,8 @@ class FilterSamplesTests(unittest.TestCase):
         actual = filter_samples(table,
                                 metadata=metadata,
                                 where=where,
-                                exclude_ids=True)
+                                exclude_ids=True,
+                                allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
     def test_combine_id_and_frequency_filters(self):
@@ -618,7 +690,7 @@ class FilterSamplesTests(unittest.TestCase):
         self.assertEqual(actual, expected)
 
         # exclude one, min_frequency filter one,
-        # max_frequency filter one
+        # max_frequency filter one raising ValueError
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
                           index=pd.Index(['S1'], name='id'))
@@ -626,16 +698,25 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_samples(table,
+                           metadata=metadata,
+                           exclude_ids=True,
+                           max_frequency=4,
+                           min_frequency=3)
+
+        # allow empty table
         actual = filter_samples(table,
                                 metadata=metadata,
                                 exclude_ids=True,
                                 max_frequency=4,
-                                min_frequency=3)
+                                min_frequency=3,
+                                allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
         # where filter one -> exclude one,
         # min_frequency filter one,
-        # max_frequency filter one
+        # max_frequency filter one raising ValueError
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue']},
                           index=pd.Index(['S1', 'S2'], name='id'))
@@ -644,12 +725,22 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "Subject='subject-1'"
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_samples(table,
+                           metadata=metadata,
+                           exclude_ids=True,
+                           where=where,
+                           max_frequency=4,
+                           min_frequency=3)
+
+        # allow empty table
         actual = filter_samples(table,
                                 metadata=metadata,
                                 exclude_ids=True,
                                 where=where,
                                 max_frequency=4,
-                                min_frequency=3)
+                                min_frequency=3,
+                                allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
     def test_combine_exclude_ids_and_features_filters(self):
@@ -773,7 +864,7 @@ class FilterSamplesTests(unittest.TestCase):
         self.assertEqual(actual, expected)
 
         # exclude one, max_features filter one,
-        # min_features filter one
+        # min_features filter one raising ValueError
         df = pd.DataFrame({'Subject': ['subject-1'],
                            'SampleType': ['gut']},
                           index=pd.Index(['S2'], name='id'))
@@ -781,16 +872,23 @@ class FilterSamplesTests(unittest.TestCase):
         table = Table(np.array([[0, 1, 3], [0, 1, 2]]),
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_samples(table,
+                           metadata=metadata,
+                           exclude_ids=True,
+                           min_features=1,
+                           max_features=1)
+        # allow empty table
         actual = filter_samples(table,
                                 metadata=metadata,
                                 exclude_ids=True,
                                 min_features=1,
-                                max_features=1)
-        self.assertTrue(actual.is_empty())
+                                max_features=1,
+                                allow_empty_table=True)
 
         # where filter one -> exclude one,
         # max_features filter one,
-        # min_features filter one
+        # min_features filter one raising ValueError
         df = pd.DataFrame({'Subject': ['subject-1', 'subject-2'],
                            'SampleType': ['gut', 'tongue']},
                           index=pd.Index(['S1', 'S2'], name='id'))
@@ -799,12 +897,22 @@ class FilterSamplesTests(unittest.TestCase):
                       ['O1', 'O2'],
                       ['S1', 'S2', 'S3'])
         where = "SampleType='tongue'"
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_samples(table,
+                           metadata=metadata,
+                           where=where,
+                           exclude_ids=True,
+                           min_features=1,
+                           max_features=1)
+
+        # allow empty table
         actual = filter_samples(table,
                                 metadata=metadata,
                                 where=where,
                                 exclude_ids=True,
                                 min_features=1,
-                                max_features=1)
+                                max_features=1,
+                                allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
 

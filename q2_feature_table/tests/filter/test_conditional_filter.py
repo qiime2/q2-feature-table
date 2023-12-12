@@ -40,6 +40,36 @@ class TestConditional(unittest.TestCase):
         npt.assert_array_equal(known.ids(axis='observation'),
                                test_.ids(axis='observation'))
 
+    def test_allow_empty_table_true(self):
+        table = biom.Table(
+            data=np.array([[0,   0,  10,   0,   0],
+                           [250, 250, 140,  90, 150],
+                           [250,  25, 100, 200, 100],
+                           [0, 225, 250, 210, 250]]),
+            sample_ids=['A', 'B', 'C', 'D', 'E'],
+            observation_ids=['bat', 'cat', 'rat', 'a-tat-tat']
+            )
+        test_ = filter_features_conditionally(table,
+                                              prevalence=0.9,
+                                              abundance=0.9,
+                                              allow_empty_table=True)
+        self.assertTrue(test_.is_empty())
+
+    def test_allow_empty_table_false(self):
+        table = biom.Table(
+            data=np.array([[0,   0,  10,   0,   0],
+                           [250, 250, 140,  90, 150],
+                           [250,  25, 100, 200, 100],
+                           [0, 225, 250, 210, 250]]),
+            sample_ids=['A', 'B', 'C', 'D', 'E'],
+            observation_ids=['bat', 'cat', 'rat', 'a-tat-tat']
+            )
+        with self.assertRaisesRegex(ValueError, 'table is empty'):
+            filter_features_conditionally(table,
+                                          prevalence=0.9,
+                                          abundance=0.9,
+                                          allow_empty_table=False)
+
 
 if __name__ == "__main__":
     unittest.main()

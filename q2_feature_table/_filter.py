@@ -12,6 +12,14 @@ import numpy as np
 import pandas as pd
 
 
+def _validate_nonempty_table(table):
+    if table.is_empty():
+        raise ValueError("The resulting table is empty. This can happen if "
+                         "you filter all samples or features out of the "
+                         "table. Please check your filtering parameters and "
+                         "try again.")
+
+
 def _get_biom_filter_function(ids_to_keep, min_frequency, max_frequency,
                               min_nonzero, max_nonzero):
     ids_to_keep = set(ids_to_keep)
@@ -32,7 +40,8 @@ _other_axis_map = {'sample': 'observation', 'observation': 'sample'}
 
 def _filter_table(table, min_frequency, max_frequency, min_nonzero,
                   max_nonzero, metadata, where, axis, exclude_ids=False,
-                  filter_opposite_axis=True):
+                  filter_opposite_axis=True,
+                  allow_empty_table=False):
     if min_frequency == 0 and max_frequency is None and min_nonzero == 0 and\
        max_nonzero is None and metadata is None and where is None and\
        exclude_ids is False:
@@ -62,20 +71,25 @@ def _filter_table(table, min_frequency, max_frequency, min_nonzero,
             max_frequency=None, min_nonzero=1, max_nonzero=None)
         table.filter(filter_fn2, axis=_other_axis_map[axis], inplace=True)
 
+    if not allow_empty_table:
+        _validate_nonempty_table(table)
+
 
 def filter_samples(table: biom.Table, min_frequency: int = 0,
                    max_frequency: int = None, min_features: int = 0,
                    max_features: int = None,
                    metadata: qiime2.Metadata = None, where: str = None,
                    exclude_ids: bool = False,
-                   filter_empty_features: bool = True)\
+                   filter_empty_features: bool = True,
+                   allow_empty_table: bool = False)\
                   -> biom.Table:
     _filter_table(table=table, min_frequency=min_frequency,
                   max_frequency=max_frequency, min_nonzero=min_features,
                   max_nonzero=max_features, metadata=metadata,
                   where=where, axis='sample', exclude_ids=exclude_ids,
-                  filter_opposite_axis=filter_empty_features)
-
+                  filter_opposite_axis=filter_empty_features,
+                  allow_empty_table=allow_empty_table
+                  )
     return table
 
 
@@ -84,20 +98,23 @@ def filter_features(table: biom.Table, min_frequency: int = 0,
                     max_samples: int = None,
                     metadata: qiime2.Metadata = None, where: str = None,
                     exclude_ids: bool = False,
-                    filter_empty_samples: bool = True)\
+                    filter_empty_samples: bool = True,
+                    allow_empty_table: bool = False)\
                    -> biom.Table:
     _filter_table(table=table, min_frequency=min_frequency,
                   max_frequency=max_frequency, min_nonzero=min_samples,
                   max_nonzero=max_samples, metadata=metadata,
                   where=where, axis='observation', exclude_ids=exclude_ids,
-                  filter_opposite_axis=filter_empty_samples)
+                  filter_opposite_axis=filter_empty_samples,
+                  allow_empty_table=allow_empty_table)
 
     return table
 
 
 def filter_seqs(data: pd.Series, table: biom.Table = None,
                 metadata: qiime2.Metadata = None, where: str = None,
-                exclude_ids: bool = False) -> pd.Series:
+                exclude_ids: bool = False,
+                ) -> pd.Series:
     if table is not None and metadata is not None:
         raise ValueError('Filtering with metadata and filtering with a table '
                          'are mutually exclusive.')
@@ -116,12 +133,14 @@ def filter_seqs(data: pd.Series, table: biom.Table = None,
     filtered = data[data.index.isin(ids_to_keep)]
     if filtered.empty is True:
         raise ValueError('All features were filtered out of the data.')
+
     return filtered
 
 
 def filter_features_conditionally(table: biom.Table,
                                   abundance: float,
                                   prevalence: float,
+                                  allow_empty_table: bool = False
                                   ) -> biom.Table:
     """
     A function to perform joint filtering because it makes life better
@@ -142,5 +161,8 @@ def filter_features_conditionally(table: biom.Table,
     filter_ids = table_norm.ids(axis='observation')
 
     new_table = table.filter(filter_ids, axis='observation', inplace=False)
+
+    if not allow_empty_table:
+        _validate_nonempty_table(new_table)
 
     return new_table
