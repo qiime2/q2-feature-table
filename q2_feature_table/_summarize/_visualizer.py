@@ -373,16 +373,13 @@ def is_integer(x):
 def _frequency_summary(table: biom.Table, axis='sample'):
     frequencies = _frequencies(table, axis=axis)
 
-    table = table.to_dataframe()
+    nonzeros = table.matrix_data.data
 
     _round = True
 
-    for _, row in table.iterrows():
-        for idx in row:
-            if not is_integer(idx):
-                _round = False
-                break
-        if not _round:
+    for item in nonzeros:
+        if not is_integer(item):
+            _round = False
             break
 
     first = frequencies.quantile(0.25)
