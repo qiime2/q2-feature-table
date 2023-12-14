@@ -373,27 +373,14 @@ def is_integer(x):
 def _frequency_summary(table: biom.Table, axis='sample'):
     frequencies = _frequencies(table, axis=axis)
 
-    nonzeros = table.matrix_data.data
-
-    _round = True
-
-    for item in nonzeros:
-        if not is_integer(item):
-            _round = False
-            break
-
     first = frequencies.quantile(0.25)
     third = frequencies.quantile(0.75)
-    _fst = round(first, 1) if _round else round(first, 4)
-    _min = round(frequencies.min(), 1) if _round else round(
-        frequencies.min(), 4)
-    _thd = round(third, 1) if _round else round(third, 4)
-    _med = round(frequencies.median(), 1) if _round else round(
-        frequencies.median(), 4)
-    _max = round(frequencies.max(), 1) if _round else round(
-        frequencies.max(), 4)
-    mean = round(frequencies.mean(), 1) if _round else round(
-        frequencies.mean(), 4)
+    _fst = round(first, 1)
+    _min = round(frequencies.min(), 1)
+    _thd = round(third, 1)
+    _med = round(frequencies.median(), 1)
+    _max = round(frequencies.max(), 1)
+    mean = round(frequencies.mean(), 1)
 
     summary = pd.Series([_min, _fst,
                          _med, _thd,
