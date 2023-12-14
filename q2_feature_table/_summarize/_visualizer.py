@@ -361,15 +361,6 @@ def _frequencies(table, axis):
     return pd.Series(data=table.sum(axis=axis), index=table.ids(axis=axis))
 
 
-def is_integer(x):
-    if isinstance(x, int):
-        return True
-    elif isinstance(x, float):
-        return x.is_integer()
-    else:
-        return False
-
-
 def _frequency_summary(table: biom.Table, axis='sample'):
     frequencies = _frequencies(table, axis=axis)
 
