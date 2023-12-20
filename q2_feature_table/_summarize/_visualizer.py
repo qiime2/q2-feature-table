@@ -99,6 +99,7 @@ def summarize(output_dir: str, table: biom.Table,
 
     sample_summary, sample_frequencies = _frequency_summary(
         table, axis='sample')
+
     if number_of_samples > 1:
 
         # Calculate the bin count, with a minimum of 5 bins
@@ -166,6 +167,10 @@ def summarize(output_dir: str, table: biom.Table,
 
     feature_qualitative_data = _compute_qualitative_summary(table)
     sample_frequencies.sort_values(inplace=True, ascending=False)
+
+    sample_frequencies_json = pd.Series(["{:,}".format(int(x)) for x in
+                                         sample_frequencies])
+
     feature_frequencies.sort_values(inplace=True, ascending=False)
 
     feature_frequencies = feature_frequencies.astype(int) \
@@ -190,7 +195,7 @@ def summarize(output_dir: str, table: biom.Table,
 
     # Create a JSON object containing the Sample Frequencies to build the
     # table in sample-frequency-detail.html
-    sample_frequencies_json = sample_frequencies.to_json()
+    sample_frequencies_json = sample_frequencies_json.to_json()
 
     templates = [index, sample_frequency_template, feature_frequency_template]
     context.update({'frequencies_list':
@@ -356,12 +361,21 @@ def _frequencies(table, axis):
     return pd.Series(data=table.sum(axis=axis), index=table.ids(axis=axis))
 
 
-def _frequency_summary(table, axis='sample'):
+def _frequency_summary(table: biom.Table, axis='sample'):
     frequencies = _frequencies(table, axis=axis)
 
-    summary = pd.Series([frequencies.min(), frequencies.quantile(0.25),
-                         frequencies.median(), frequencies.quantile(0.75),
-                         frequencies.max(), frequencies.mean()],
+    first = frequencies.quantile(0.25)
+    third = frequencies.quantile(0.75)
+    _fst = round(first, 1)
+    _min = round(frequencies.min(), 1)
+    _thd = round(third, 1)
+    _med = round(frequencies.median(), 1)
+    _max = round(frequencies.max(), 1)
+    mean = round(frequencies.mean(), 1)
+
+    summary = pd.Series([_min, _fst,
+                         _med, _thd,
+                         _max, mean],
                         index=['Minimum frequency', '1st quartile',
                                'Median frequency', '3rd quartile',
                                'Maximum frequency', 'Mean frequency'])
