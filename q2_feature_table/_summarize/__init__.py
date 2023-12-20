@@ -6,6 +6,12 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from ._visualizer import (summarize, tabulate_seqs)
+from ._visualizer import (summarize, tabulate_seqs,
+                          tabulate_feature_frequencies,
+                          tabulate_sample_frequencies,
+                          summarize_plus)
 
-__all__ = ['summarize', 'tabulate_seqs']
+__all__ = ['summarize', 'tabulate_seqs',
+           'tabulate_feature_frequencies',
+           'tabulate_sample_frequencies',
+           'summarize_plus']
