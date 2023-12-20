@@ -69,8 +69,8 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
                     member.index)
             elif merge_method == 'strict':
                 if set(member.index) != display_sequences:
-                    raise Exception('Merge method is strict and IDs do not \
-                        match')
+                    raise Exception(
+                                'Merge method is strict and IDs do not match')
 
     seq_len_stats = _compute_descriptive_stats(seq_lengths)
     _write_tsvs_of_descriptive_stats(seq_len_stats, output_dir)
