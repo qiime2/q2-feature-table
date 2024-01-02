@@ -84,7 +84,7 @@ class SubsampleTests(TestCase):
 class SubsampleIdsTests(TestCase):
 
     def test_subsample_ids(self):
-        t = np.array([[0, 1, 3], [1, 1, 2]]),['O1', 'O2'],['S1', 'S2', 'S3']
+        t = np.array([[0, 1, 3], [1, 1, 2]]), ['O1', 'O2'], ['S1', 'S2', 'S3']
         a = subsample_ids(t, 2, 'sample')
         self.assertEqual(a.shape, (2, 2))
 
