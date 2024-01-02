@@ -21,7 +21,7 @@ def subsample_ids(table: biom.Table, subsampling_depth: int,
                          'is: %d.' % len(table.ids()))
 
     # the axis is always 'sample' due to the above transpose
-    table = table.subsample_ids(subsampling_depth, axis='sample', by_id=True)
+    table = table.subsample(subsampling_depth, axis='sample', by_id=True)
 
     # the inverted axis is always observation due to the above transpose
     invaxis = 'observation'

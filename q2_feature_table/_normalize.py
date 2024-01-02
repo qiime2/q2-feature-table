@@ -14,8 +14,8 @@ def rarefy(table: biom.Table, sampling_depth: int,
     if with_replacement:
         table = table.filter(lambda v, i, m: v.sum() >= sampling_depth,
                              inplace=False, axis='sample')
-    table = table.subsample_ids(sampling_depth, axis='sample', by_id=False,
-                                with_replacement=with_replacement)
+    table = table.subsample(sampling_depth, axis='sample', by_id=False,
+                            with_replacement=with_replacement)
 
     if table.is_empty():
         raise ValueError('The rarefied table contains no samples or features. '
