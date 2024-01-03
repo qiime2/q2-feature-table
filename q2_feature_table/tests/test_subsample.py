@@ -11,7 +11,6 @@ from unittest import TestCase, main
 import numpy as np
 import numpy.testing as npt
 from biom.table import Table
-from biom.table import subsample
 
 from q2_feature_table import subsample_ids
 
@@ -22,7 +21,7 @@ class SubsampleTests(TestCase):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                   ['O1', 'O2'],
                   ['S1', 'S2', 'S3'])
-        a = subsample(t, 2, 'sample')
+        a = subsample_ids(t, 2, 'sample')
         self.assertEqual(a.shape, (2, 2))
 
         sample_ids = frozenset(a.ids(axis='sample'))
@@ -39,7 +38,7 @@ class SubsampleTests(TestCase):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]).T,
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
-        a = subsample(t, 2, 'feature')
+        a = subsample_ids(t, 2, 'feature')
         self.assertEqual(a.shape, (2, 2))
 
         sample_ids = frozenset(a.ids(axis='observation'))
@@ -57,46 +56,28 @@ class SubsampleTests(TestCase):
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
         with self.assertRaisesRegex(ValueError, "depth exceeds"):
-            subsample(t, 10, 'sample')
+            subsample_ids(t, 10, 'sample')
 
     def test_subsample_features_oversample(self):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]).T,
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
         with self.assertRaisesRegex(ValueError, "depth exceeds"):
-            subsample(t, 10, 'feature')
+            subsample_ids(t, 10, 'feature')
 
     def test_subsample_samples_empty(self):
         t = Table(np.array([[0, 0, 0], [0, 0, 0]]).T,
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
         with self.assertRaisesRegex(ValueError, "contains no"):
-            subsample(t, 2, 'sample')
+            subsample_ids(t, 2, 'sample')
 
     def test_subsample_features_empty(self):
         t = Table(np.array([[0, 0, 0], [0, 0, 0]]).T,
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
         with self.assertRaisesRegex(ValueError, "contains no"):
-            subsample(t, 2, 'feature')
-
-
-class SubsampleIdsTests(TestCase):
-
-    def test_subsample_ids(self):
-        t = np.array([[0, 1, 3], [1, 1, 2]]), ['O1', 'O2'], ['S1', 'S2', 'S3']
-        a = subsample_ids(t, 2, 'sample')
-        self.assertEqual(a.shape, (2, 2))
-
-        sample_ids = frozenset(a.ids(axis='sample'))
-        self.assertIn(sample_ids, set([frozenset(['S1', 'S2']),
-                                       frozenset(['S1', 'S3']),
-                                       frozenset(['S2', 'S3'])]))
-        self.assertEqual(set(a.ids(axis='observation')), set(['O1', 'O2']))
-
-        for i in a.ids(axis='sample'):
-            npt.assert_equal(t.data(i, axis='sample'),
-                             a.data(i, axis='sample'))
+            subsample_ids(t, 2, 'feature')
 
 
 if __name__ == "__main__":
