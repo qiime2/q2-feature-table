@@ -58,7 +58,7 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
-    function=q2_feature_table.subsample,
+    function=q2_feature_table.subsample_ids,
     inputs={'table': FeatureTable[Frequency]},
     parameters={'subsampling_depth': Int % Range(1, None),
                 'axis': Str % Choices(['sample', 'feature'])},

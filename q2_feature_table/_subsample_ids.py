@@ -9,8 +9,8 @@
 import biom
 
 
-def subsample(table: biom.Table, subsampling_depth: int,
-              axis: str) -> biom.Table:
+def subsample_ids(table: biom.Table, subsampling_depth: int,
+                  axis: str) -> biom.Table:
     if axis == 'feature':
         # we are transposing the table due to biocore/biom-format#759
         table = table.transpose()
