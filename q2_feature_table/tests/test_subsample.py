@@ -15,7 +15,7 @@ from biom.table import Table
 from q2_feature_table import subsample_ids
 
 
-class SubsampleTests(TestCase):
+class SubsampleIDsTests(TestCase):
 
     def test_subsample_samples(self):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
