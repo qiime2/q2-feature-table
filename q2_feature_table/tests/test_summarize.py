@@ -387,12 +387,18 @@ class SummarizeTests(TestCase):
             sample_frequency_fp = os.path.join(output_dir,
                                                'sample-frequency-detail.html')
             self.assertTrue(os.path.exists(sample_frequency_fp))
+            re.DOTALL = True
+
+            rx = (r'<script id="table-data" type="application/json">' +
+                  r'\n\{[^}]*\}\n</script>')
 
             with open(sample_frequency_fp) as fi:
                 text = fi.read()
-                tbl_rx = re.compile(
-                    r'\{*[(S3)(S2)(S3)]*[(S3)(S2)(S3)]*[(S3)(S2)(S3)]*\}')
-                self.assertTrue(tbl_rx.search(text))
+                tbl_rx = re.compile(rx)
+                tbl = tbl_rx.findall(text)[0].split('\n')[1].strip()
+
+                df = pd.read_json(tbl)
+                print(df)
 
     def test_frequency_ranges_are_zero(self):
         table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
