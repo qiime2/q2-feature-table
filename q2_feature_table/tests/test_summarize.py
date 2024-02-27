@@ -10,6 +10,7 @@ import os
 from unittest import TestCase, main
 import tempfile
 import re
+import json
 
 import skbio
 import biom
@@ -397,8 +398,11 @@ class SummarizeTests(TestCase):
                 tbl_rx = re.compile(rx)
                 tbl = tbl_rx.findall(text)[0].split('\n')[1].strip()
 
-                df = pd.read_json(tbl)
-                print(df)
+                sample_ids = json.loads(tbl).keys()
+
+                self.assertTrue('S1' in sample_ids)
+                self.assertTrue('S2' in sample_ids)
+                self.assertTrue('S3' in sample_ids)
 
     def test_frequency_ranges_are_zero(self):
         table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
