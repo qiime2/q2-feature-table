@@ -169,7 +169,8 @@ def summarize(output_dir: str, table: biom.Table,
     sample_frequencies.sort_values(inplace=True, ascending=False)
 
     sample_frequencies_json = pd.Series(["{:,}".format(int(x)) for x in
-                                         sample_frequencies])
+                                         sample_frequencies],
+                                        index=sample_frequencies.index)
 
     feature_frequencies.sort_values(inplace=True, ascending=False)
 
