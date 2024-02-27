@@ -383,6 +383,16 @@ class SummarizeTests(TestCase):
             index_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(index_fp))
 
+            sample_frequency_fp = os.path.join(output_dir,
+                                               'sample-frequency-detail.html')
+            self.assertTrue(os.path.exists(sample_frequency_fp))
+
+            with open(sample_frequency_fp) as sp:
+                text = sp.read()
+                self.assertTrue('S1' in text)
+                self.assertTrue('S2' in text)
+                self.assertTrue('S3' in text)
+
     def test_frequency_ranges_are_zero(self):
         table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
                            ['O1', 'O2'],
