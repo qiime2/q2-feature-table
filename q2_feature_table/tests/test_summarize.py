@@ -9,6 +9,7 @@
 import os
 from unittest import TestCase, main
 import tempfile
+import re
 
 import skbio
 import biom
@@ -387,11 +388,11 @@ class SummarizeTests(TestCase):
                                                'sample-frequency-detail.html')
             self.assertTrue(os.path.exists(sample_frequency_fp))
 
-            with open(sample_frequency_fp) as sp:
-                text = sp.read()
-                self.assertTrue('S1' in text)
-                self.assertTrue('S2' in text)
-                self.assertTrue('S3' in text)
+            with open(sample_frequency_fp) as fi:
+                text = fi.read()
+                tbl_rx = re.compile(
+                    r'\{*[(S3)(S2)(S3)]*[(S3)(S2)(S3)]*[(S3)(S2)(S3)]*\}')
+                self.assertTrue(tbl_rx.search(text))
 
     def test_frequency_ranges_are_zero(self):
         table = biom.Table(np.array([[25, 25, 25], [25, 25, 25]]),
