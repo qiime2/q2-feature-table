@@ -183,16 +183,16 @@
     // opposed to the numerical value "1234", so in order to compare these
     // based on numerical value we get rid of the commas and cast to int in
     // order to subtract normally
-    var _a = parseInt(sampleFrequency[a].replaceAll(",", ""), 10);
-    var _b = parseInt(sampleFrequency[b].replaceAll(",", ""), 10);
-    var temp = _a - _b;
+    const aVal = strToInt(sampleFrequency[a]);
+    const bVal = strToInt(sampleFrequency[b]);
+    const diff = aVal - bVal;
     // if two samples have the same number of features then we
     // determine the order using the sample ID alphabetical order
-    if (temp == 0){
+    if (diff == 0){
       return b.localeCompare(a);
     }
 
-    return temp;
+    return diff;
   });
 
   sortedSampleIDs.forEach(function(element) {
@@ -205,26 +205,28 @@
   });
 
 
-  function updateTableandText(val) {
+  function updateTableandText(samplingDepth) {
     var retainedSampleCount = 0;
 
     // start the counter at 1 to ignore the header row
     for (var i = 1; row = table.rows[i]; i++) {
+      let sampleFrequency = row.cells[1].innerHTML;
+      sampleFrequency = strToInt(sampleFrequency)
 
-      if (Number(row.cells[1].innerHTML) < val) {
+      if (sampleFrequency < samplingDepth) {
         row.className = "danger";
       } else {
         row.className = "";
         retainedSampleCount += 1;
       }
     }
-    if (val == 0){
+    if (samplingDepth == 0){
 
     textField.innerHTML = defaultDescription;
 
     }
     else{
-      var retainedFeatureCount = retainedSampleCount * val;
+      var retainedFeatureCount = retainedSampleCount * samplingDepth;
       textField.innerHTML = "Retained " + retainedFeatureCount.toLocaleString('en')
                                         + " (" + (retainedFeatureCount/totalFrequencies*100).toFixed(2) + "%) features in "
                                         + retainedSampleCount + " (" + (retainedSampleCount/sampleCount*100).toFixed(2)
@@ -251,7 +253,6 @@
   function sliderHelperFunction(val){
     updateBoxVal(val);
     updateTableandText(val);
-
   }
 
 
@@ -267,6 +268,11 @@
       num.value = {{max_count}};
     }
     updateSliderVal(val);
+  }
+
+  // Parse a string that may contain commas into a base 10 integer
+  function strToInt(val) {
+    return parseInt(val.replaceAll(",", ""), 10);
   }
 </script>
 
