@@ -165,13 +165,14 @@ def summarize(output_dir: str, table: biom.Table,
         'feature_summary_table': feature_summary_table,
     }
 
+    # Create a JSON object containing the Sample Frequencies to build the
+    # table in sample-frequency-detail.html
+    #
+    # Cast to DataFrame to standardize with other tables
+    sample_frequencies_json = pd.DataFrame(
+        sample_frequencies, columns=['Frequency']).to_json()
+
     feature_qualitative_data = _compute_qualitative_summary(table)
-    sample_frequencies.sort_values(inplace=True, ascending=False)
-
-    sample_frequencies_json = pd.Series(["{:,}".format(int(x)) for x in
-                                         sample_frequencies],
-                                        index=sample_frequencies.index)
-
     feature_frequencies.sort_values(inplace=True, ascending=False)
 
     feature_frequencies = feature_frequencies.astype(int) \
@@ -194,10 +195,6 @@ def summarize(output_dir: str, table: biom.Table,
                              {'url': 'feature-frequency-detail.html',
                               'title': 'Feature Detail'}]})
 
-    # Create a JSON object containing the Sample Frequencies to build the
-    # table in sample-frequency-detail.html
-    sample_frequencies_json = sample_frequencies_json.to_json()
-
     templates = [index, sample_frequency_template, feature_frequency_template]
     context.update({'frequencies_list':
                     json.dumps(sorted(sample_frequencies.values.tolist()))})
@@ -211,6 +208,10 @@ def summarize(output_dir: str, table: biom.Table,
     q2templates.util.copy_assets(os.path.join(TEMPLATES,
                                               'summarize_assets',
                                               'vega'),
+                                 output_dir)
+    q2templates.util.copy_assets(os.path.join(TEMPLATES,
+                                              'summarize_assets',
+                                              'utils'),
                                  output_dir)
     q2templates.render(templates, output_dir, context=context)
 
