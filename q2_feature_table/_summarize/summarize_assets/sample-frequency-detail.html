@@ -181,14 +181,7 @@
   // get object keys and store them in an ascending order based on the key value
   // this order is used to create the table rows
   sortedSampleIDs = Object.keys(sampleFrequencies).sort(function(a, b) {
-    const diff = sampleFrequencies[a] - sampleFrequencies[b];
-    // if two samples have the same number of features then we
-    // determine the order using the sample ID alphabetical order
-    if (diff == 0){
-      return b.localeCompare(a);
-    }
-
-    return diff;
+    return sortIDs(a, b, sampleFrequencies)
   });
 
   formatTable(tableBody, sampleTable, sortedSampleIDs);
