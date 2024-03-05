@@ -396,7 +396,7 @@ class SummarizeTests(TestCase):
                 tbl_rx = re.compile(rx)
                 tbl = tbl_rx.findall(text)[0].split('\n')[1].strip()
 
-                sample_ids = json.loads(tbl).keys()
+                sample_ids = json.loads(tbl)['Frequency'].keys()
 
                 self.assertTrue('S1' in sample_ids)
                 self.assertTrue('S2' in sample_ids)
