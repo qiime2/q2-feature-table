@@ -151,41 +151,42 @@ def summarize(output_dir: str, table: biom.Table,
         feature_frequencies_ax.get_figure().savefig(
             os.path.join(output_dir, 'feature-frequencies.png'))
 
-    sample_summary_table = q2templates.df_to_html(
-        sample_summary.apply('{:,}'.format).to_frame('Frequency'))
-    feature_summary_table = q2templates.df_to_html(
-        feature_summary.apply('{:,}'.format).to_frame('Frequency'))
+    sample_summary_json = pd.DataFrame(
+        sample_summary, columns=['Frequency']).to_json()
+    feature_summary_json = pd.DataFrame(
+        feature_summary, columns=['Frequency']).to_json()
 
     index = os.path.join(TEMPLATES, 'summarize_assets', 'index.html')
     context = {
         'number_of_samples': number_of_samples,
         'number_of_features': number_of_features,
         'total_frequencies': int(np.sum(sample_frequencies)),
-        'sample_summary_table': sample_summary_table,
-        'feature_summary_table': feature_summary_table,
+        'sample_summary_table': sample_summary_json,
+        'feature_summary_table': feature_summary_json,
     }
 
+    # Create a JSON object containing the Sample Frequencies to build the
+    # table in sample-frequency-detail.html
+    #
+    # Cast to DataFrame to standardize with other tables
+    sample_frequencies_json = pd.DataFrame(
+        sample_frequencies, columns=['Frequency']).to_json()
+
+    # Create a JSON object containing the Feature Frequencies to build the
+    # table in feature-frequency-detail.html
     feature_qualitative_data = _compute_qualitative_summary(table)
-    sample_frequencies.sort_values(inplace=True, ascending=False)
-
-    sample_frequencies_json = pd.Series(["{:,}".format(int(x)) for x in
-                                         sample_frequencies],
-                                        index=sample_frequencies.index)
-
-    feature_frequencies.sort_values(inplace=True, ascending=False)
-
-    feature_frequencies = feature_frequencies.astype(int) \
-        .apply('{:,}'.format).to_frame('Frequency')
+    feature_frequencies = feature_frequencies.astype(int).to_frame('Frequency')
     feature_frequencies['# of Samples Observed In'] = \
-        pd.Series(feature_qualitative_data).astype(int).apply('{:,}'.format)
-    feature_frequencies_table = q2templates.df_to_html(feature_frequencies)
+        pd.Series(feature_qualitative_data).astype(int)
+    feature_frequencies_json = feature_frequencies.to_json()
+
     sample_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'sample-frequency-detail.html')
     feature_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'feature-frequency-detail.html')
 
     context.update({'max_count': sample_frequencies.max(),
-                    'feature_frequencies_table': feature_frequencies_table,
+                    'feature_frequencies_json': feature_frequencies_json,
                     'feature_qualitative_data': feature_qualitative_data,
                     'tabs': [{'url': 'index.html',
                               'title': 'Overview'},
@@ -193,10 +194,6 @@ def summarize(output_dir: str, table: biom.Table,
                               'title': 'Interactive Sample Detail'},
                              {'url': 'feature-frequency-detail.html',
                               'title': 'Feature Detail'}]})
-
-    # Create a JSON object containing the Sample Frequencies to build the
-    # table in sample-frequency-detail.html
-    sample_frequencies_json = sample_frequencies_json.to_json()
 
     templates = [index, sample_frequency_template, feature_frequency_template]
     context.update({'frequencies_list':
@@ -211,6 +208,10 @@ def summarize(output_dir: str, table: biom.Table,
     q2templates.util.copy_assets(os.path.join(TEMPLATES,
                                               'summarize_assets',
                                               'vega'),
+                                 output_dir)
+    q2templates.util.copy_assets(os.path.join(TEMPLATES,
+                                              'summarize_assets',
+                                              'utils'),
                                  output_dir)
     q2templates.render(templates, output_dir, context=context)
 
