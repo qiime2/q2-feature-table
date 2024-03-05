@@ -172,21 +172,21 @@ def summarize(output_dir: str, table: biom.Table,
     sample_frequencies_json = pd.DataFrame(
         sample_frequencies, columns=['Frequency']).to_json()
 
+    # Create a JSON object containing the Feature Frequencies to build the
+    # table in feature-frequency-detail.html
     feature_qualitative_data = _compute_qualitative_summary(table)
-    feature_frequencies.sort_values(inplace=True, ascending=False)
-
-    feature_frequencies = feature_frequencies.astype(int) \
-        .apply('{:,}'.format).to_frame('Frequency')
+    feature_frequencies = feature_frequencies.astype(int).to_frame('Frequency')
     feature_frequencies['# of Samples Observed In'] = \
-        pd.Series(feature_qualitative_data).astype(int).apply('{:,}'.format)
-    feature_frequencies_table = q2templates.df_to_html(feature_frequencies)
+        pd.Series(feature_qualitative_data).astype(int)
+    feature_frequencies_json = feature_frequencies.to_json()
+
     sample_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'sample-frequency-detail.html')
     feature_frequency_template = os.path.join(
         TEMPLATES, 'summarize_assets', 'feature-frequency-detail.html')
 
     context.update({'max_count': sample_frequencies.max(),
-                    'feature_frequencies_table': feature_frequencies_table,
+                    'feature_frequencies_json': feature_frequencies_json,
                     'feature_qualitative_data': feature_qualitative_data,
                     'tabs': [{'url': 'index.html',
                               'title': 'Overview'},

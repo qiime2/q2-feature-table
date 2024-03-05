@@ -1,9 +1,38 @@
-{% extends "tabbed.html" %}
-
+{% extends "tabbed.html" %} {% block head %}
+<script src="util.js"></script> {% endblock %}
 {% block tabcontent %}
-  <div class="row">
+
+<div class="row">
+  <div class="col-lg-12">
     <div class="col-lg-12">
-      {{ feature_frequencies_table }}
+      <table class="dataframe table table-striped table-hover" border="0">
+        <thead>
+          <tr style="text-align: right;">
+            <th></th>
+            <th>Frequency</th>
+            <th># of Samples Observed In</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
     </div>
   </div>
+</div>
+
+<script id="table-data" type="application/json">
+{{ feature_frequencies_json }}
+</script>
+
+<script type="text/javascript">
+  const tableBody = document.getElementById("table-body");
+  const tableData = JSON.parse(document.getElementById("table-data").innerHTML);
+  const featureFrequencies = tableData["Frequency"];
+
+  const sortedFeatureIDs = Object.keys(featureFrequencies).sort(function(a, b) {
+    return sortIDs(a, b, featureFrequencies)
+  });
+
+  formatTable(tableBody, tableData, sortedFeatureIDs);
+</script>
+
 {% endblock %}
