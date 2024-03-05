@@ -388,7 +388,6 @@ class SummarizeTests(TestCase):
             sample_frequency_fp = os.path.join(output_dir,
                                                'sample-frequency-detail.html')
             self.assertTrue(os.path.exists(sample_frequency_fp))
-
             rx = (r'<script id="table-data" type="application/json">' +
                   r'\n.*[^}]*.*\n</script>')
 
