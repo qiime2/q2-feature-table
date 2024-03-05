@@ -22,6 +22,7 @@ setup(
                       'summarize_assets/vega/licenses/*',
                       'summarize_assets/vega/js/*',
                       'summarize_assets/vega/css/*',
+                      'summarize_assets/utils/*',
                       'tabulate_seqs_assets/js/*',
                       'tabulate_seqs_assets/index.html'],
                   'q2_feature_table._core_features': [
