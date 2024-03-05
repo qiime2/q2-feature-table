@@ -4,6 +4,9 @@ const formatter = new Intl.NumberFormat({numberingSystem: "latn"})
 
 
 function formatTable(tableBody, data, sortedKeys) {
+    console.log(tableBody)
+    console.log(data)
+    console.log(sortedKeys)
     for (const key of sortedKeys) {
         let colIdx = 1;
         let row = tableBody.insertRow(0);

@@ -151,18 +151,18 @@ def summarize(output_dir: str, table: biom.Table,
         feature_frequencies_ax.get_figure().savefig(
             os.path.join(output_dir, 'feature-frequencies.png'))
 
-    sample_summary_table = q2templates.df_to_html(
-        sample_summary.apply('{:,}'.format).to_frame('Frequency'))
-    feature_summary_table = q2templates.df_to_html(
-        feature_summary.apply('{:,}'.format).to_frame('Frequency'))
+    sample_summary_json = pd.DataFrame(
+        sample_summary, columns=['Frequency']).to_json()
+    feature_summary_json = pd.DataFrame(
+        feature_summary, columns=['Frequency']).to_json()
 
     index = os.path.join(TEMPLATES, 'summarize_assets', 'index.html')
     context = {
         'number_of_samples': number_of_samples,
         'number_of_features': number_of_features,
         'total_frequencies': int(np.sum(sample_frequencies)),
-        'sample_summary_table': sample_summary_table,
-        'feature_summary_table': feature_summary_table,
+        'sample_summary_table': sample_summary_json,
+        'feature_summary_table': feature_summary_json,
     }
 
     # Create a JSON object containing the Sample Frequencies to build the
