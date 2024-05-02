@@ -20,10 +20,8 @@ requirements:
     - python {{ python }}
     - scikit-bio {{ scikit_bio }}
     - biom-format {{ biom_format }}
-    - seaborn
-    # pinned here on 10.19.22 due to pkg int build failure on community
-    # due to matplotlib bug. will be resolved once 3.7.0 is released
-    - matplotlib =3.6.0
+    - seaborn {{ seaborn }}
+    - matplotlib {{ matplotlib }}
     - pandas {{ pandas }}
     - numpy
     # `ipywidgets` included to avoid ShimWarning from
