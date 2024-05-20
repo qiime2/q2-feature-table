@@ -191,8 +191,12 @@
 
     // start the counter at 1 to ignore the header row
     for (var i = 1; row = table.rows[i]; i++) {
-      let sampleFrequency = row.cells[1].innerText;
-      sampleFrequency = strToInt(sampleFrequency);
+      // The value in table is formatted as a string for display to the user,
+      // but the value in sampleFrequencies is formatted as an int for data
+      // manipulation, so we use the ID we are on in table to get the frequency
+      // fro sampleFrequencies.
+      const sampleID = sampleFrequencies[row.cells[0].innerText];
+      const sampleFrequency = sampleFrequencies[sampleID];
 
       if (sampleFrequency < samplingDepth) {
         row.className = "danger";
