@@ -195,7 +195,7 @@
       // but the value in sampleFrequencies is formatted as an int for data
       // manipulation, so we use the ID we are on in table to get the frequency
       // from sampleFrequencies.
-      const sampleID = sampleFrequencies[row.cells[0].innerText];
+      const sampleID = row.cells[0].innerText;
       const sampleFrequency = sampleFrequencies[sampleID];
 
       if (sampleFrequency < samplingDepth) {
