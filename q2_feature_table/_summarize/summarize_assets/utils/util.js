@@ -31,3 +31,9 @@ function sortIDs(a, b, data) {
 
     return diff;
 }
+
+
+// Parse a string that may contain commas into a base 10 integer
+function strToInt(val) {
+    return parseInt(val.replaceAll(",", ""), 10);
+}
