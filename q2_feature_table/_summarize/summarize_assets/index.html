@@ -1,5 +1,5 @@
-{% extends "tabbed.html" %}
-
+{% extends "tabbed.html" %} {% block head %}
+<script src="util.js"></script> {% endblock %}
 {% block tabcontent %}
 <div class="row">
   <div class="col-lg-12">
@@ -10,22 +10,22 @@
         <table class="table table-striped table-hover">
           <thead>
             <tr>
-              <th>Metric</th>
-              <th>Sample</th>
+              <th>Summary Statistic</th>
+              <th>Value</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <th scope="row">Number of samples</th>
-              <td>{{ "{:,}".format(number_of_samples) }}</td>
+              <td id="number-of-samples"></td>
             </tr>
             <tr>
               <th scope="row">Number of features</th>
-              <td>{{ "{:,}".format(number_of_features) }}</td>
+              <td id="number-of-features"></td>
             </tr>
             <tr>
               <th scope="row">Total frequency</th>
-              <td>{{ "{:,}".format(total_frequencies) }}</td>
+              <td id="total-frequency"></td>
             </tr>
           </tbody>
         </table>
@@ -36,7 +36,15 @@
 
     <div class="row">
       <div class="col-lg-6">
-        {{ sample_summary_table }}
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Frequency</th>
+            </tr>
+          </thead>
+          <tbody id="sample-table-body"></tbody>
+        </table>
       </div>
       {% if number_of_samples > 1 %}
       <div class="col-lg-6">
@@ -51,10 +59,19 @@
       {% endif %}
     </div>
 
+    <h1>Frequency per feature</h1>
+
     <div class="row">
       <div class="col-lg-6">
-        <h1>Frequency per feature</h1>
-        {{ feature_summary_table }}
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Frequency</th>
+            </tr>
+          </thead>
+          <tbody id="feature-table-body"></tbody>
+        </table>
       </div>
       {% if number_of_features > 1 %}
       <div class="col-lg-6">
@@ -70,4 +87,34 @@
     </div>
   </div>
 </div>
+
+<script id="sample-table-data" type="application/json">
+{{ sample_summary_table }}
+</script>
+
+<script id="feature-table-data" type="application/json">
+{{ feature_summary_table }}
+</script>
+
+<script type="text/javascript">
+  const numberOfSamples = document.getElementById("number-of-samples");
+  numberOfSamples.innerText = formatter.format({{number_of_samples}});
+
+  const numberOfFeatures = document.getElementById("number-of-features");
+  numberOfFeatures.innerText = formatter.format({{number_of_features}});
+
+  const totalFrequency = document.getElementById("total-frequency");
+  totalFrequency.innerText = formatter.format({{total_frequencies}});
+
+  const sampleTableBody = document.getElementById("sample-table-body");
+  const sampleTableData = JSON.parse(document.getElementById("sample-table-data").innerHTML);
+
+  formatTable(sampleTableBody, sampleTableData, Object.keys(sampleTableData["Frequency"]).reverse());
+
+  const featureTableBody = document.getElementById("feature-table-body");
+  const featureTableData = JSON.parse(document.getElementById("feature-table-data").innerHTML);
+
+  formatTable(featureTableBody, featureTableData, Object.keys(featureTableData["Frequency"]).reverse());
+</script>
+
 {% endblock %}
