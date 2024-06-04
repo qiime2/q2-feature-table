@@ -508,6 +508,67 @@ class SummarizeTests(TestCase):
 
         self.assertEqual(spec['data'][0]['values'], exp)
 
+    def test_summarize_viz(self):
+        from selenium import webdriver
+        from selenium.webdriver.chrome.options import Options
+        from selenium.webdriver.common.by import By
+
+        chrome_options = Options()
+        chrome_options.add_argument("--headless=new")
+        driver = webdriver.Chrome(options=chrome_options)
+
+        table = biom.Table(np.array([[0, 1, 3],
+                                     [1, 1, 2],
+                                     [400, 450, 500],
+                                     [1000, 10000, 100000],
+                                     [52, 42, 99]]),
+                           ['O1', 'O2', '03', '04', 'O5'],
+                           ['S1', 'S2', 'S3'])
+
+        with tempfile.TemporaryDirectory() as output_dir:
+            summarize(output_dir, table)
+            driver.get(
+                "file://"
+                f"{os.path.join(output_dir, 'sample-frequency-detail.html')}")
+
+            element_list = driver.find_element(
+                By.ID, 'table-body').find_elements(By.TAG_NAME, 'tr')
+            # Reverse this so the lower values are first
+            element_list.reverse()
+            input_element = driver.find_element(By.ID, 'text-box')
+
+            # Assert the table is correct
+            self.assertEqual(element_list[0].text, 'S1 1,453')
+            self.assertEqual(element_list[1].text, 'S2 10,494')
+            self.assertEqual(element_list[2].text, 'S3 100,604')
+
+            # None should have danger to begin
+            for element in element_list:
+                self.assertNotIn('danger', element.get_attribute('class'))
+
+            # There was already a 0 in the text box so this actually made the
+            # depth 10000 and so on for every other send
+            input_element.send_keys('1000')
+
+            self.assertIn('danger', element_list[0].get_attribute('class'))
+            self.assertNotIn('danger', element_list[1].get_attribute('class'))
+            self.assertNotIn('danger', element_list[2].get_attribute('class'))
+
+            input_element.send_keys('0')
+
+            self.assertIn('danger', element_list[0].get_attribute('class'))
+            self.assertIn('danger', element_list[1].get_attribute('class'))
+            self.assertNotIn('danger', element_list[2].get_attribute('class'))
+
+            # Ensure the box cannot go over the largest
+            input_element.send_keys('0')
+
+            self.assertIn('danger', element_list[0].get_attribute('class'))
+            self.assertIn('danger', element_list[1].get_attribute('class'))
+            self.assertNotIn('danger', element_list[2].get_attribute('class'))
+
+            self.assertEqual(input_element.get_attribute('value'), '100604')
+
 
 class TabulateSampleFrequencyTests(TestCase):
 
