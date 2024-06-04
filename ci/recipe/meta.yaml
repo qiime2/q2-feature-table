@@ -39,6 +39,7 @@ test:
     - q2-types >={{ q2_types }}
     - pytest
     - selenium
+    - selenium-manager
 
   imports:
     - q2_feature_table
