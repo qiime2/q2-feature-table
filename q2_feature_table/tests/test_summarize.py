@@ -533,14 +533,12 @@ class SummarizeTests(TestCase):
 
             element_list = driver.find_element(
                 By.ID, 'table-body').find_elements(By.TAG_NAME, 'tr')
-            # Reverse this so the lower values are first
-            element_list.reverse()
             input_element = driver.find_element(By.ID, 'text-box')
 
             # Assert the table is correct
-            self.assertEqual(element_list[0].text, 'S1 1,453')
+            self.assertEqual(element_list[2].text, 'S1 1,453')
             self.assertEqual(element_list[1].text, 'S2 10,494')
-            self.assertEqual(element_list[2].text, 'S3 100,604')
+            self.assertEqual(element_list[0].text, 'S3 100,604')
 
             # None should have danger to begin
             for element in element_list:
@@ -550,22 +548,22 @@ class SummarizeTests(TestCase):
             # depth 10000 and so on for every other send
             input_element.send_keys('1000')
 
-            self.assertIn('danger', element_list[0].get_attribute('class'))
+            self.assertIn('danger', element_list[2].get_attribute('class'))
             self.assertNotIn('danger', element_list[1].get_attribute('class'))
-            self.assertNotIn('danger', element_list[2].get_attribute('class'))
+            self.assertNotIn('danger', element_list[0].get_attribute('class'))
 
             input_element.send_keys('0')
 
-            self.assertIn('danger', element_list[0].get_attribute('class'))
+            self.assertIn('danger', element_list[2].get_attribute('class'))
             self.assertIn('danger', element_list[1].get_attribute('class'))
-            self.assertNotIn('danger', element_list[2].get_attribute('class'))
+            self.assertNotIn('danger', element_list[0].get_attribute('class'))
 
             # Ensure the box cannot go over the largest
             input_element.send_keys('0')
 
-            self.assertIn('danger', element_list[0].get_attribute('class'))
+            self.assertIn('danger', element_list[2].get_attribute('class'))
             self.assertIn('danger', element_list[1].get_attribute('class'))
-            self.assertNotIn('danger', element_list[2].get_attribute('class'))
+            self.assertNotIn('danger', element_list[0].get_attribute('class'))
 
             self.assertEqual(input_element.get_attribute('value'), '100604')
 
