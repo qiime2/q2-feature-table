@@ -544,21 +544,25 @@ class SummarizeTests(TestCase):
             for element in element_list:
                 self.assertNotIn('danger', element.get_attribute('class'))
 
-            # There was already a 0 in the text box so this actually made the
-            # depth 10000 and so on for every other send
+            # This is not setting the value in the box, it is sending these key
+            # presses to the box. There is already a 0 in the box, so we are
+            # adding these digits to that 0 making the value in the box 10000
             input_element.send_keys('1000')
 
             self.assertIn('danger', element_list[2].get_attribute('class'))
             self.assertNotIn('danger', element_list[1].get_attribute('class'))
             self.assertNotIn('danger', element_list[0].get_attribute('class'))
 
+            # Add another 0 to the box making the value 100000
             input_element.send_keys('0')
 
             self.assertIn('danger', element_list[2].get_attribute('class'))
             self.assertIn('danger', element_list[1].get_attribute('class'))
             self.assertNotIn('danger', element_list[0].get_attribute('class'))
 
-            # Ensure the box cannot go over the largest
+            # Send another 0 to the box and ensure the box cannot go over the
+            # largest frequency. This would make the value 1000000, but it
+            # should be artificially capped to 100604
             input_element.send_keys('0')
 
             self.assertIn('danger', element_list[2].get_attribute('class'))
