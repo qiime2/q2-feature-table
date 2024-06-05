@@ -31,7 +31,6 @@ requirements:
     - qiime2 {{ qiime2_epoch }}.*
     - q2templates {{ qiime2_epoch }}.*
     - q2-types {{ qiime2_epoch }}.*
-    - selenium
 
 test:
   requires:
@@ -39,6 +38,7 @@ test:
     - q2templates >={{ q2templates }}
     - q2-types >={{ q2_types }}
     - pytest
+    - selenium
 
   imports:
     - q2_feature_table
