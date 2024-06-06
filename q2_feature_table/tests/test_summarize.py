@@ -18,7 +18,8 @@ import biom
 import pandas as pd
 import numpy as np
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
 
 import qiime2
@@ -512,11 +513,21 @@ class SummarizeTests(TestCase):
 
         self.assertEqual(spec['data'][0]['values'], exp)
 
-    def test_summarize_viz(self):
-        chrome_options = Options()
-        chrome_options.add_argument("--headless=new")
-        driver = webdriver.Chrome(options=chrome_options)
+    def test_summarize_viz_chrome(self):
+        chrome_options = ChromeOptions()
+        chrome_options.add_argument("-headless")
 
+        with webdriver.Chrome(options=chrome_options) as driver:
+            self._selenium_test(driver)
+
+    def test_summarize_viz_firefox(self):
+        firefox_options = FirefoxOptions()
+        firefox_options.add_argument("-headless")
+
+        with webdriver.Firefox(options=firefox_options) as driver:
+            self._selenium_test(driver)
+
+    def _selenium_test(self, driver):
         table = biom.Table(np.array([[0, 1, 3],
                                      [1, 1, 2],
                                      [400, 450, 500],
