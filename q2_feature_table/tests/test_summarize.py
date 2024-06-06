@@ -11,16 +11,20 @@ from unittest import TestCase, main
 import tempfile
 import re
 import json
+import csv
 
 import skbio
 import biom
 import pandas as pd
 import numpy as np
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+
 import qiime2
 from q2_types.feature_data import DNAIterator
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Artifact, Metadata
-import csv
 
 from q2_feature_table import (
         tabulate_seqs, summarize,
@@ -509,10 +513,6 @@ class SummarizeTests(TestCase):
         self.assertEqual(spec['data'][0]['values'], exp)
 
     def test_summarize_viz(self):
-        from selenium import webdriver
-        from selenium.webdriver.chrome.options import Options
-        from selenium.webdriver.common.by import By
-
         chrome_options = Options()
         chrome_options.add_argument("--headless=new")
         driver = webdriver.Chrome(options=chrome_options)
