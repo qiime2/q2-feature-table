@@ -528,13 +528,13 @@ class SummarizeTests(TestCase):
             self._selenium_test(driver)
 
     def _selenium_test(self, driver):
-        table = biom.Table(np.array([[0, 1, 3],
-                                     [1, 1, 2],
-                                     [400, 450, 500],
-                                     [1000, 10000, 100000],
-                                     [52, 42, 99]]),
+        table = biom.Table(np.array([[0, 0, 1, 3],
+                                     [1, 1, 1, 2],
+                                     [100, 400, 450, 500],
+                                     [500, 1000, 10000, 100000],
+                                     [50, 52, 42, 99]]),
                            ['O1', 'O2', '03', '04', 'O5'],
-                           ['S1', 'S2', 'S3'])
+                           ['S1', 'S2', 'S3', 'S4'])
 
         with tempfile.TemporaryDirectory() as output_dir:
             summarize(output_dir, table)
@@ -547,9 +547,10 @@ class SummarizeTests(TestCase):
             input_element = driver.find_element(By.ID, 'text-box')
 
             # Assert the table is correct
-            self.assertEqual(element_list[2].text, 'S1 1,453')
-            self.assertEqual(element_list[1].text, 'S2 10,494')
-            self.assertEqual(element_list[0].text, 'S3 100,604')
+            self.assertEqual(element_list[3].text, 'S1 651')
+            self.assertEqual(element_list[2].text, 'S2 1,453')
+            self.assertEqual(element_list[1].text, 'S3 10,494')
+            self.assertEqual(element_list[0].text, 'S4 100,604')
 
             # None should have danger to begin
             for element in element_list:
@@ -557,9 +558,18 @@ class SummarizeTests(TestCase):
 
             # This is not setting the value in the box, it is sending these key
             # presses to the box. There is already a 0 in the box, so we are
-            # adding these digits to that 0 making the value in the box 10000
-            input_element.send_keys('1000')
+            # adding these digits to that 0 making the value in the box 1000
+            input_element.send_keys('100')
 
+            self.assertIn('danger', element_list[3].get_attribute('class'))
+            self.assertNotIn('danger', element_list[2].get_attribute('class'))
+            self.assertNotIn('danger', element_list[1].get_attribute('class'))
+            self.assertNotIn('danger', element_list[0].get_attribute('class'))
+
+            # Add another 0 to the box making the value 10000
+            input_element.send_keys('0')
+
+            self.assertIn('danger', element_list[3].get_attribute('class'))
             self.assertIn('danger', element_list[2].get_attribute('class'))
             self.assertNotIn('danger', element_list[1].get_attribute('class'))
             self.assertNotIn('danger', element_list[0].get_attribute('class'))
@@ -567,6 +577,7 @@ class SummarizeTests(TestCase):
             # Add another 0 to the box making the value 100000
             input_element.send_keys('0')
 
+            self.assertIn('danger', element_list[3].get_attribute('class'))
             self.assertIn('danger', element_list[2].get_attribute('class'))
             self.assertIn('danger', element_list[1].get_attribute('class'))
             self.assertNotIn('danger', element_list[0].get_attribute('class'))
@@ -576,6 +587,7 @@ class SummarizeTests(TestCase):
             # should be artificially capped to 100604
             input_element.send_keys('0')
 
+            self.assertIn('danger', element_list[3].get_attribute('class'))
             self.assertIn('danger', element_list[2].get_attribute('class'))
             self.assertIn('danger', element_list[1].get_attribute('class'))
             self.assertNotIn('danger', element_list[0].get_attribute('class'))
