@@ -38,6 +38,7 @@ test:
     - q2templates >={{ q2templates }}
     - q2-types >={{ q2_types }}
     - pytest
+    - selenium
 
   imports:
     - q2_feature_table

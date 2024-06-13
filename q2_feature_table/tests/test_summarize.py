@@ -11,16 +11,21 @@ from unittest import TestCase, main
 import tempfile
 import re
 import json
+import csv
 
 import skbio
 import biom
 import pandas as pd
 import numpy as np
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.common.by import By
+
 import qiime2
 from q2_types.feature_data import DNAIterator
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Artifact, Metadata
-import csv
 
 from q2_feature_table import (
         tabulate_seqs, summarize,
@@ -507,6 +512,87 @@ class SummarizeTests(TestCase):
                {'frequency': 50, 'id': '1', 'metadata': {'a': None}}]
 
         self.assertEqual(spec['data'][0]['values'], exp)
+
+    def test_summarize_viz_chrome(self):
+        chrome_options = ChromeOptions()
+        chrome_options.add_argument("-headless")
+
+        with webdriver.Chrome(options=chrome_options) as driver:
+            self._selenium_test(driver)
+
+    def test_summarize_viz_firefox(self):
+        firefox_options = FirefoxOptions()
+        firefox_options.add_argument("-headless")
+
+        with webdriver.Firefox(options=firefox_options) as driver:
+            self._selenium_test(driver)
+
+    def _selenium_test(self, driver):
+        table = biom.Table(np.array([[0, 0, 1, 3],
+                                     [1, 1, 1, 2],
+                                     [100, 400, 450, 500],
+                                     [500, 1000, 10000, 100000],
+                                     [50, 52, 42, 99]]),
+                           ['O1', 'O2', '03', '04', 'O5'],
+                           ['S1', 'S2', 'S3', 'S4'])
+
+        with tempfile.TemporaryDirectory() as output_dir:
+            summarize(output_dir, table)
+            driver.get(
+                "file://"
+                f"{os.path.join(output_dir, 'sample-frequency-detail.html')}")
+
+            element_list = driver.find_element(
+                By.ID, 'table-body').find_elements(By.TAG_NAME, 'tr')
+            input_element = driver.find_element(By.ID, 'text-box')
+
+            # Assert the table is correct
+            self.assertEqual(element_list[3].text, 'S1 651')
+            self.assertEqual(element_list[2].text, 'S2 1,453')
+            self.assertEqual(element_list[1].text, 'S3 10,494')
+            self.assertEqual(element_list[0].text, 'S4 100,604')
+
+            # None should have danger to begin
+            for element in element_list:
+                self.assertNotIn('danger', element.get_attribute('class'))
+
+            # This is not setting the value in the box, it is sending these key
+            # presses to the box. There is already a 0 in the box, so we are
+            # adding these digits to that 0 making the value in the box 1000
+            input_element.send_keys('100')
+
+            self.assertIn('danger', element_list[3].get_attribute('class'))
+            self.assertNotIn('danger', element_list[2].get_attribute('class'))
+            self.assertNotIn('danger', element_list[1].get_attribute('class'))
+            self.assertNotIn('danger', element_list[0].get_attribute('class'))
+
+            # Add another 0 to the box making the value 10000
+            input_element.send_keys('0')
+
+            self.assertIn('danger', element_list[3].get_attribute('class'))
+            self.assertIn('danger', element_list[2].get_attribute('class'))
+            self.assertNotIn('danger', element_list[1].get_attribute('class'))
+            self.assertNotIn('danger', element_list[0].get_attribute('class'))
+
+            # Add another 0 to the box making the value 100000
+            input_element.send_keys('0')
+
+            self.assertIn('danger', element_list[3].get_attribute('class'))
+            self.assertIn('danger', element_list[2].get_attribute('class'))
+            self.assertIn('danger', element_list[1].get_attribute('class'))
+            self.assertNotIn('danger', element_list[0].get_attribute('class'))
+
+            # Send another 0 to the box and ensure the box cannot go over the
+            # largest frequency. This would make the value 1000000, but it
+            # should be artificially capped to 100604
+            input_element.send_keys('0')
+
+            self.assertIn('danger', element_list[3].get_attribute('class'))
+            self.assertIn('danger', element_list[2].get_attribute('class'))
+            self.assertIn('danger', element_list[1].get_attribute('class'))
+            self.assertNotIn('danger', element_list[0].get_attribute('class'))
+
+            self.assertEqual(input_element.get_attribute('value'), '100604')
 
 
 class TabulateSampleFrequencyTests(TestCase):
