@@ -5,16 +5,17 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
-
+from qiime2.core.type import Properties
 from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
                            Choices, MetadataColumn, Categorical, List,
                            Citations, TypeMatch, TypeMap, Collection,
                            Visualization)
 
 from q2_types.feature_table import (
-    FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
+    FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition,
+    Normalized)
 from q2_types.feature_data import (
-    FeatureData, Sequence, Taxonomy, AlignedSequence)
+    FeatureData, Sequence, Taxonomy, AlignedSequence, SequenceCharacteristics)
 from q2_types.metadata import ImmutableMetadata
 
 import q2_feature_table
@@ -722,4 +723,78 @@ plugin.pipelines.register_function(
     description="Generate visual and tabular summaries of a feature table. "
                 "Tabulate sample and feature frequencies.",
     examples={'feature_table_summarize_plus': ex.feature_table_summarize_plus}
+)
+
+P_method, T_normalized_table = TypeMap(
+    {
+        Str
+        % Choices("tpm"): (
+            FeatureTable[Normalized % Properties("TPM")],
+        ),
+        Str
+        % Choices("fpkm"): (
+            FeatureTable[Normalized % Properties("FPKM")],
+        ),
+        Str
+        % Choices("tmm"): (
+            FeatureTable[Normalized % Properties("TMM")],
+        ),
+        Str
+        % Choices("uq"): (
+            FeatureTable[Normalized % Properties("UQ")],
+        ),
+        Str
+        % Choices("cuf"): (
+            FeatureTable[Normalized % Properties("CUF")],
+        ),
+        Str
+        % Choices("ctf"): (
+            FeatureTable[Normalized % Properties("CTF")],
+        ),
+        Str
+        % Choices("cpm"): (
+            FeatureTable[Normalized % Properties("CPM")],
+        ),
+    }
+)
+
+plugin.methods.register_function(
+    function=q2_feature_table.normalize,
+    inputs={
+        "table": FeatureTable[Frequency],
+        "gene_length": FeatureData[
+            SequenceCharacteristics % Properties("length")],
+    },
+    parameters={
+        "method": P_method,
+        "m_trim": Float % Range(
+            0, 1, inclusive_start=True, inclusive_end=True
+        ),
+        "a_trim": Float % Range(
+            0, 1, inclusive_start=True, inclusive_end=True
+        ),
+    },
+    outputs=[("normalized_table", T_normalized_table)],
+    input_descriptions={
+        "table": "Feature table with gene counts.",
+        "gene_length": "Gene lengths of all genes in the feature table.",
+    },
+    parameter_descriptions={
+        "method": "Specify the normalization method to be used. Use FPKM or "
+        "TPM for within comparisons and TMM, UQ, CUF or CTF for between "
+        "sample camparisons. Check https://www.genialis.com/wp-content/uploads"
+        "/2023/12/2023-Normalizing-RNA-seq-data-in-Python-with-RNAnorm.pdf "
+        "for more information on the methods.",
+        "m_trim": "Two sided cutoff for M-values. Can only be used for "
+        "methods TMM and CTF. (default = 0.3)",
+        "a_trim": "Two sided cutoff for A-values. Can only be used for "
+        "methods TMM and CTF. (default = 0.05)",
+    },
+    output_descriptions={
+        "normalized_table": "Feature table normalized with specified method."
+    },
+    name="Normalize FeatureTable",
+    description="Normalize FeatureTable by gene length, library size and "
+    "composition with common methods for RNA-seq.",
+    citations=[citations["Zmrzlikar_RNAnorm_RNA-seq_data_2023"]],
 )

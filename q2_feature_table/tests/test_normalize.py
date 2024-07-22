@@ -6,7 +6,6 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 import os
-import shutil
 from unittest import TestCase, main
 from unittest.mock import MagicMock, patch
 
@@ -18,8 +17,8 @@ from pandas._testing import assert_series_equal
 from q2_types.feature_data import SequenceCharacteristicsDirectoryFormat
 
 from q2_feature_table import rarefy
-from q2_feature_table._normalize import _validate_parameters, _convert_lengths, \
-    normalize
+from q2_feature_table._normalize import (_validate_parameters, \
+    _convert_lengths, normalize)
 
 
 class RarefyTests(TestCase):
@@ -89,16 +88,19 @@ class NormalizeTests(TestCase):
 
     def test_validate_parameters_tpm_missing_gene_length(self):
         # Test Error raised if gene-length is missing with TPM method
-        with self.assertRaisesRegex(ValueError, "gene-length input is missing."):
+        with self.assertRaisesRegex(
+                ValueError, "gene-length input is missing."):
             _validate_parameters("tpm", None, None, None)
 
     def test_validate_parameters_tmm_gene_length(self):
         # Test Error raised if gene-length is given with TMM method
         with self.assertRaisesRegex(
                 ValueError,
-                "gene-length input can only be used with FPKM and TPM methods."
+                "gene-length input can only be used with FPKM and "
+                "TPM methods."
         ):
-            _validate_parameters("tmm", None, None, gene_length=MagicMock())
+            _validate_parameters(
+                "tmm", None, None, gene_length=MagicMock())
 
     def test_validate_parameters_default_m_a_trim(self):
         # Test if m_trim and a_trim get set to default values if None
@@ -115,7 +117,8 @@ class NormalizeTests(TestCase):
     def test_convert_lengths_gene_length(self):
         # Test _convert_lengths
         gene_length = SequenceCharacteristicsDirectoryFormat()
-        with open(os.path.join(str(gene_length), "sequence_characteristics.tsv"),
+        with open(os.path.join(
+                str(gene_length), "sequence_characteristics.tsv"),
                   'w') as file:
             file.write("id\tlength\nARO1\t1356.0\nARO2\t1173.0")
 
@@ -125,13 +128,15 @@ class NormalizeTests(TestCase):
     def test_convert_lengths_short_gene_length(self):
         # Test Error raised if gene-length is missing genes
         gene_length = SequenceCharacteristicsDirectoryFormat()
-        with open(os.path.join(str(gene_length), "sequence_characteristics.tsv"), 'w') as file:
+        with open(os.path.join(
+                str(gene_length),
+                "sequence_characteristics.tsv"), 'w') as file:
             file.write("id\tlength\nARO1\t1356.0")
         with self.assertRaisesRegex(
                 ValueError,
-                "There are genes present in the FeatureTable that are not present "
-                "in the gene-length input. Missing lengths for genes: "
-                "{'ARO2'}",
+                "There are genes present in the FeatureTable that are "
+                "not present in the gene-length input. Missing lengths "
+                "for genes: {'ARO2'}",
         ):
             _convert_lengths(self.table, gene_length=gene_length)
 
@@ -139,7 +144,8 @@ class NormalizeTests(TestCase):
     def test_tpm_fpkm_with_valid_inputs(self, mock_tpm):
         # Test valid inputs for TPM method
         gene_length = SequenceCharacteristicsDirectoryFormat()
-        with open(os.path.join(str(gene_length), "sequence_characteristics.tsv"),
+        with open(os.path.join(
+                str(gene_length), "sequence_characteristics.tsv"),
                   'w') as file:
             file.write("id\tlength\nARO1\t1356.0\nARO2\t1173.0")
         normalize(table=self.table, gene_length=gene_length, method="tpm")
@@ -148,7 +154,8 @@ class NormalizeTests(TestCase):
     def test_tmm_uq_cuf_ctf_with_valid_inputs(self, mock_tmm):
         # Test valid inputs for TMM method
         gene_length = SequenceCharacteristicsDirectoryFormat()
-        with open(os.path.join(str(gene_length), "sequence_characteristics.tsv"),
+        with open(os.path.join(
+                str(gene_length), "sequence_characteristics.tsv"),
                   'w') as file:
             file.write("id\tlength\nARO1\t1356.0\nARO2\t1173.0")
         normalize(table=self.table, method="tmm", a_trim=0.06, m_trim=0.4)

@@ -75,19 +75,24 @@ def _validate_parameters(method, m_trim, a_trim, gene_length):
     if method in ["tpm", "fpkm"] and not gene_length:
         raise ValueError("gene-length input is missing.")
 
-    # Raise Error if gene-length is given when using methods TMM, UQ, CUF, CPM or CTF
+    # Raise Error if gene-length is given when using methods TMM, UQ, CUF,
+    # CPM or CTF
     if method in ["tmm", "uq", "cuf", "ctf", "cpm"] and gene_length:
         raise ValueError(
             "gene-length input can only be used with FPKM and TPM methods."
         )
 
-    # Raise Error if m_trim or a_trim are given when not using methods TMM or CTF
-    if (method not in ["tmm", "ctf"]) and (m_trim is not None or a_trim is not None):
+    # Raise Error if m_trim or a_trim are given when not using methods
+    # TMM or CTF
+    if ((method not in ["tmm", "ctf"])
+            and (m_trim is not None or a_trim is not None)):
         raise ValueError(
-            "Parameters m-trim and a-trim can only be used with methods TMM and CTF."
+            "Parameters m-trim and a-trim can only be used with "
+            "methods TMM and CTF."
         )
 
-    # Set m_trim and a_trim to their default values for methods TMM and CTF
+    # Set m_trim and a_trim to their default values for methods
+    # TMM and CTF
     if method in ["tmm", "ctf"]:
         m_trim = 0.3 if m_trim is None else m_trim
         a_trim = 0.05 if a_trim is None else a_trim
@@ -106,13 +111,13 @@ def _convert_lengths(table, gene_length):
         skiprows=1,
     ).squeeze("columns")
 
-    # Check if all gene IDs that are present in the table are also present in
-    # the lengths
+    # Check if all gene IDs that are present in the table are also
+    # present in the lengths
     if not set(table.columns).issubset(set(lengths.index)):
         only_in_counts = set(table.columns) - set(lengths.index)
         raise ValueError(
-            f"There are genes present in the FeatureTable that are not present "
-            f"in the gene-length input. Missing lengths for genes: "
-            f"{only_in_counts}"
+            f"There are genes present in the FeatureTable that are "
+            f"not present in the gene-length input. Missing lengths "
+            f"for genes: {only_in_counts}"
         )
     return lengths
