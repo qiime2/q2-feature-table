@@ -17,8 +17,8 @@ from pandas._testing import assert_series_equal
 from q2_types.feature_data import SequenceCharacteristicsDirectoryFormat
 
 from q2_feature_table import rarefy
-from q2_feature_table._normalize import (_validate_parameters, \
-    _convert_lengths, normalize)
+from q2_feature_table._normalize import (_validate_parameters,
+                                         _convert_lengths, normalize)
 
 
 class RarefyTests(TestCase):
