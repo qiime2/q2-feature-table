@@ -67,6 +67,21 @@ class SplitTests(unittest.TestCase):
         self.assertEqual(actual,
                          {'a': expected1, 'b': expected2, 'c': expected3})
 
+    def test_extra_metadata(self):
+        # S4 and S5 are in metadata but not the table - they should be ignored
+        md_column = qiime2.CategoricalMetadataColumn(
+            pd.Series(['a', 'a', 'a', 'b', 'a'], name='foo',
+                      index=pd.Index(['S1', 'S2', 'S3', 'S4', 'S5'],
+                                     name='id')))
+        table = Table(np.array([[5, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'],
+                      ['S1', 'S2', 'S3'])
+        actual = split(table, metadata=md_column)
+        expected1 = Table(np.array([[5, 1, 3], [1, 1, 2]]),
+                          ['O1', 'O2'],
+                          ['S1', 'S2', 'S3'])
+        self.assertEqual(actual, {'a': expected1})
+
     def test_invalid_values(self):
         table = Table(np.array([[5, 1, 3], [1, 1, 2]]),
                       ['O1', 'O2'],
