@@ -13,6 +13,7 @@ import qiime2
 def split(table: biom.Table,
           metadata: qiime2.CategoricalMetadataColumn,
           filter_empty_features: bool = True) -> biom.Table:
+    metadata = metadata.filter_ids(table.ids(axis='sample'))
     metadata_df = metadata.drop_missing_values().to_dataframe()
 
     indices = metadata_df.reset_index(
