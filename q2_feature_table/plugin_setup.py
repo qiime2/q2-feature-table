@@ -64,7 +64,6 @@ plugin.methods.register_function(
                 'axis': Str % Choices(['sample', 'feature']),
                 'seed': Int % Range(0, 2**32) | Str % Choices(["random"])
                 },
-
     outputs=[('sampled_table', FeatureTable[Frequency])],
     input_descriptions={'table': 'The feature table to be sampled.'},
     parameter_descriptions={
@@ -74,7 +73,7 @@ plugin.methods.register_function(
                               'the resulting table.'),
         'axis': ('The axis to sample over. If "sample" then samples will be '
                  'randomly selected to be retained. If "feature" then '
-                 'a random set of features will be selected to be retained.')
+                 'a random set of features will be selected to be retained.'),
         'seed': ('Set the seed for the subsampling. Using the same seed with '
                  'the same table will always lead to the same result. Using '
                  '"random", sets the seed to a random number. The random '
