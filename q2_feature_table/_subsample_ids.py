@@ -5,12 +5,14 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+from typing import Union
 
 import biom
+import numpy as np
 
 
 def subsample_ids(table: biom.Table, subsampling_depth: int,
-                  axis: str) -> biom.Table:
+                  axis: str, seed: Union[int, str] = 1) -> biom.Table:
     if axis == 'feature':
         # we are transposing the table due to biocore/biom-format#759
         table = table.transpose()
@@ -20,8 +22,14 @@ def subsample_ids(table: biom.Table, subsampling_depth: int,
                          'elements on the desired axis. The maximum depth '
                          'is: %d.' % len(table.ids()))
 
+    # Generate a random seed if seed is None
+    if seed == "random":
+        rng = np.random.default_rng()
+        seed = rng.integers(0, 2 ** 32 - 1)
+
     # the axis is always 'sample' due to the above transpose
-    table = table.subsample(subsampling_depth, axis='sample', by_id=True)
+    table = table.subsample(subsampling_depth, axis='sample',
+                            by_id=True, seed=seed)
 
     # the inverted axis is always observation due to the above transpose
     invaxis = 'observation'
