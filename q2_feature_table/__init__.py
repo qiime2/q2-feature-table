@@ -19,10 +19,11 @@ from ._core_features import core_features
 from ._group import group
 from ._rename import rename_ids
 from ._heatmap import (heatmap, heatmap_choices)
-from ._version import get_versions
 
-__version__ = get_versions()['version']
-del get_versions
+try:
+    from ._version import __version__
+except ModuleNotFoundError:
+    __version__ = '0.0.0+notfound'
 
 __all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'transpose',
            'summarize', 'merge', 'merge_seqs', 'filter_samples',

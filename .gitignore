@@ -70,3 +70,7 @@ target/
 
 .DS_Store
 node_modules
+
+# Version file from versioningit
+_version.py
+
