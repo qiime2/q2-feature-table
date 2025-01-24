@@ -18,7 +18,7 @@ requirements:
   - seaborn {{ seaborn }}
   - matplotlib {{ matplotlib }}
   - pandas {{ pandas }}
-  - numpy
+  - numpy {{ numpy }}
   - ipywidgets
   - qiime2 {{ qiime2_epoch }}.*
   - q2templates {{ qiime2_epoch }}.*
