@@ -23,7 +23,7 @@ requirements:
   - qiime2 {{ qiime2_epoch }}.*
   - q2templates {{ qiime2_epoch }}.*
   - q2-types {{ qiime2_epoch }}.*
-  - rnanorm
+  - rnanorm {{ rnanorm }}
   build:
   - python {{ python }}
   - setuptools
