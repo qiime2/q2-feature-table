@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 import os
-import pkg_resources
+import importlib
 import shutil
 
 import biom
@@ -27,7 +27,7 @@ _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
                        "ALIGNMENT_VIEW=Pairwise&PROGRAM=blastn&DATABASE"
                        "=nt&CMD=Put&QUERY=%s")
 
-TEMPLATES = pkg_resources.resource_filename('q2_feature_table', '_summarize')
+TEMPLATES = importlib.resources.open_text('q2_feature_table', '_summarize')
 
 
 def tabulate_seqs(output_dir: str, data: DNAIterator,

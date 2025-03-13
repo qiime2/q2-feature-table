@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 import os.path
-import pkg_resources
+import importlib
 
 import biom
 import q2templates
@@ -16,7 +16,7 @@ import pandas as pd
 import seaborn as sns
 
 
-TEMPLATES = pkg_resources.resource_filename(
+TEMPLATES = importlib.resources.open_text(
     'q2_feature_table._core_features', 'core_features_assets')
 
 

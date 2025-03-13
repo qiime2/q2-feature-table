@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 import os.path
-import pkg_resources
+import importlib
 
 import q2templates
 import numpy as np
@@ -17,8 +17,8 @@ import seaborn as sns
 import qiime2
 
 
-TEMPLATES = pkg_resources.resource_filename('q2_feature_table._heatmap',
-                                            'assets')
+TEMPLATES = importlib.resources.open_text('q2_feature_table._heatmap',
+                                          'assets')
 
 
 heatmap_choices = {

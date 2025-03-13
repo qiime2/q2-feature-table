@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import pkg_resources
+import importlib
 
 import numpy as np
 from biom import Table
@@ -34,8 +34,8 @@ local_taxonomy_path = 'moving-pics-taxonomy-gg-2.qza'
 
 
 def get_data_path(filename):
-    return pkg_resources.resource_filename('q2_feature_table.tests',
-                                           'data/%s' % filename)
+    return importlib.resources.open_text('q2_feature_table.tests',
+                                         'data/%s' % filename)
 
 
 def ft1_factory():
