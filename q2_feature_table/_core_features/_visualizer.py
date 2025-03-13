@@ -16,8 +16,8 @@ import pandas as pd
 import seaborn as sns
 
 
-TEMPLATES = importlib.resources.open_text(
-    'q2_feature_table._core_features', 'core_features_assets')
+TEMPLATES = importlib.resources.files(
+    'q2_feature_table._core_features') / 'core_features_assets'
 
 
 def core_features(output_dir, table: biom.Table, min_fraction: float = 0.5,

@@ -17,8 +17,8 @@ import seaborn as sns
 import qiime2
 
 
-TEMPLATES = importlib.resources.open_text('q2_feature_table._heatmap',
-                                          'assets')
+TEMPLATES = importlib.resources.files(
+    'q2_feature_table._heatmap') / 'assets'
 
 
 heatmap_choices = {

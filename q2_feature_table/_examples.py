@@ -7,6 +7,7 @@
 # ----------------------------------------------------------------------------
 
 import importlib
+import os
 
 import numpy as np
 from biom import Table
@@ -34,8 +35,8 @@ local_taxonomy_path = 'moving-pics-taxonomy-gg-2.qza'
 
 
 def get_data_path(filename):
-    return importlib.resources.open_text('q2_feature_table.tests',
-                                         'data/%s' % filename)
+    return importlib.resources.files(
+        'q2_feature_table.tests') / os.path.join('data/%s' % filename)
 
 
 def ft1_factory():
