@@ -18,7 +18,7 @@ import qiime2
 
 
 TEMPLATES = importlib.resources.files(
-    'q2_feature_table._heatmap') / 'assets'
+    'q2_feature_table') / '_heatmap' / 'assets'
 
 
 heatmap_choices = {
