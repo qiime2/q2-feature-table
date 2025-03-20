@@ -185,7 +185,7 @@ def feature_table_filter_samples_to_subject1(use):
     filtered_table, = use.action(
         use.UsageAction(plugin_id='feature_table', action_id='filter_samples'),
         use.UsageInputs(table=feature_table, metadata=sample_metadata,
-                        where='[subject]="subject-1"'),
+                        where="[subject]='subject-1'"),
         use.UsageOutputNames(filtered_table='filtered_table')
     )
 
@@ -203,7 +203,7 @@ def feature_table_filter_samples_to_skin(use):
     filtered_table, = use.action(
         use.UsageAction(plugin_id='feature_table', action_id='filter_samples'),
         use.UsageInputs(table=feature_table, metadata=sample_metadata,
-                        where='[body-site] IN ("left palm", "right palm")'),
+                        where="[body-site] IN ('left palm', 'right palm')"),
         use.UsageOutputNames(filtered_table='filtered_table')
     )
 
@@ -221,7 +221,7 @@ def feature_table_filter_samples_to_subject1_gut(use):
     filtered_table, = use.action(
         use.UsageAction(plugin_id='feature_table', action_id='filter_samples'),
         use.UsageInputs(table=feature_table, metadata=sample_metadata,
-                        where=r'[subject]="subject-1" AND [body-site]="gut"'),
+                        where=r"[subject]='subject-1' AND [body-site]='gut'"),
         use.UsageOutputNames(filtered_table='filtered_table')
     )
 
@@ -240,7 +240,7 @@ def feature_table_filter_samples_to_gut_or_abx(use):
         use.UsageAction(plugin_id='feature_table', action_id='filter_samples'),
         use.UsageInputs(
             table=feature_table, metadata=sample_metadata,
-            where=r'[body-site]="gut" OR [reported-antibiotic-usage]="Yes"'),
+            where=r"[body-site]='gut' OR [reported-antibiotic-usage]='Yes'"),
         use.UsageOutputNames(filtered_table='filtered_table')
     )
 
@@ -259,7 +259,7 @@ def feature_table_filter_samples_to_subject1_not_gut(use):
         use.UsageAction(plugin_id='feature_table', action_id='filter_samples'),
         use.UsageInputs(
             table=feature_table, metadata=sample_metadata,
-            where=r'[subject]="subject-1" AND NOT [body-site]="gut"'),
+            where=r"[subject]='subject-1' AND NOT [body-site]='gut'"),
         use.UsageOutputNames(filtered_table='filtered_table')
     )
 
