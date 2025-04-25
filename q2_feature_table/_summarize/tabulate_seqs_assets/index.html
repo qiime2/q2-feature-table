@@ -89,8 +89,6 @@
         <thead>
           <tr>
             <th>Feature ID</th>
-            <th data-tsorter="numeric">Sequence</th>
-            <th data-tsorter="link">Sequence Length</th>
             {% if taxonomy is defined %}
               {% for name in taxonomy.keys() %}
             <th data-tsorter="text">Taxon: {{name}}</th>
@@ -101,19 +99,14 @@
             <th data-tsorter="text">{{ name }}</th>
               {% endfor %}
             {% endif %}
+            <th data-tsorter="link">Sequence Length</th>
+            <th data-tsorter="numeric">Sequence</th>
           </tr>
         </thead>
         <tbody>
         {% for sequence in display_sequences %}
           <tr>
             <td>{{ sequence }}</td>
-            {% if sequence in data %}
-            <td><samp><a target="_blank" href="{{ data[sequence].url }}" rel="noopener noreferrer">{{ data[sequence].seq }}</a></samp></td>
-            <td>{{ data[sequence].len }}</td>
-            {% else %}
-            <td>-</td>
-            <td>-</td>
-            {% endif %}
             {% if taxonomy is defined %}
               {% for member in taxonomy.values() %}
                 {% if sequence in member.index %}
@@ -133,6 +126,13 @@
             <td>-</td>
                 {% endfor %}
               {% endif %}
+            {% endif %}
+            {% if sequence in data %}
+            <td>{{ data[sequence].len }}</td>
+            <td><samp><a target="_blank" href="{{ data[sequence].url }}" rel="noopener noreferrer">{{ data[sequence].seq }}</a></samp></td>
+            {% else %}
+            <td>-</td>
+            <td>-</td>
             {% endif %}
           </tr>
         {% endfor %}
