@@ -594,7 +594,8 @@ plugin.visualizers.register_function(
 plugin.visualizers.register_function(
     function=q2_feature_table.heatmap,
     inputs={
-        'table': FeatureTable[Frequency]
+        'table': FeatureTable[Frequency | RelativeFrequency |
+                              PresenceAbsence | Composition]
     },
     parameters={
         'sample_metadata': MetadataColumn[Categorical],
