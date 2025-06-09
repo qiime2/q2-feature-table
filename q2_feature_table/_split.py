@@ -16,13 +16,9 @@ def split(table: biom.Table,
     metadata = metadata.filter_ids(table.ids(axis='sample'))
     metadata_df = metadata.drop_missing_values().to_dataframe()
     lookup = metadata_df[metadata.name].to_dict()
-
-    def partition_f(i, m):
-        return lookup.get(i)
-
-    unique_grps = sorted(set(lookup.values()))
     try:
-        qiime2.sdk.util.validate_result_collection_keys(*unique_grps)
+        qiime2.sdk.util.validate_result_collection_keys(*(
+            sorted(set(lookup.values()))))
     except KeyError as e:
         raise KeyError(
             "One or more invalid metadata column values identified during "
@@ -31,11 +27,9 @@ def split(table: biom.Table,
             f"table. The original error message is as follows: {str(e)}")
 
     result = {}
-    for group, tab in table.partition(partition_f):
-        if group is None:
-            continue
+    for group, tab in table.partition(lookup, axis='sample',
+                                      remove_empty=filter_empty_features,
+                                      ignore_none=True):
 
-        if filter_empty_features:
-            tab.remove_empty(axis='observation', inplace=True)
         result[group] = tab
     return result
