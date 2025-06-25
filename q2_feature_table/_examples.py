@@ -64,12 +64,14 @@ def ft3_factory():
               ['O1', 'O4'],
               ['S7', 'S8', 'S9']))
 
+
 def ft4_factory():
     return Artifact.import_data(
         'FeatureTable[Frequency]',
         Table(np.array([[0, 1], [1, 1], [88, 99]]),
               ['F1', 'F2', 'F3'],
               ['S1', 'S2']))
+
 
 def fd4_factory():
     seqs = pd.Series(['AACGT', 'GGAAT', 'GATAGTT', 'GGGGGGGG'],
@@ -295,6 +297,7 @@ def feature_table_filter_features_min_samples(use):
 
     filtered_table.assert_output_type('FeatureTable[Frequency]')
 
+
 def feature_table_filter_features_sequences(use):
     feature_table = use.init_artifact('feature_table', ft4_factory)
     sequences = use.init_artifact('sequences', fd4_factory)
@@ -305,7 +308,7 @@ def feature_table_filter_features_sequences(use):
                 "useful, for example, for removing sequences that are "
                 "identified as chimeric. To learn about "
                 "using Artifacts as Metadata, as is performed here, see "
-                "https://use.qiime2.org/en/latest/how-to-guides/artifacts-as-metadata.html")
+                "https://use.qiime2.org/en/latest/how-to-guides/artifacts-as-metadata.html") # noqa
 
     filtered_table, = use.action(
         use.UsageAction(plugin_id='feature_table',
