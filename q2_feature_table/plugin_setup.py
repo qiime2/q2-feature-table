@@ -359,8 +359,7 @@ plugin.methods.register_function(
     name="Filter samples from table",
     description="Filter samples from table based on frequency and/or "
                 "metadata. Any features with a frequency of zero after sample "
-                "filtering will also be removed. See the filtering tutorial "
-                "on https://docs.qiime2.org for additional details.",
+                "filtering will also be removed.",
     examples={
         'filter_to_subject1': ex.feature_table_filter_samples_to_subject1,
         'filter_to_skin': ex.feature_table_filter_samples_to_skin,
@@ -461,11 +460,12 @@ plugin.methods.register_function(
     name="Filter features from table",
     description="Filter features from table based on frequency and/or "
                 "metadata. Any samples with a frequency of zero after feature "
-                "filtering will also be removed. See the filtering tutorial "
-                "on https://docs.qiime2.org for additional details.",
+                "filtering will also be removed.",
     examples={
      'filter_features_min_samples':
-     ex.feature_table_filter_features_min_samples
+     ex.feature_table_filter_features_min_samples,
+     'filter_features_sequences':
+     ex.feature_table_filter_features_sequences
     }
 )
 
@@ -507,11 +507,9 @@ plugin.methods.register_function(
     },
     name="Filter features from sequences",
     description="Filter features from sequences based on a feature table or "
-                "metadata. See the filtering tutorial on "
-                "https://docs.qiime2.org for additional details. This method "
-                "can filter based on ids in a table or a metadata file, but "
-                "not both (i.e., the table and metadata options are mutually "
-                "exclusive)."
+                "metadata. This method can filter based on ids in a table or "
+                "a metadata file, but not both (i.e., the table and metadata "
+                "options are mutually exclusive)."
 )
 
 plugin.visualizers.register_function(
