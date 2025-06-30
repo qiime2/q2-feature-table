@@ -211,7 +211,7 @@
     else{
       var retainedFeatureCount = retainedSampleCount * samplingDepth;
       textField.innerHTML = "Retained " + formatter.format(retainedFeatureCount)
-                                        + " (" + (retainedFeatureCount/totalFrequencies*100).toFixed(2) + "%) features in "
+                                        + " (" + (retainedFeatureCount/totalFrequencies*100).toFixed(2) + "%) observations in "
                                         + retainedSampleCount + " (" + (retainedSampleCount/sampleCount*100).toFixed(2)
                                         +  "%) samples at the specifed sampling depth.";
     }
