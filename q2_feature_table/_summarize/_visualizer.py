@@ -82,7 +82,10 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
                     )
 
     if merge_method == 'union':
-        seq_lengths = list(display_sequences.values())
+        seq_lengths = [
+            length for length in display_sequences.values()
+            if length is not None
+        ]
 
     seq_len_stats = _compute_descriptive_stats(seq_lengths)
     _write_tsvs_of_descriptive_stats(seq_len_stats, output_dir)
