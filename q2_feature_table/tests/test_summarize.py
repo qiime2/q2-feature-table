@@ -92,6 +92,10 @@ class TabulateSeqsTests(TestCase):
             _compute_descriptive_stats(seq_lengths)
 
     def test_seq_count_union(self):
+        """
+        This tests that the sequence count is equal to the sequence count in
+        the DNA iterator passed into to `tabulate_seqs`.
+        """
         seqs = DNAIterator(skbio.DNA(a, metadata=b)for a, b in (
             ('ACGT', {'id': 'seq01'}),
             ('AAAA', {'id': 'seq02'}),
@@ -133,10 +137,16 @@ class TabulateSeqsTests(TestCase):
 
             with open(Path(output_dir) / 'descriptive_stats.tsv', 'r') as f:
                 lines = f.readlines()
-                self.assertTrue('count\t8' in line for line in lines)
+                for line in lines:
+                    print(line)
+                self.assertTrue('count\t5\n' in lines)
 
     def test_seq_count_intersection(self):
-        seqs = DNAIterator(skbio.DNA(a, metadata=b) for a, b in (
+        """
+        This tests that the sequence count reflects the intersection of the
+        data, metadata, and taxonomy.
+        """
+        seqs = DNAIterator(skbio.DNA(seq, metadata=md) for seq, md in (
             ('AAAA', {'id': 'seq02'}),
             ('GGGG', {'id': 'seq03'}),
             ('GGGG', {'id': 'seq04'}),
@@ -176,7 +186,7 @@ class TabulateSeqsTests(TestCase):
 
             with open(Path(output_dir) / 'descriptive_stats.tsv', 'r') as f:
                 lines = f.readlines()
-                self.assertTrue('count\t3' in line for line in lines)
+                self.assertTrue('count\t3\n' in lines)
 
     def test_descriptive_stats_integration(self):
         seqs = DNAIterator(skbio.DNA(a, metadata=b)for a, b in (
