@@ -35,7 +35,7 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
                   metadata: qiime2.Metadata = None,
                   merge_method: str = 'strict') -> None:
 
-    display_sequences = set()
+    display_sequences = {}
     sequences = {}
     seq_lengths = []
     with open(os.path.join(output_dir, 'sequences.fasta'), 'w') as fh:
@@ -43,7 +43,7 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
             skbio.io.write(sequence, format='fasta', into=fh)
             str_seq = str(sequence)
             seq_len = len(str_seq)
-            display_sequences.add(sequence.metadata['id'])
+            display_sequences[sequence.metadata['id']] = seq_len
             sequences[sequence.metadata['id']]\
                 = {'len': seq_len,
                    'url': _blast_url_template % str_seq,
@@ -53,24 +53,36 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
     if metadata is not None:
         metadata_df = metadata.to_dataframe()
         if merge_method == 'union':
-            display_sequences = display_sequences.union(metadata_df.index)
+            for id in metadata_df.index:
+                if id not in display_sequences:
+                    display_sequences[id] = None
         elif merge_method == 'intersect':
-            display_sequences = display_sequences.intersection(
-                metadata_df.index)
+            display_sequences = {
+                k: v for k, v in display_sequences.items()
+                if k in metadata_df.index
+            }
         elif merge_method == 'strict':
-            if set(metadata_df.index) != display_sequences:
+            if set(metadata_df.index) != set(display_sequences):
                 raise ValueError('Merge method is strict and IDs do not match')
     if taxonomy is not None:
         for member in taxonomy.values():
             if merge_method == 'union':
-                display_sequences = display_sequences.union(member.index)
+                for id in member.index:
+                    if id not in display_sequences:
+                        display_sequences[id] = None
             elif merge_method == 'intersect':
-                display_sequences = display_sequences.intersection(
-                    member.index)
+                display_sequences = {
+                    k: v for k, v in display_sequences.items()
+                    if k in member.index
+                }
             elif merge_method == 'strict':
-                if set(member.index) != display_sequences:
+                if set(member.index) != set(display_sequences):
                     raise ValueError(
-                                'Merge method is strict and IDs do not match')
+                                'Merge method is strict and IDs do not match'
+                    )
+
+    if merge_method == 'union':
+        seq_lengths = list(display_sequences.values())
 
     seq_len_stats = _compute_descriptive_stats(seq_lengths)
     _write_tsvs_of_descriptive_stats(seq_len_stats, output_dir)

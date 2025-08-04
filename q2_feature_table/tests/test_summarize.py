@@ -21,6 +21,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.by import By
+from pathlib import Path
 
 import qiime2
 from q2_types.feature_data import DNAIterator
@@ -89,6 +90,93 @@ class TabulateSeqsTests(TestCase):
         seq_lengths = []
         with self.assertRaisesRegex(ValueError, 'No values provided.'):
             _compute_descriptive_stats(seq_lengths)
+
+    def test_seq_count_union(self):
+        seqs = DNAIterator(skbio.DNA(a, metadata=b)for a, b in (
+            ('ACGT', {'id': 'seq01'}),
+            ('AAAA', {'id': 'seq02'}),
+            ('GGGG', {'id': 'seq03'}),
+            ('GGGG', {'id': 'seq04'}),
+            ('TTTT', {'id': 'seq05'})
+        ))
+
+        metadata = pd.DataFrame(index=['seq01', 'seq02',
+                                       'seq03', 'seq04',
+                                       'seq05', 'seq06',
+                                       'seq07', 'seq08'],
+                                columns=['att1', 'att2'],
+                                data=[['00', '01'], ['10', '11'],
+                                      ['03', '04'], ['12', '13'],
+                                      ['05', '06'], ['14', '15'],
+                                      ['07', '08'], ['16', '17']])
+        metadata.index.name = 'feature id'
+
+        metadata = qiime2.Metadata(metadata)
+
+        taxonomy = pd.DataFrame([('a;b;c;d', '1.0'), ('a;b;c;f', '0.7'),
+                                 ('a;b;h;d', '0.3'), ('a;b;d;f', '0.7'),
+                                 ('a;b;e;d', '0.4'), ('a;b;c;f', '0.6'),
+                                 ('a;b;t;d', '1.0'), ('a;b;d;f', '0.5')],
+                                index=['seq01', 'seq02', 'seq03', 'seq04',
+                                       'seq05', 'seq06', 'seq07', 'seq08'],
+                                columns=['Taxon', 'Confidence'])
+        taxonomy = {"Taxon Name": taxonomy}
+
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate_seqs(
+                output_dir,
+                seqs,
+                taxonomy=taxonomy,
+                metadata=metadata,
+                merge_method='union'
+            )
+
+            with open(Path(output_dir) / 'descriptive_stats.tsv', 'r') as f:
+                lines = f.readlines()
+                self.assertTrue('count\t8' in line for line in lines)
+
+    def test_seq_count_intersection(self):
+        seqs = DNAIterator(skbio.DNA(a, metadata=b) for a, b in (
+            ('AAAA', {'id': 'seq02'}),
+            ('GGGG', {'id': 'seq03'}),
+            ('GGGG', {'id': 'seq04'}),
+            ('TTTT', {'id': 'seq11'}),
+        ))
+
+        metadata = pd.DataFrame(index=['seq01', 'seq02',
+                                       'seq03', 'seq04',
+                                       'seq05', 'seq06',
+                                       'seq07', 'seq08'],
+                                columns=['att1', 'att2'],
+                                data=[['00', '01'], ['10', '11'],
+                                      ['03', '04'], ['12', '13'],
+                                      ['05', '06'], ['14', '15'],
+                                      ['07', '08'], ['16', '17']])
+        metadata.index.name = 'feature id'
+
+        metadata = qiime2.Metadata(metadata)
+
+        taxonomy = pd.DataFrame([('a;b;c;d', '1.0'), ('a;b;c;f', '0.7'),
+                                 ('a;b;h;d', '0.3'), ('a;b;d;f', '0.7'),
+                                 ('a;b;e;d', '0.4'), ('a;b;c;f', '0.6'),
+                                 ('a;b;t;d', '1.0'), ('a;b;d;f', '0.5')],
+                                index=['seq01', 'seq02', 'seq03', 'seq04',
+                                       'seq05', 'seq06', 'seq07', 'seq08'],
+                                columns=['Taxon', 'Confidence'])
+        taxonomy = {"Taxon Name": taxonomy}
+
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate_seqs(
+                output_dir,
+                seqs,
+                taxonomy=taxonomy,
+                metadata=metadata,
+                merge_method='intersect'
+            )
+
+            with open(Path(output_dir) / 'descriptive_stats.tsv', 'r') as f:
+                lines = f.readlines()
+                self.assertTrue('count\t3' in line for line in lines)
 
     def test_descriptive_stats_integration(self):
         seqs = DNAIterator(skbio.DNA(a, metadata=b)for a, b in (
