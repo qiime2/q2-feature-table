@@ -165,8 +165,8 @@
   var totalFrequencies = {{total_frequencies}};
   var sampleCount = {{number_of_samples}};
   var defaultDescription = "Retained " + (totalFrequencies.toLocaleString('en'))
-                                       + " (100.00%) features in "
-                                       + sampleCount + " (100.00%) samples at the specifed sampling depth.";
+                                       + " (100.00%) observations in "
+                                       + sampleCount + " (100.00%) samples at the specified sampling depth.";
 
 
   var textField = document.getElementById('text-field');
@@ -211,9 +211,9 @@
     else{
       var retainedFeatureCount = retainedSampleCount * samplingDepth;
       textField.innerHTML = "Retained " + formatter.format(retainedFeatureCount)
-                                        + " (" + (retainedFeatureCount/totalFrequencies*100).toFixed(2) + "%) features in "
+                                        + " (" + (retainedFeatureCount/totalFrequencies*100).toFixed(2) + "%) observations in "
                                         + retainedSampleCount + " (" + (retainedSampleCount/sampleCount*100).toFixed(2)
-                                        +  "%) samples at the specifed sampling depth.";
+                                        +  "%) samples at the specified sampling depth.";
     }
   }
 
