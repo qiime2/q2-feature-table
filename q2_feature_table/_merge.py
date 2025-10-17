@@ -71,11 +71,29 @@ def merge_seqs(data: pd.Series) -> pd.Series:
     return _merge_feature_data(data)
 
 
-def merge_taxa(data: pd.DataFrame) -> pd.DataFrame:
-    data = _merge_feature_data(data)
+def merge_taxa(data: list[pd.DataFrame]) -> pd.DataFrame:
+
+    frame_one = data[0]
+    frame_two = data[1]
+
+    count = frame_one["Taxon"].str.count(';')
+    count_two = frame_two["Taxon"].str.count(';')
+
+    if not count.equals(count_two):
+        raise ValueError(
+            "You are trying to merge tables with different levels of taxonomic"
+            " depth, this may cause failures later."
+        )
+    if 0 in count.values:
+        raise ValueError(
+            "You are trying to merge tables with one level of taxonomic"
+            " depth, this may cause failures later."
+        )
+
     # merge orders columns alphabetically; Taxon must be first header column
     # as defined here: https://github.com/qiime2/q2-types/blob/
     # 067d83e2aefe98674433e95162336fb5b9d96474/q2_types/feature_data/
     # _format.py#L97
+    data = _merge_feature_data(data)
     data = data[data.columns.drop('Taxon').insert(0, 'Taxon')]
     return data

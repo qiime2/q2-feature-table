@@ -349,6 +349,39 @@ class MergeFeatureTaxonomyTests(unittest.TestCase):
             index=['f1', 'f2', 'f3'], columns=['Taxon', 'Confidence'])
         pdt.assert_frame_equal(obs, exp)
 
+    def test_merge_taxa_different_levels(self):
+        data_one = pd.DataFrame(
+            [('a;b;c;d', '1.0'), ('a;b;c;f', '0.7')],
+            index=['f1', 'f2'],
+            columns=['Taxon', 'Confidence']
+        )
+        data_two = pd.DataFrame(
+            [('a;b;c;d;', '1.0'), ('a;b;c;f', '0.7')],
+            index=['f1', 'f2'],
+            columns=['Taxon', 'Confidence']
+        )
+
+        with (self.assertRaises(ValueError)):
+            merge_taxa([data_one, data_two]),
+            "You are trying to merge tables with different levels of taxonomic"
+            " depth, this may cause failures later."
+
+        data_one = pd.DataFrame(
+            [('a', '1.0'), ('a', '0.7')],
+            index=['f1', 'f2'],
+            columns=['Taxon', 'Confidence']
+        )
+        data_two = pd.DataFrame(
+            [('a', '1.0'), ('a', '0.7')],
+            index=['f1', 'f2'],
+            columns=['Taxon', 'Confidence']
+        )
+
+        with self.assertRaises(ValueError):
+            merge_taxa([data_one, data_two]),
+            "You are trying to merge tables with one level of taxonomic"
+            " depth, this may cause failures later."
+
 
 if __name__ == "__main__":
     unittest.main()
