@@ -79,12 +79,17 @@ def merge_taxa(data: list[pd.DataFrame]) -> pd.DataFrame:
     count = frame_one["Taxon"].str.count(';')
     count_two = frame_two["Taxon"].str.count(';')
 
-    if not count.equals(count_two):
-        raise ValueError(
-            "You are trying to merge tables with different levels of taxonomic"
-            " depth, this may cause failures later."
-        )
-    if 0 in count.values:
+    for index, value in count.items():
+        try:
+            if value != count_two[index]:
+                raise ValueError(
+                    "You are trying to merge tables with different levels of "
+                    "taxonomic depth, this may cause failures later."
+                )
+        except KeyError:
+            continue
+
+    if (count == 0).any():
         raise ValueError(
             "You are trying to merge tables with one level of taxonomic"
             " depth, this may cause failures later."
