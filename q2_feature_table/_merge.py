@@ -9,6 +9,7 @@
 import biom
 import pandas as pd
 import collections
+import warnings
 
 
 def overlap_methods():
@@ -71,29 +72,31 @@ def merge_seqs(data: pd.Series) -> pd.Series:
     return _merge_feature_data(data)
 
 
-def merge_taxa(data: list[pd.DataFrame]) -> pd.DataFrame:
+def merge_taxa(data: pd.DataFrame) -> pd.DataFrame:
+    if isinstance(data, list):
+        frame_one = data[0]
+        frame_two = data[1]
 
-    frame_one = data[0]
-    frame_two = data[1]
+        count = frame_one["Taxon"].str.count(';')
+        count_two = frame_two["Taxon"].str.count(';')
 
-    count = frame_one["Taxon"].str.count(';')
-    count_two = frame_two["Taxon"].str.count(';')
+        for index, value in count.items():
+            try:
+                if value != count_two[index]:
+                    warnings.warn(
+                        "You are trying to merge tables with different levels "
+                        "of taxonomic depth, this may cause failures later.",
+                        UserWarning
+                    )
+            except KeyError:
+                continue
 
-    for index, value in count.items():
-        try:
-            if value != count_two[index]:
-                raise ValueError(
-                    "You are trying to merge tables with different levels of "
-                    "taxonomic depth, this may cause failures later."
-                )
-        except KeyError:
-            continue
-
-    if (count == 0).any():
-        raise ValueError(
-            "You are trying to merge tables with one level of taxonomic"
-            " depth, this may cause failures later."
-        )
+        if (count == 0).any():
+            warnings.warn(
+                "You are trying to merge tables with one level of taxonomic"
+                " depth, this may cause failures later.",
+                UserWarning
+            )
 
     # merge orders columns alphabetically; Taxon must be first header column
     # as defined here: https://github.com/qiime2/q2-types/blob/

@@ -13,6 +13,7 @@ import numpy as np
 from biom.table import Table
 import pandas as pd
 import pandas.testing as pdt
+import pytest
 
 from q2_feature_table import merge, merge_seqs, merge_taxa
 from q2_feature_table._merge import _merge_feature_data, _get_overlapping
@@ -361,10 +362,8 @@ class MergeFeatureTaxonomyTests(unittest.TestCase):
             columns=['Taxon', 'Confidence']
         )
 
-        with (self.assertRaises(ValueError)):
-            merge_taxa([data_one, data_two]),
-            "You are trying to merge tables with different levels of taxonomic"
-            " depth, this may cause failures later."
+        with pytest.warns(UserWarning, match=' different levels '):
+            merge_taxa([data_one, data_two])
 
         data_one = pd.DataFrame(
             [('a', '1.0'), ('a', '0.7')],
@@ -377,10 +376,8 @@ class MergeFeatureTaxonomyTests(unittest.TestCase):
             columns=['Taxon', 'Confidence']
         )
 
-        with self.assertRaises(ValueError):
-            merge_taxa([data_one, data_two]),
-            "You are trying to merge tables with one level of taxonomic"
-            " depth, this may cause failures later."
+        with pytest.warns(UserWarning, match=' one level '):
+            merge_taxa([data_one, data_two])
 
 
 if __name__ == "__main__":
