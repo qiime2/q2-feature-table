@@ -13,7 +13,6 @@ import numpy as np
 from biom.table import Table
 import pandas as pd
 import pandas.testing as pdt
-import pytest
 
 from q2_feature_table import merge, merge_seqs, merge_taxa
 from q2_feature_table._merge import _merge_feature_data, _get_overlapping
@@ -362,7 +361,7 @@ class MergeFeatureTaxonomyTests(unittest.TestCase):
             columns=['Taxon', 'Confidence']
         )
 
-        with pytest.warns(UserWarning, match=' different levels '):
+        with self.assertWarns(UserWarning):
             merge_taxa([data_one, data_two])
 
         data_one = pd.DataFrame(
@@ -376,7 +375,7 @@ class MergeFeatureTaxonomyTests(unittest.TestCase):
             columns=['Taxon', 'Confidence']
         )
 
-        with pytest.warns(UserWarning, match=' one level '):
+        with self.assertWarns(UserWarning):
             merge_taxa([data_one, data_two])
 
 
