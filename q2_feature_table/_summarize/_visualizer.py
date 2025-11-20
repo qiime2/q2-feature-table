@@ -250,9 +250,8 @@ def tabulate_sample_frequencies(table: biom.Table) -> qiime2.Metadata:
 def summarize_plus(ctx, table, metadata=None):
     try:
         table_dimensions = table.view(pd.DataFrame).shape
-
-    except ValueError:
-        raise ValueError('Cannot summarize a table with no features')
+    except ValueError as e:
+        raise ValueError('Cannot summarize a table with no features') from e
 
     if table_dimensions[0] == 0:
         raise ValueError('Cannot summarize a table with no samples')
