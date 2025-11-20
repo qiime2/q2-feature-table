@@ -74,3 +74,5 @@ node_modules
 # Version file from versioningit
 _version.py
 
+# vscode
+.vscode
