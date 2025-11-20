@@ -367,13 +367,13 @@ def feature_table_group_samples(use):
     filtered_table.assert_output_type('FeatureTable[Frequency]')
 
 
-def feature_table_summarize(use):
+def feature_table__summarize(use):
     feature_table = use.init_artifact_from_url(
         'feature_table', moving_pics_ft_url
     )
 
     viz, = use.action(
-        use.UsageAction('feature_table', 'summarize'),
+        use.UsageAction('feature_table', '_summarize'),
         use.UsageInputs(table=feature_table),
         use.UsageOutputNames(visualization='table')
     )
@@ -459,13 +459,13 @@ def feature_table_tabulate_feature_freqs(use):
     feature_frequencies.assert_output_type('ImmutableMetadata')
 
 
-def feature_table_summarize_plus(use):
+def feature_table_summarize(use):
     feature_table = use.init_artifact_from_url(
         'feature_table', moving_pics_ft_url
     )
 
     feature_freqs, sample_freqs, viz, = use.action(
-        use.UsageAction('feature_table', 'summarize_plus'),
+        use.UsageAction('feature_table', 'summarize'),
         use.UsageInputs(table=feature_table),
         use.UsageOutputNames(feature_frequencies='feature_frequencies',
                              sample_frequencies='sample_frequencies',
