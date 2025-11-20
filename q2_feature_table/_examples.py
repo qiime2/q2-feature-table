@@ -367,20 +367,6 @@ def feature_table_group_samples(use):
     filtered_table.assert_output_type('FeatureTable[Frequency]')
 
 
-def feature_table__summarize(use):
-    feature_table = use.init_artifact_from_url(
-        'feature_table', moving_pics_ft_url
-    )
-
-    viz, = use.action(
-        use.UsageAction('feature_table', '_summarize'),
-        use.UsageInputs(table=feature_table),
-        use.UsageOutputNames(visualization='table')
-    )
-
-    viz.assert_output_type('Visualization')
-
-
 def feature_table_tabulate_seqs(use):
     rep_seqs = use.init_artifact_from_url(
         'rep_seqs', rep_seqs_1_url

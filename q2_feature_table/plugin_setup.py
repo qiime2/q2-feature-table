@@ -524,10 +524,7 @@ plugin.visualizers.register_function(
     input_descriptions={'table': 'The feature table to be summarized.'},
     parameter_descriptions={'sample_metadata': 'The sample metadata.'},
     name="Summarize table helper",
-    description="Generate visual and tabular summaries of a feature table.",
-    examples={
-        'feature_table_summarize': ex.feature_table_summarize,
-    }
+    description="Generate visual and tabular summaries of a feature table."
 )
 
 plugin.visualizers.register_function(
