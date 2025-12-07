@@ -518,16 +518,13 @@ plugin.methods.register_function(
 )
 
 plugin.visualizers.register_function(
-    function=q2_feature_table.summarize,
+    function=q2_feature_table._summarize,
     inputs={'table': FeatureTable[Frequency | PresenceAbsence]},
     parameters={'sample_metadata': Metadata},
     input_descriptions={'table': 'The feature table to be summarized.'},
     parameter_descriptions={'sample_metadata': 'The sample metadata.'},
-    name="Summarize table",
-    description="Generate visual and tabular summaries of a feature table.",
-    examples={
-        'feature_table_summarize': ex.feature_table_summarize,
-    }
+    name="Summarize table helper",
+    description="Generate visual and tabular summaries of a feature table."
 )
 
 plugin.visualizers.register_function(
@@ -712,7 +709,7 @@ plugin.methods.register_function(
 )
 
 plugin.pipelines.register_function(
-    function=q2_feature_table.summarize_plus,
+    function=q2_feature_table.summarize,
     inputs={'table': FeatureTable[Frequency | PresenceAbsence]},
     parameters={'metadata': Metadata},
     outputs={'feature_frequencies': ImmutableMetadata,
@@ -727,10 +724,10 @@ plugin.pipelines.register_function(
                          'sample_frequencies': 'Observed feature count and ' +
                          'total frequencies per sample.',
                          'summary': 'Visual summary of feature table'},
-    name="Summarize table plus",
+    name="Summarize table",
     description="Generate visual and tabular summaries of a feature table. "
                 "Tabulate sample and feature frequencies.",
-    examples={'feature_table_summarize_plus': ex.feature_table_summarize_plus}
+    examples={'feature_table_summarize_': ex.feature_table_summarize}
 )
 
 P_method, T_normalized_table = TypeMap(

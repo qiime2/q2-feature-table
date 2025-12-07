@@ -9,8 +9,9 @@
 from ._normalize import rarefy, normalize
 from ._subsample_ids import subsample_ids
 from ._transform import (presence_absence, relative_frequency, transpose)
-from ._summarize import (summarize, tabulate_seqs, tabulate_sample_frequencies,
-                         tabulate_feature_frequencies, summarize_plus)
+from ._summarize import (_summarize, tabulate_seqs,
+                         tabulate_sample_frequencies,
+                         tabulate_feature_frequencies, summarize)
 from ._merge import (merge, merge_seqs, merge_taxa, overlap_methods)
 from ._filter import (filter_samples, filter_features, filter_seqs,
                       filter_features_conditionally)
@@ -26,10 +27,10 @@ except ModuleNotFoundError:
     __version__ = '0.0.0+notfound'
 
 __all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'transpose',
-           'summarize', 'merge', 'merge_seqs', 'filter_samples',
+           '_summarize', 'merge', 'merge_seqs', 'filter_samples',
            'filter_features', 'merge_taxa', 'tabulate_seqs', 'overlap_methods',
            'core_features', 'group', 'heatmap', 'heatmap_choices',
            'filter_seqs', 'subsample_ids', 'rename_ids',
            'filter_features_conditionally', 'split',
            'tabulate_feature_frequencies', 'tabulate_sample_frequencies',
-           'summarize_plus', 'normalize']
+           'summarize', 'normalize']

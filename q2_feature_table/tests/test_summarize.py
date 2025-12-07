@@ -29,7 +29,7 @@ from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Artifact, Metadata
 
 from q2_feature_table import (
-        tabulate_seqs, summarize,
+        tabulate_seqs, _summarize,
         tabulate_feature_frequencies, tabulate_sample_frequencies)
 from q2_feature_table._summarize._visualizer import _compute_descriptive_stats
 from q2_feature_table._summarize._visualizer import _frequencies
@@ -471,8 +471,7 @@ class TabulateSeqsTests(TestCase):
                 # Did not error out, this is a problem
 
 
-class SummarizeTests(TestCase):
-
+class _SummarizeTests(TestCase):
     def test_basic(self):
         table = biom.Table(np.array([[0, 1, 3],
                                      [1, 1, 2],
@@ -483,7 +482,7 @@ class SummarizeTests(TestCase):
                            ['S1', 'S2', 'S3'])
 
         with tempfile.TemporaryDirectory() as output_dir:
-            summarize(output_dir, table)
+            _summarize(output_dir, table)
 
             index_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(index_fp))
@@ -511,7 +510,7 @@ class SummarizeTests(TestCase):
                            ['S1', 'S2', 'S3'])
 
         with tempfile.TemporaryDirectory() as output_dir:
-            summarize(output_dir, table)
+            _summarize(output_dir, table)
 
             index_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(index_fp))
@@ -524,7 +523,7 @@ class SummarizeTests(TestCase):
                            ['O1', 'O2'],
                            ['S1'])
         with tempfile.TemporaryDirectory() as output_dir:
-            summarize(output_dir, table)
+            _summarize(output_dir, table)
             sample_frequencies_pdf_fp = \
                 os.path.join(output_dir, sample_frequencies_pdf_fn)
             self.assertFalse(os.path.exists(sample_frequencies_pdf_fp))
@@ -534,7 +533,7 @@ class SummarizeTests(TestCase):
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
         with tempfile.TemporaryDirectory() as output_dir:
-            summarize(output_dir, table)
+            _summarize(output_dir, table)
             sample_frequencies_pdf_fp = \
                 os.path.join(output_dir, sample_frequencies_pdf_fn)
             self.assertTrue(os.path.exists(sample_frequencies_pdf_fp))
@@ -547,7 +546,7 @@ class SummarizeTests(TestCase):
                            ['O1'],
                            ['S1', 'S2'])
         with tempfile.TemporaryDirectory() as output_dir:
-            summarize(output_dir, table)
+            _summarize(output_dir, table)
             feature_frequencies_pdf_fp = \
                 os.path.join(output_dir, feature_frequencies_pdf_fn)
             self.assertFalse(os.path.exists(feature_frequencies_pdf_fp))
@@ -557,7 +556,7 @@ class SummarizeTests(TestCase):
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
         with tempfile.TemporaryDirectory() as output_dir:
-            summarize(output_dir, table)
+            _summarize(output_dir, table)
             feature_frequencies_pdf_fp = \
                 os.path.join(output_dir, feature_frequencies_pdf_fn)
             self.assertTrue(os.path.exists(feature_frequencies_pdf_fp))
@@ -572,7 +571,7 @@ class SummarizeTests(TestCase):
                            ['S1', 'S2', 'S3'])
 
         with tempfile.TemporaryDirectory() as output_dir:
-            summarize(output_dir, table, metadata)
+            _summarize(output_dir, table, metadata)
 
             index_fp = os.path.join(output_dir, 'index.html')
             self.assertTrue(os.path.exists(index_fp))
@@ -635,7 +634,7 @@ class SummarizeTests(TestCase):
                            ['S1', 'S2', 'S3', 'S4'])
 
         with tempfile.TemporaryDirectory() as output_dir:
-            summarize(output_dir, table)
+            _summarize(output_dir, table)
             driver.get(
                 "file://"
                 f"{os.path.join(output_dir, 'sample-frequency-detail.html')}")
@@ -725,20 +724,20 @@ class TabulateFeatureFrequencyTests(TestCase):
         pd.testing.assert_frame_equal(exp, obs)
 
 
-class SummarizePlusTests(TestPluginBase):
+class SummarizeTests(TestPluginBase):
 
     package = 'q2_feature_table'
 
     def setUp(self):
         super().setUp()
-        self.summarize_plus = self.plugin.pipelines['summarize_plus']
+        self.summarize = self.plugin.pipelines['summarize']
 
     def test_basic(self):
         table = biom.Table(np.array([[25, 0, 25], [25, 25, 25]]),
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
         table = Artifact.import_data('FeatureTable[Frequency]', table)
-        results = self.summarize_plus(table)
+        results = self.summarize(table)
 
         self.assertEqual(len(results), 3)
         self.assertEqual(repr(results.feature_frequencies.type),
@@ -771,7 +770,7 @@ class SummarizePlusTests(TestPluginBase):
         table = Artifact.import_data('FeatureTable[Frequency]', table)
 
         with self.assertRaises(ValueError) as context:
-            self.summarize_plus(table)
+            self.summarize(table)
 
             self.assertTrue('Cannot summarize a table with no samples' in
                             context.exception)
@@ -784,7 +783,7 @@ class SummarizePlusTests(TestPluginBase):
 
         with self.assertRaises(ValueError) as context:
 
-            self.summarize_plus(table)
+            self.summarize(table)
 
             self.assertTrue('Cannot summarize a table with no features' in
                             context.exception)
@@ -794,7 +793,7 @@ class SummarizePlusTests(TestPluginBase):
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
         table = Artifact.import_data('FeatureTable[Frequency]', table)
-        results = self.summarize_plus(table)
+        results = self.summarize(table)
 
         self.assertEqual(len(results), 3)
         self.assertEqual(repr(results.feature_frequencies.type),

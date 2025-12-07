@@ -308,7 +308,7 @@ def feature_table_filter_features_sequences(use):
                 "useful, for example, for removing sequences that are "
                 "identified as chimeric. To learn about "
                 "using Artifacts as Metadata, as is performed here, see "
-                "https://use.qiime2.org/en/latest/how-to-guides/artifacts-as-metadata.html") # noqa
+                "https://use.qiime2.org/en/stable/how-to-guides/artifacts-as-metadata.html") # noqa
 
     filtered_table, = use.action(
         use.UsageAction(plugin_id='feature_table',
@@ -365,20 +365,6 @@ def feature_table_group_samples(use):
     )
 
     filtered_table.assert_output_type('FeatureTable[Frequency]')
-
-
-def feature_table_summarize(use):
-    feature_table = use.init_artifact_from_url(
-        'feature_table', moving_pics_ft_url
-    )
-
-    viz, = use.action(
-        use.UsageAction('feature_table', 'summarize'),
-        use.UsageInputs(table=feature_table),
-        use.UsageOutputNames(visualization='table')
-    )
-
-    viz.assert_output_type('Visualization')
 
 
 def feature_table_tabulate_seqs(use):
@@ -459,13 +445,13 @@ def feature_table_tabulate_feature_freqs(use):
     feature_frequencies.assert_output_type('ImmutableMetadata')
 
 
-def feature_table_summarize_plus(use):
+def feature_table_summarize(use):
     feature_table = use.init_artifact_from_url(
         'feature_table', moving_pics_ft_url
     )
 
     feature_freqs, sample_freqs, viz, = use.action(
-        use.UsageAction('feature_table', 'summarize_plus'),
+        use.UsageAction('feature_table', 'summarize'),
         use.UsageInputs(table=feature_table),
         use.UsageOutputNames(feature_frequencies='feature_frequencies',
                              sample_frequencies='sample_frequencies',

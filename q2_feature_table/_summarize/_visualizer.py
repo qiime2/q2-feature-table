@@ -95,8 +95,8 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
     shutil.copy(js, os.path.join(output_dir, 'js', 'tsorter.min.js'))
 
 
-def summarize(output_dir: str, table: biom.Table,
-              sample_metadata: qiime2.Metadata = None) -> None:
+def _summarize(output_dir: str, table: biom.Table,
+               sample_metadata: qiime2.Metadata = None) -> None:
     # this value is to limit the amount of memory used by seaborn.histplot, for
     # more information see: https://github.com/mwaskom/seaborn/issues/2325
     MAX_BINS = 50
@@ -247,13 +247,11 @@ def tabulate_sample_frequencies(table: biom.Table) -> qiime2.Metadata:
     return qiime2.Metadata(sample_frequencies)
 
 
-def summarize_plus(ctx, table, metadata=None):
-
+def summarize(ctx, table, metadata=None):
     try:
         table_dimensions = table.view(pd.DataFrame).shape
-
-    except ValueError:
-        raise ValueError('Cannot summarize a table with no features')
+    except ValueError as e:
+        raise ValueError('Cannot summarize a table with no features') from e
 
     if table_dimensions[0] == 0:
         raise ValueError('Cannot summarize a table with no samples')
@@ -263,7 +261,7 @@ def summarize_plus(ctx, table, metadata=None):
     _sample_frequencies = ctx.get_action('feature_table',
                                          'tabulate_sample_frequencies')
     _visualizer = ctx.get_action('feature_table',
-                                 'summarize')
+                                 '_summarize')
 
     feature_frequencies, = _feature_frequencies(table)
     sample_frequencies, = _sample_frequencies(table)
