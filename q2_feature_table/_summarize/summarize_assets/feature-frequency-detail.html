@@ -27,6 +27,10 @@
   const tableData = JSON.parse(document.getElementById("table-data").innerHTML);
   const featureFrequencies = tableData["Frequency"];
 
+  for (const [key, val] of Object.entries(tableData["Frequency"])) {
+    featureFrequencies[key] = Number(val);
+  }
+
   const sortedFeatureIDs = Object.keys(featureFrequencies).sort(function(a, b) {
     return sortIDs(a, b, featureFrequencies)
   });
