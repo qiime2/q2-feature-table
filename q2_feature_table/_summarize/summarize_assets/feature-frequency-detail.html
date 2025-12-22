@@ -8,8 +8,8 @@
         <thead>
           <tr style="text-align: right;">
             <th></th>
-            <th data-tsorter="numeric">Frequency</th>
-            <th data-tsorter="numeric"># of Samples Observed In</th>
+            <th>Frequency</th>
+            <th># of Samples Observed In</th>
           </tr>
         </thead>
         <tbody id="table-body"></tbody>
@@ -25,7 +25,6 @@
 <script type="text/javascript">
   const tableBody = document.getElementById("table-body");
   const tableData = JSON.parse(document.getElementById("table-data").innerHTML);
-  const featureFrequencies = tableData["Frequency"];
 
   const sortedFeatureIDs = Object.keys(featureFrequencies).sort(function(a, b) {
     return sortIDs(a, b, featureFrequencies)
