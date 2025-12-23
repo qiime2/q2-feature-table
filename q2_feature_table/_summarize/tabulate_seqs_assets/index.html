@@ -96,7 +96,11 @@
             {% endif %}
             {% if metadata is defined %}
               {% for name in metadata.columns %}
+                {% if is_numeric(name) %}
+            <th data-tsorter="numeric">{{ name }}</th>
+                {% else %}
             <th data-tsorter="text">{{ name }}</th>
+                {% endif %}
               {% endfor %}
             {% endif %}
             <th data-tsorter="link">Sequence Length</th>
