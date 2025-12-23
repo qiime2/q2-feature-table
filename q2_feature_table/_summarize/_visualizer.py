@@ -86,6 +86,8 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
         context['taxonomy'] = taxonomy
     if metadata is not None:
         context['metadata'] = metadata_df
+        context['is_numeric'] = is_numeric(metadata)
+
     context['display_sequences'] = display_sequences
     q2templates.render(index, output_dir, context=context)
 
@@ -93,6 +95,13 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
         TEMPLATES, 'tabulate_seqs_assets', 'js', 'tsorter.min.js')
     os.mkdir(os.path.join(output_dir, 'js'))
     shutil.copy(js, os.path.join(output_dir, 'js', 'tsorter.min.js'))
+
+
+def is_numeric(metadata: qiime2.metadata):
+    def is_numeric_closure(column_name: str):
+        return metadata.get_column(column_name).type == 'numeric'
+
+    return is_numeric_closure
 
 
 def summarize(output_dir: str, table: biom.Table,
@@ -231,6 +240,7 @@ def tabulate_feature_frequencies(table: biom.Table) -> qiime2.Metadata:
         pd.Series(feature_qualitative_data).astype(int)
     feature_frequencies["No. of Samples Observed In"] = samples_observed_in
     feature_frequencies.index.name = "Feature ID"
+
     return qiime2.Metadata(feature_frequencies)
 
 
