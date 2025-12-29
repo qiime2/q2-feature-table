@@ -25,6 +25,7 @@
 <script type="text/javascript">
   const tableBody = document.getElementById("table-body");
   const tableData = JSON.parse(document.getElementById("table-data").innerHTML);
+  const featureFrequencies = tableData["Frequency"];
 
   const sortedFeatureIDs = Object.keys(featureFrequencies).sort(function(a, b) {
     return sortIDs(a, b, featureFrequencies)
