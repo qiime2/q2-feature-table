@@ -715,7 +715,7 @@ class TabulateFeatureFrequencyTests(TestCase):
         table = biom.Table(np.array([[25, 25, 0], [25, 25, 25]]),
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
-        obs = tabulate_feature_frequencies(table).to_dataframe()
+        obs = tabulate_feature_frequencies(table, format=True).to_dataframe()
 
         exp = pd.DataFrame({'Frequency': ['50.0', '75.0'],
                             'No. of Samples Observed In':
@@ -738,7 +738,7 @@ class SummarizePlusTests(TestPluginBase):
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
         table = Artifact.import_data('FeatureTable[Frequency]', table)
-        results = self.summarize_plus(table)
+        results = self.summarize_plus(table, format=True)
 
         self.assertEqual(len(results), 3)
         self.assertEqual(repr(results.feature_frequencies.type),
@@ -794,7 +794,7 @@ class SummarizePlusTests(TestPluginBase):
                            ['O1', 'O2'],
                            ['S1', 'S2', 'S3'])
         table = Artifact.import_data('FeatureTable[Frequency]', table)
-        results = self.summarize_plus(table)
+        results = self.summarize_plus(table, format=True)
 
         self.assertEqual(len(results), 3)
         self.assertEqual(repr(results.feature_frequencies.type),
