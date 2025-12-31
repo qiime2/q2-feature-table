@@ -72,7 +72,7 @@ def merge_seqs(data: pd.Series) -> pd.Series:
     return _merge_feature_data(data)
 
 
-def merge_taxa(data: list[pd.DataFrame]) -> pd.DataFrame:
+def merge_taxa(data: pd.DataFrame) -> pd.DataFrame:
     if len(data) > 1:
 
         depths = []
@@ -80,8 +80,8 @@ def merge_taxa(data: list[pd.DataFrame]) -> pd.DataFrame:
         for d in data:
             depth = 0
             for _, row in d.iterrows():
-                 depth = row['Taxon'].count(';')
-                 if depth > max:
+                depth = row['Taxon'].count(';')
+                if depth > max:
                     depths.append(depth)
                     max = depth
 
