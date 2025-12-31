@@ -72,27 +72,23 @@ def merge_seqs(data: pd.Series) -> pd.Series:
     return _merge_feature_data(data)
 
 
-def merge_taxa(data: pd.DataFrame) -> pd.DataFrame:
+def merge_taxa(data: list[pd.DataFrame]) -> pd.DataFrame:
     if len(data) > 1:
 
-        counts = []
+        depths = []
+        max = 0
         for d in data:
-            total = 0
+            depth = 0
             for _, row in d.iterrows():
-                total += row['Taxon'].count(';')
-            counts.append(total)
+                 depth = row['Taxon'].count(';')
+                 if depth > max:
+                    depths.append(depth)
+                    max = depth
 
-        if len(set(counts)) != 1:
+        if len(set(depths)) != 1:
             warnings.warn(
                 "You are trying to merge tables with different levels "
                 "of taxonomic depth, this may cause failures later.",
-                UserWarning
-            )
-
-        if any(count == 0 for count in counts):
-            warnings.warn(
-                "You are trying to merge tables with one level of taxonomic"
-                " depth, this may cause failures later.",
                 UserWarning
             )
 

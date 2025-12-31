@@ -356,21 +356,7 @@ class MergeFeatureTaxonomyTests(unittest.TestCase):
             columns=['Taxon', 'Confidence']
         )
         data_two = pd.DataFrame(
-            [('a;b;c;d;', '1.0'), ('a;b;c;f', '0.7')],
-            index=['f1', 'f2'],
-            columns=['Taxon', 'Confidence']
-        )
-
-        with self.assertWarns(UserWarning):
-            merge_taxa([data_one, data_two])
-
-        data_one = pd.DataFrame(
-            [('a', '1.0'), ('a', '0.7')],
-            index=['f1', 'f2'],
-            columns=['Taxon', 'Confidence']
-        )
-        data_two = pd.DataFrame(
-            [('a', '1.0'), ('a', '0.7')],
+            [('a;b;c;d;f', '1.0'), ('a;b;c;f', '0.7')],
             index=['f1', 'f2'],
             columns=['Taxon', 'Confidence']
         )
