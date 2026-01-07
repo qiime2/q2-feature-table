@@ -86,8 +86,7 @@ def merge_taxa(data: pd.DataFrame) -> pd.DataFrame:
 
         if len(set(depths)) != 1:
             warnings.warn(
-                "You are merging taxonomies with different levels "
-                "of taxonomic depth.",
+                "You are merging taxonomies with different depths.",
                 UserWarning
             )
 
