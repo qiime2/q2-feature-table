@@ -350,19 +350,19 @@ class MergeFeatureTaxonomyTests(unittest.TestCase):
         pdt.assert_frame_equal(obs, exp)
 
     def test_merge_taxa_different_levels(self):
-        taxon_one = pd.DataFrame(
+        taxonomy1 = pd.DataFrame(
             [('a;b;c;d', '1.0'), ('a;b;c;f', '0.7')],
             index=['f1', 'f2'],
             columns=['Taxon', 'Confidence']
         )
-        taxon_two = pd.DataFrame(
+        taxonomy2 = pd.DataFrame(
             [('a;b;c;d;f', '1.0'), ('a;b;c;f', '0.7')],
             index=['f1', 'f2'],
             columns=['Taxon', 'Confidence']
         )
 
         with self.assertWarns(UserWarning):
-            merge_taxa([taxon_one, taxon_two])
+            merge_taxa([taxonomy1, taxonomy2])
 
 
 if __name__ == "__main__":
