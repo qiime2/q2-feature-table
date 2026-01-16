@@ -16,6 +16,7 @@ import pandas.testing as pdt
 
 from q2_feature_table import merge, merge_seqs, merge_taxa
 from q2_feature_table._merge import _merge_feature_data, _get_overlapping
+from qiime2.core.exceptions import RachisWarning
 
 
 class MergeTableTests(unittest.TestCase):
@@ -361,7 +362,7 @@ class MergeFeatureTaxonomyTests(unittest.TestCase):
             columns=['Taxon', 'Confidence']
         )
 
-        with self.assertWarns(UserWarning):
+        with self.assertWarns(RachisWarning):
             merge_taxa([taxonomy1, taxonomy2])
 
 

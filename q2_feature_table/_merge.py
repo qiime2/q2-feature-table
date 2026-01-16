@@ -11,6 +11,8 @@ import pandas as pd
 import collections
 import warnings
 
+from qiime2.core.exceptions import RachisWarning
+
 
 def overlap_methods():
     return {'error_on_overlapping_sample', 'error_on_overlapping_feature',
@@ -87,7 +89,7 @@ def merge_taxa(data: pd.DataFrame) -> pd.DataFrame:
         if len(set(depths)) != 1:
             warnings.warn(
                 "You are merging taxonomies with different depths.",
-                UserWarning
+                RachisWarning
             )
 
     data = _merge_feature_data(data)
