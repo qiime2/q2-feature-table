@@ -8,6 +8,7 @@
 
 import os
 from unittest import TestCase, main
+import pytest
 import tempfile
 import re
 import json
@@ -610,6 +611,7 @@ class _SummarizeTests(TestCase):
 
         self.assertEqual(spec['data'][0]['values'], exp)
 
+    @pytest.mark.selenium
     def test_summarize_viz_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument("-headless")
@@ -617,6 +619,7 @@ class _SummarizeTests(TestCase):
         with webdriver.Chrome(options=chrome_options) as driver:
             self._selenium_test(driver)
 
+    @pytest.mark.selenium
     def test_summarize_viz_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument("-headless")
