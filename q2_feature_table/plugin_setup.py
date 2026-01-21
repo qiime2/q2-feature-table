@@ -675,16 +675,10 @@ plugin.methods.register_function(
     function=q2_feature_table.tabulate_feature_frequencies,
     inputs={'table': FeatureTable[Frequency | PresenceAbsence |
                                   RelativeFrequency]},
-    parameters={'format': Bool},
+    parameters={},
     outputs={'feature_frequencies': ImmutableMetadata},
     input_descriptions={
         'table': 'The input feature table.'
-    },
-    parameter_descriptions={
-        'format': (
-            'Whether to format large numbers with commas. Note that numeric '
-            'columns will be converted to string columns.'
-        ),
     },
     output_descriptions={
         'feature_frequencies': 'Per-sample and total frequencies per feature.'
@@ -717,20 +711,14 @@ plugin.methods.register_function(
 plugin.pipelines.register_function(
     function=q2_feature_table.summarize,
     inputs={'table': FeatureTable[Frequency | PresenceAbsence]},
-    parameters={'metadata': Metadata, 'format': Bool},
+    parameters={'metadata': Metadata},
     outputs={'feature_frequencies': ImmutableMetadata,
              'sample_frequencies': ImmutableMetadata,
              'summary': Visualization},
     input_descriptions={
         'table': 'The feature table to be summarized.'
     },
-    parameter_descriptions={
-        'metadata': 'The sample metadata.',
-        'format': (
-            'Whether to format large numbers with commas. Note that numeric '
-            'columns will be converted to string columns.'
-        ),
-    },
+    parameter_descriptions={'metadata': 'The sample metadata.'},
     output_descriptions={'feature_frequencies': 'Per-sample and total ' +
                          'frequencies per feature.',
                          'sample_frequencies': 'Observed feature count and ' +
