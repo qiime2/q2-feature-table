@@ -12,6 +12,7 @@ import tempfile
 import re
 import json
 import csv
+import pytest
 
 import skbio
 import biom
@@ -34,6 +35,18 @@ from q2_feature_table import (
 from q2_feature_table._summarize._visualizer import _compute_descriptive_stats
 from q2_feature_table._summarize._visualizer import _frequencies
 from q2_feature_table._summarize._vega_spec import vega_spec
+
+# This is a temporary 'fix' to failing selenium tests with chrome when they
+# are run within a container on the GHA linux runner.
+# The failures aren't interesting and the hope is that this will either be
+# fixed such that:
+# A. None of the tests are run within a container, or
+# B. The firefox tests in container plus chrome tests on mac will fill in
+# enough gaps that we can see if something goes wrong that is interesting.
+skip_linux = pytest.mark.skipif(
+    os.getenv('SKIP_SELENIUM', '') == '1',
+    reason='skipping Selenium tests on chrome within linux container'
+    )
 
 
 class TabulateSeqsTests(TestCase):
@@ -610,6 +623,7 @@ class _SummarizeTests(TestCase):
 
         self.assertEqual(spec['data'][0]['values'], exp)
 
+    @skip_linux
     def test_summarize_viz_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument("-headless")
