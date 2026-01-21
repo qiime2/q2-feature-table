@@ -43,7 +43,7 @@ from q2_feature_table._summarize._vega_spec import vega_spec
 # A. None of the tests are run within a container, or
 # B. The chrome & firefox tests on mac will fill in enough gaps
 # that we can see if something goes wrong that is interesting.
-skip_linux = pytest.mark.skipif(
+skip_selenium = pytest.mark.skipif(
     os.getenv('SKIP_SELENIUM', '') == '1',
     reason='skipping Selenium tests within linux container'
     )
@@ -623,7 +623,7 @@ class _SummarizeTests(TestCase):
 
         self.assertEqual(spec['data'][0]['values'], exp)
 
-    @skip_linux
+    @skip_selenium
     def test_summarize_viz_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument("-headless")
@@ -631,7 +631,7 @@ class _SummarizeTests(TestCase):
         with webdriver.Chrome(options=chrome_options) as driver:
             self._selenium_test(driver)
 
-    @skip_linux
+    @skip_selenium
     def test_summarize_viz_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument("-headless")
