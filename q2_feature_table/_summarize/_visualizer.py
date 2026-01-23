@@ -9,6 +9,7 @@
 import os
 import importlib
 import shutil
+import tempfile
 
 import biom
 import numpy as np
@@ -50,6 +51,34 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
 
     if metadata is not None:
         metadata_df = metadata.to_dataframe()
+
+        # Make sure numeric columns are represented correctly
+        types = {}
+        numeric_frame = pd.DataFrame()
+        for column in metadata_df.columns:
+            types[column] = 'categorical'
+            if metadata.get_column(column).type == 'categorical':
+                numeric_column = pd.to_numeric(
+                    metadata_df[column].str.replace(',', ''), errors='coerce'
+                )
+
+                if (
+                    not numeric_column.isna().any()
+                    and (numeric_column.astype(str) ==
+                         metadata_df[column].str.replace(',', '')).all()
+                ):
+                    types[column] = 'numeric'
+                    numeric_frame[column] = numeric_column
+                else:
+                    numeric_frame[column] = metadata_df[column]
+
+        with tempfile.NamedTemporaryFile() as tsv_file:
+            tsv_path = tsv_file.name
+            numeric_frame.to_csv(tsv_path, sep='\t')
+            metadata = metadata.load(tsv_path, types)
+
+        metadata_df = metadata.to_dataframe()
+
         if merge_method == 'union':
             display_sequences = display_sequences.union(metadata_df.index)
         elif merge_method == 'intersect':
@@ -232,25 +261,15 @@ def _summarize(output_dir: str, table: biom.Table,
     plt.close('all')
 
 
-def tabulate_feature_frequencies(table: biom.Table, format: bool = False) \
-        -> qiime2.Metadata:
-
+def tabulate_feature_frequencies(table: biom.Table) -> qiime2.Metadata:
     feature_frequencies = _frequencies(table, 'observation')
-
-    if format:
-        feature_frequencies = feature_frequencies.apply('{:,}'.format)
-
-    feature_frequencies = feature_frequencies.to_frame('Frequency')
+    feature_frequencies = feature_frequencies.apply(
+        '{:,}'.format).to_frame('Frequency')
     feature_qualitative_data = _compute_qualitative_summary(table)
     samples_observed_in =\
-        pd.Series(feature_qualitative_data).astype(int)
-
-    if format:
-        samples_observed_in = samples_observed_in.apply('{:,}'.format)
-
+        pd.Series(feature_qualitative_data).astype(int).apply('{:,}'.format)
     feature_frequencies["No. of Samples Observed In"] = samples_observed_in
     feature_frequencies.index.name = "Feature ID"
-
     return qiime2.Metadata(feature_frequencies)
 
 
@@ -266,7 +285,7 @@ def tabulate_sample_frequencies(table: biom.Table) -> qiime2.Metadata:
     return qiime2.Metadata(sample_frequencies)
 
 
-def summarize(ctx, table, metadata=None, format=False):
+def summarize(ctx, table, metadata=None):
     try:
         table_dimensions = table.view(pd.DataFrame).shape
     except ValueError as e:
@@ -282,7 +301,7 @@ def summarize(ctx, table, metadata=None, format=False):
     _visualizer = ctx.get_action('feature_table',
                                  '_summarize')
 
-    feature_frequencies, = _feature_frequencies(table, format)
+    feature_frequencies, = _feature_frequencies(table)
     sample_frequencies, = _sample_frequencies(table)
     summary, = _visualizer(table, metadata)
 
