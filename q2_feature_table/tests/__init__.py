@@ -5,3 +5,6 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+from ._util import fake_CaptureHolder_factory
+
+all = ['fake_CaptureHolder_factory']
