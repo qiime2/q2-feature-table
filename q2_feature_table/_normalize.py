@@ -9,12 +9,12 @@ import biom
 
 import os
 import random
-import sys
 
 import pandas as pd
 from qiime2.core.type import CaptureHolder
 from q2_types.feature_data import SequenceCharacteristicsDirectoryFormat
 from rnanorm import CPM, CTF, CUF, FPKM, TMM, TPM, UQ
+from ._util import RNG_MAX_SIZE
 
 
 def rarefy(table: biom.Table,
@@ -23,7 +23,7 @@ def rarefy(table: biom.Table,
            random_seed: CaptureHolder = None
            ) -> biom.Table:
     if random_seed.value is None:
-        random_int = random.randrange(sys.maxsize)
+        random_int = random.randrange(RNG_MAX_SIZE)
         random_seed.set_value(random_int)
 
     if with_replacement:
