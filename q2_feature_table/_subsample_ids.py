@@ -9,6 +9,7 @@ import biom
 import random
 
 from qiime2.core.type import CaptureHolder
+from ._util import RNG_MAX_SIZE
 
 
 def subsample_ids(table: biom.Table,
@@ -17,7 +18,7 @@ def subsample_ids(table: biom.Table,
                   random_seed: CaptureHolder = None
                   ) -> biom.Table:
     if random_seed.value is None:
-        random_int = random.randrange(2**128)
+        random_int = random.randrange(RNG_MAX_SIZE)
         random_seed.set_value(random_int)
 
     if axis == 'feature':
