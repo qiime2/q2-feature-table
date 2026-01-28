@@ -13,6 +13,7 @@ import numpy.testing as npt
 from biom.table import Table
 
 from q2_feature_table import subsample_ids
+from ._util import FakeCaptureHolder
 
 
 class SubsampleIDsTests(TestCase):
@@ -21,11 +22,11 @@ class SubsampleIDsTests(TestCase):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                   ['O1', 'O2'],
                   ['S1', 'S2', 'S3'])
-        a = subsample_ids(t, 2, 'sample')
+        a = subsample_ids(t, 2, 'sample', random_seed=FakeCaptureHolder())
         a_eq_b = []
         n_iterations = 100
         for i in range(n_iterations):
-            b = subsample_ids(t, 2, 'sample')
+            b = subsample_ids(t, 2, 'sample', random_seed=FakeCaptureHolder())
             self.assertEqual(a.shape, (2, 2))
 
             sample_ids = frozenset(b.ids(axis='sample'))
@@ -48,7 +49,7 @@ class SubsampleIDsTests(TestCase):
         t = Table(np.array([[0, 0, 0], [1, 1, 2]]),
                   ['O1', 'O2'],
                   ['S1', 'S2', 'S3'])
-        a = subsample_ids(t, 2, 'sample')
+        a = subsample_ids(t, 2, 'sample', random_seed=FakeCaptureHolder())
         self.assertEqual(a.shape, (1, 2))
 
         sample_ids = frozenset(a.ids(axis='sample'))
@@ -61,11 +62,11 @@ class SubsampleIDsTests(TestCase):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]).T,
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
-        a = subsample_ids(t, 2, 'feature')
+        a = subsample_ids(t, 2, 'feature', random_seed=FakeCaptureHolder())
         a_eq_b = []
         n_iterations = 100
         for i in range(n_iterations):
-            b = subsample_ids(t, 2, 'feature')
+            b = subsample_ids(t, 2, 'feature', random_seed=FakeCaptureHolder())
             self.assertEqual(b.shape, (2, 2))
 
             feature_ids = frozenset(b.ids(axis='observation'))
@@ -88,11 +89,11 @@ class SubsampleIDsTests(TestCase):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                   ['O1', 'O2'],
                   ['S1', 'S2', 'S3'])
-        a = subsample_ids(t, 2, 'sample', random_seed=1)
+        a = subsample_ids(t, 2, 'sample', random_seed=FakeCaptureHolder(1))
         a_eq_b = []
         n_iterations = 100
         for i in range(n_iterations):
-            b = subsample_ids(t, 2, 'sample', random_seed=1)
+            b = subsample_ids(t, 2, 'sample', random_seed=FakeCaptureHolder(1))
             a_eq_b.append(a == b)
         self.assertFalse(False in a_eq_b,
                          f"After {n_iterations} iterations, at least one "
@@ -104,11 +105,12 @@ class SubsampleIDsTests(TestCase):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]).T,
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
-        a = subsample_ids(t, 2, 'feature', random_seed=1)
+        a = subsample_ids(t, 2, 'feature', random_seed=FakeCaptureHolder(1))
         a_eq_b = []
         n_iterations = 100
         for i in range(n_iterations):
-            b = subsample_ids(t, 2, 'feature', random_seed=1)
+            b = subsample_ids(t, 2, 'feature',
+                              random_seed=FakeCaptureHolder(1))
             a_eq_b.append(a == b)
         self.assertFalse(False in a_eq_b,
                          f"After {n_iterations} iterations, at least one "
@@ -120,7 +122,7 @@ class SubsampleIDsTests(TestCase):
         t = Table(np.array([[0, 0, 0], [1, 1, 2]]).T,
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
-        a = subsample_ids(t, 2, 'feature')
+        a = subsample_ids(t, 2, 'feature', random_seed=FakeCaptureHolder())
         self.assertEqual(a.shape, (2, 1))
 
         sample_ids = frozenset(a.ids(axis='observation'))
@@ -134,28 +136,28 @@ class SubsampleIDsTests(TestCase):
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
         with self.assertRaisesRegex(ValueError, "depth exceeds"):
-            subsample_ids(t, 10, 'sample')
+            subsample_ids(t, 10, 'sample', random_seed=FakeCaptureHolder())
 
     def test_subsample_features_oversample(self):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]).T,
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
         with self.assertRaisesRegex(ValueError, "depth exceeds"):
-            subsample_ids(t, 10, 'feature')
+            subsample_ids(t, 10, 'feature', random_seed=FakeCaptureHolder())
 
     def test_subsample_samples_empty(self):
         t = Table(np.array([[0, 0, 0], [0, 0, 0]]).T,
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
         with self.assertRaisesRegex(ValueError, "contains no"):
-            subsample_ids(t, 2, 'sample')
+            subsample_ids(t, 2, 'sample', random_seed=FakeCaptureHolder())
 
     def test_subsample_features_empty(self):
         t = Table(np.array([[0, 0, 0], [0, 0, 0]]).T,
                   ['O1', 'O2', 'O3'],
                   ['S1', 'S2'])
         with self.assertRaisesRegex(ValueError, "contains no"):
-            subsample_ids(t, 2, 'feature')
+            subsample_ids(t, 2, 'feature', random_seed=FakeCaptureHolder())
 
 
 if __name__ == "__main__":
