@@ -7,4 +7,4 @@
 # ----------------------------------------------------------------------------
 from ._util import fake_CaptureHolder_factory
 
-all = ['fake_CaptureHolder_factory']
+__all__ = ['fake_CaptureHolder_factory']
