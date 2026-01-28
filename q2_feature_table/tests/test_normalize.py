@@ -19,6 +19,7 @@ from q2_types.feature_data import SequenceCharacteristicsDirectoryFormat
 from q2_feature_table import rarefy
 from q2_feature_table._normalize import (_validate_parameters,
                                          _convert_lengths, normalize)
+from ._util import FakeCaptureHolder
 
 
 class RarefyTests(TestCase):
@@ -27,11 +28,11 @@ class RarefyTests(TestCase):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                   ['O1', 'O2'],
                   ['S1', 'S2', 'S3'])
-        a = rarefy(t, 2)
+        a = rarefy(t, 2, random_seed=FakeCaptureHolder())
         a_eq_b = []
         n_iterations = 100
         for i in range(n_iterations):
-            b = rarefy(t, 2)
+            b = rarefy(t, 2, random_seed=FakeCaptureHolder())
             self.assertEqual(b.shape, (2, 2))
             self.assertEqual(set(b.ids(axis='sample')), set(['S2', 'S3']))
             self.assertEqual(set(b.ids(axis='observation')), set(['O1', 'O2']))
@@ -46,11 +47,11 @@ class RarefyTests(TestCase):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                   ['O1', 'O2'],
                   ['S1', 'S2', 'S3'])
-        a = rarefy(t, 2, random_seed=1)
+        a = rarefy(t, 2, random_seed=FakeCaptureHolder(1))
         a_eq_b = []
         n_iterations = 100
         for i in range(n_iterations):
-            b = rarefy(t, 2, random_seed=1)
+            b = rarefy(t, 2, random_seed=FakeCaptureHolder(1))
             a_eq_b.append(a == b)
         self.assertFalse(False in a_eq_b,
                          f"After {n_iterations} iterations, at least one "
@@ -62,16 +63,19 @@ class RarefyTests(TestCase):
         t = Table(np.array([[0, 10, 30], [10, 10, 20]]),
                   ['O1', 'O2'],
                   ['S1', 'S2', 'S3'])
-        rt = rarefy(t, 3, with_replacement=True)
+        rt = rarefy(t, 3, with_replacement=True,
+                    random_seed=FakeCaptureHolder())
         self.assertEqual(rt.shape, (2, 3))
 
         # IMPORTANT: samples below subsample depth should be removed
         for n_draws in range(11, 21):
-            rt = rarefy(t, n_draws, with_replacement=True)
+            rt = rarefy(t, n_draws, with_replacement=True,
+                        random_seed=FakeCaptureHolder())
             npt.assert_array_equal(rt.sum('sample'),
                                    np.array([n_draws] * 2))
         for n_draws in range(21, 50):
-            rt = rarefy(t, n_draws, with_replacement=True)
+            rt = rarefy(t, n_draws, with_replacement=True,
+                        random_seed=FakeCaptureHolder())
             npt.assert_array_equal(rt.sum('sample'),
                                    np.array([n_draws] * 1))
 
@@ -81,7 +85,7 @@ class RarefyTests(TestCase):
                   ['S1', 'S2', 'S3'])
 
         with self.assertRaisesRegex(ValueError, 'shallow enough'):
-            rarefy(t, 50)
+            rarefy(t, 50, random_seed=FakeCaptureHolder())
 
 
 class NormalizeTests(TestCase):
