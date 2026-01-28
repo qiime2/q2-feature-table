@@ -6,13 +6,20 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 import biom
+import random
+
+from qiime2.core.type import CaptureHolder
 
 
 def subsample_ids(table: biom.Table,
                   subsampling_depth: int,
                   axis: str,
-                  random_seed: int = None
+                  random_seed: CaptureHolder = None
                   ) -> biom.Table:
+    if random_seed.value is None:
+        random_int = random.randrange(2**128)
+        random_seed.set_value(random_int)
+
     if axis == 'feature':
         # we are transposing the table due to biocore/biom-format#759
         table = table.transpose()
@@ -24,7 +31,7 @@ def subsample_ids(table: biom.Table,
 
     # the axis is always 'sample' due to the above transpose
     table = table.subsample(subsampling_depth, axis='sample',
-                            by_id=True, seed=random_seed)
+                            by_id=True, seed=random_seed.value)
 
     # the inverted axis is always observation due to the above transpose
     invaxis = 'observation'
