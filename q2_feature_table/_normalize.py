@@ -8,8 +8,11 @@
 import biom
 
 import os
+import random
+import sys
 
 import pandas as pd
+from qiime2.core.type import CaptureHolder
 from q2_types.feature_data import SequenceCharacteristicsDirectoryFormat
 from rnanorm import CPM, CTF, CUF, FPKM, TMM, TPM, UQ
 
@@ -17,8 +20,11 @@ from rnanorm import CPM, CTF, CUF, FPKM, TMM, TPM, UQ
 def rarefy(table: biom.Table,
            sampling_depth: int,
            with_replacement: bool = False,
-           random_seed: int = None
+           random_seed: CaptureHolder = None
            ) -> biom.Table:
+    if random_seed.value is None:
+        random_int = random.randrange(sys.maxsize)
+        random_seed.set_value(random_int)
 
     if with_replacement:
         table = table.filter(lambda v, i, m: v.sum() >= sampling_depth,
@@ -26,7 +32,7 @@ def rarefy(table: biom.Table,
 
     table = table.subsample(sampling_depth, axis='sample', by_id=False,
                             with_replacement=with_replacement,
-                            seed=random_seed)
+                            seed=random_seed.value)
 
     if table.is_empty():
         raise ValueError('The rarefied table contains no samples or features. '
