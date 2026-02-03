@@ -9,7 +9,6 @@
 import os
 import importlib
 import shutil
-import tempfile
 
 import biom
 import numpy as np
@@ -23,6 +22,7 @@ import skbio
 import qiime2
 import json
 from ._vega_spec import vega_spec
+from rachis.metadata import Metadata
 
 _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
                        "ALIGNMENT_VIEW=Pairwise&PROGRAM=blastn&DATABASE"
@@ -72,11 +72,7 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
                 else:
                     numeric_frame[column] = metadata_df[column]
 
-        with tempfile.NamedTemporaryFile() as tsv_file:
-            tsv_path = tsv_file.name
-            numeric_frame.to_csv(tsv_path, sep='\t')
-            metadata = metadata.load(tsv_path, types)
-
+        metadata = Metadata(numeric_frame)
         metadata_df = metadata.to_dataframe()
 
         if merge_method == 'union':
