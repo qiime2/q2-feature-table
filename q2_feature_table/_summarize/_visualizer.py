@@ -53,26 +53,21 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
         metadata_df = metadata.to_dataframe()
 
         # Make sure numeric columns are represented correctly
-        types = {}
-        numeric_frame = pd.DataFrame()
         for column in metadata_df.columns:
-            types[column] = 'categorical'
             if metadata.get_column(column).type == 'categorical':
                 numeric_column = pd.to_numeric(
                     metadata_df[column].str.replace(',', ''), errors='coerce'
                 )
-
                 if (
                     not numeric_column.isna().any()
                     and (numeric_column.astype(str) ==
                          metadata_df[column].str.replace(',', '')).all()
                 ):
-                    types[column] = 'numeric'
-                    numeric_frame[column] = numeric_column
+                    metadata_df[column] = numeric_column
                 else:
-                    numeric_frame[column] = metadata_df[column]
+                    metadata_df[column] = metadata_df[column]
 
-        metadata = Metadata(numeric_frame)
+        metadata = Metadata(metadata_df)
         metadata_df = metadata.to_dataframe()
 
         if merge_method == 'union':
