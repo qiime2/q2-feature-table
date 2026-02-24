@@ -12,9 +12,16 @@ class FakeCaptureHolder:
     Mimic just enough of the CaptureHolder that this can be used in tests that
     call unwrapped functions that expect a CaptureHolder
     """
+    CAPTURE_HOLDER_DEFAULT = None
+
     def __init__(self, value=None):
         self._value = value
         self._set = False
+
+    @property
+    def is_set(self):
+        return self._set or self._value != \
+            FakeCaptureHolder.CAPTURE_HOLDER_DEFAULT
 
     @property
     def value(self):

@@ -6,10 +6,8 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 import biom
-import random
 
-from qiime2.core.type import CaptureHolder
-from ._util import RNG_MAX_SIZE
+from rachis.plugin import CaptureHolder, set_np_random_seed
 
 
 def subsample_ids(table: biom.Table,
@@ -17,10 +15,7 @@ def subsample_ids(table: biom.Table,
                   axis: str,
                   random_seed: CaptureHolder = None
                   ) -> biom.Table:
-    if random_seed.value is None:
-        random_int = random.randrange(RNG_MAX_SIZE)
-        random_seed.set_value(random_int)
-
+    set_np_random_seed(random_seed)
     if axis == 'feature':
         # we are transposing the table due to biocore/biom-format#759
         table = table.transpose()

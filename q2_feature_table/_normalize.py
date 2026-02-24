@@ -5,16 +5,13 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
-import biom
-
 import os
-import random
-
+import biom
 import pandas as pd
-from qiime2.core.type import CaptureHolder
+
+from rachis.plugin import CaptureHolder, set_np_random_seed
 from q2_types.feature_data import SequenceCharacteristicsDirectoryFormat
 from rnanorm import CPM, CTF, CUF, FPKM, TMM, TPM, UQ
-from ._util import RNG_MAX_SIZE
 
 
 def rarefy(table: biom.Table,
@@ -22,10 +19,7 @@ def rarefy(table: biom.Table,
            with_replacement: bool = False,
            random_seed: CaptureHolder = None
            ) -> biom.Table:
-    if random_seed.value is None:
-        random_int = random.randrange(RNG_MAX_SIZE)
-        random_seed.set_value(random_int)
-
+    set_np_random_seed(random_seed)
     if with_replacement:
         table = table.filter(lambda v, i, m: v.sum() >= sampling_depth,
                              inplace=False, axis='sample')
