@@ -22,6 +22,7 @@ import skbio
 import qiime2
 import json
 from ._vega_spec import vega_spec
+from rachis.metadata import Metadata
 
 _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
                        "ALIGNMENT_VIEW=Pairwise&PROGRAM=blastn&DATABASE"
@@ -63,6 +64,8 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
                          metadata_df[column].str.replace(',', '')).all()
                 ):
                     metadata_df[column] = numeric_column
+                
+                metadata = Metadata(metadata_df)
 
         if merge_method == 'union':
             display_sequences = display_sequences.union(metadata_df.index)
