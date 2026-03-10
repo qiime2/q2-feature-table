@@ -64,7 +64,7 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
                          metadata_df[column].str.replace(',', '')).all()
                 ):
                     metadata_df[column] = numeric_column
- 
+
                 metadata = Metadata(metadata_df)
 
         if merge_method == 'union':
