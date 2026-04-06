@@ -9,7 +9,7 @@ import os
 import biom
 import pandas as pd
 
-from rachis.plugin import CaptureHolder, set_np_random_seed
+from rachis.plugin import CaptureHolder, get_np_random_seed
 from q2_types.feature_data import SequenceCharacteristicsDirectoryFormat
 from rnanorm import CPM, CTF, CUF, FPKM, TMM, TPM, UQ
 
@@ -19,14 +19,14 @@ def rarefy(table: biom.Table,
            with_replacement: bool = False,
            random_seed: CaptureHolder = None
            ) -> biom.Table:
-    set_np_random_seed(random_seed)
+    random_int = CaptureHolder.get_or_set(random_seed, get_np_random_seed)
     if with_replacement:
         table = table.filter(lambda v, i, m: v.sum() >= sampling_depth,
                              inplace=False, axis='sample')
 
     table = table.subsample(sampling_depth, axis='sample', by_id=False,
                             with_replacement=with_replacement,
-                            seed=random_seed.value)
+                            seed=random_int)
 
     if table.is_empty():
         raise ValueError('The rarefied table contains no samples or features. '
