@@ -108,8 +108,7 @@ class SubsampleIDsTests(TestCase):
         a_eq_b = []
         n_iterations = 100
         for i in range(n_iterations):
-            b = subsample_ids(t, 2, 'feature',
-                              random_seed=1)
+            b = subsample_ids(t, 2, 'feature', random_seed=1)
             a_eq_b.append(a == b)
         self.assertFalse(False in a_eq_b,
                          f"After {n_iterations} iterations, at least one "
