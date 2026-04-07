@@ -17,7 +17,7 @@ from rnanorm import CPM, CTF, CUF, FPKM, TMM, TPM, UQ
 def rarefy(table: biom.Table,
            sampling_depth: int,
            with_replacement: bool = False,
-           random_seed: CaptureHolder = None
+           random_seed: CaptureHolder[int] = None
            ) -> biom.Table:
     random_int = CaptureHolder.get_or_set(random_seed, get_np_random_seed)
     if with_replacement:

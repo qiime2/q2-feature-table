@@ -13,7 +13,7 @@ from rachis.plugin import CaptureHolder, get_np_random_seed
 def subsample_ids(table: biom.Table,
                   subsampling_depth: int,
                   axis: str,
-                  random_seed: CaptureHolder = None
+                  random_seed: CaptureHolder[int] = None
                   ) -> biom.Table:
     random_int = CaptureHolder.get_or_set(random_seed, get_np_random_seed)
     if axis == 'feature':
