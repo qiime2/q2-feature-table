@@ -48,3 +48,7 @@ include = ["q2_feature_table*"]
 
 [tool.setuptools.package-data]
 q2_feature_table = ["**/*"]
+
+[tool.mutmut]
+paths_to_mutate = [ "q2_feature_table/" ]
+do_not_mutate = [ "**/tests/*", "*/__init__.py", "*/_version.py" ]
