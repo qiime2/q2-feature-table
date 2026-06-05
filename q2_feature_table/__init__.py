@@ -20,6 +20,8 @@ from ._core_features import core_features
 from ._group import group
 from ._rename import rename_ids
 from ._heatmap import (heatmap, heatmap_choices)
+from ._multiply import (multiply_tables, _multiply_tables,
+                        _multiply_tables_pa, _multiply_tables_relative)
 
 try:
     from ._version import __version__
@@ -33,4 +35,5 @@ __all__ = ['rarefy', 'presence_absence', 'relative_frequency', 'transpose',
            'filter_seqs', 'subsample_ids', 'rename_ids',
            'filter_features_conditionally', 'split',
            'tabulate_feature_frequencies', 'tabulate_sample_frequencies',
-           'summarize', 'normalize']
+           'summarize', 'normalize', 'multiply_tables', '_multiply_tables',
+           '_multiply_tables_pa', '_multiply_tables_relative']
