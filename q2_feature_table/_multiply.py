@@ -9,7 +9,9 @@ import warnings
 
 import biom
 import numpy as np
-from q2_types.feature_table import FeatureTable, PresenceAbsence, RelativeFrequency
+from q2_types.feature_table import (
+    FeatureTable, PresenceAbsence, RelativeFrequency
+)
 
 
 def _multiply(table1: biom.Table, table2: biom.Table) -> biom.Table:
@@ -30,8 +32,9 @@ def _multiply(table1: biom.Table, table2: biom.Table) -> biom.Table:
 
     if len(table1_obs_to_keep) < len(table1.ids(axis="observation")):
         warnings.warn(
-            f"Removed {len(table1.ids(axis='observation')) - len(table1_obs_to_keep)} "
-            f"feature(s) from table1 that had no matching samples in table2."
+            "Removed "
+            f"{len(table1.ids(axis='observation')) - len(table1_obs_to_keep)}"
+            " feature(s) from table1 that had no matching samples in table2."
         )
 
     table1 = table1.filter(table1_obs_to_keep, axis="observation")
@@ -62,7 +65,9 @@ def _multiply_tables(table1: biom.Table, table2: biom.Table) -> biom.Table:
     return result
 
 
-def _multiply_tables_relative(table1: biom.Table, table2: biom.Table) -> biom.Table:
+def _multiply_tables_relative(
+        table1: biom.Table, table2: biom.Table
+) -> biom.Table:
     """Calculate dot product of two feature tables and convert to
     a relative frequency table."""
     result = _multiply(table1, table2)

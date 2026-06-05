@@ -9,10 +9,14 @@ import biom
 import numpy as np
 import pandas as pd
 import qiime2 as q2
-from q2_types.feature_table import FeatureTable, Frequency, PresenceAbsence, RelativeFrequency
+from q2_types.feature_table import (
+    FeatureTable, Frequency, PresenceAbsence, RelativeFrequency
+)
 from rachis.plugin.testing import TestPluginBase
 
-from q2_feature_table import _multiply_tables_pa, _multiply_tables_relative, _multiply_tables
+from q2_feature_table import (
+    _multiply_tables_pa, _multiply_tables_relative, _multiply_tables
+)
 
 
 class MultiplyTablesTests(TestPluginBase):
@@ -20,7 +24,9 @@ class MultiplyTablesTests(TestPluginBase):
 
     @staticmethod
     def _df_to_biom(df):
-        return biom.Table(df.values.T, sample_ids=df.index, observation_ids=df.columns)
+        return biom.Table(
+            df.values.T, sample_ids=df.index, observation_ids=df.columns
+        )
 
     def setUp(self):
         super().setUp()
@@ -56,7 +62,8 @@ class MultiplyTablesTests(TestPluginBase):
     def test_multiply_tables(self):
         obs = _multiply_tables(self.table1, self.table2)
         exp = pd.DataFrame(
-            {"a1": [58, 139], "a2": [64, 154]}, dtype="float", index=["s1", "s2"]
+            {"a1": [58, 139], "a2": [64, 154]},
+            dtype="float", index=["s1", "s2"]
         )
         pd.testing.assert_frame_equal(obs.to_dataframe(dense=True).T, exp)
 
@@ -77,7 +84,8 @@ class MultiplyTablesTests(TestPluginBase):
     def test_multiply_tables_relative(self):
         obs = _multiply_tables_relative(self.table1_rel, self.table2)
         exp = pd.DataFrame(
-            {"a1": [0.4754, 0.4744], "a2": [0.5246, 0.5256]}, index=["s1", "s2"]
+            {"a1": [0.4754, 0.4744], "a2": [0.5246, 0.5256]},
+            index=["s1", "s2"]
         )
         pd.testing.assert_frame_equal(
             obs.to_dataframe(dense=True).T, exp, atol=1e-4, check_exact=False
@@ -86,7 +94,8 @@ class MultiplyTablesTests(TestPluginBase):
     def test_multiply_tables_relative_both(self):
         obs = _multiply_tables_relative(self.table1_rel, self.table2_rel)
         exp = pd.DataFrame(
-            {"a1": [0.4748, 0.4737], "a2": [0.5252, 0.5263]}, index=["s1", "s2"]
+            {"a1": [0.4748, 0.4737], "a2": [0.5252, 0.5263]},
+            index=["s1", "s2"]
         )
         pd.testing.assert_frame_equal(
             obs.to_dataframe(dense=True).T, exp, atol=1e-4, check_exact=False
@@ -109,8 +118,12 @@ class MultiplyTablesTests(TestPluginBase):
         pd.testing.assert_frame_equal(obs.to_dataframe(dense=True).T, exp)
 
     def test_multiply_tables_pipeline_freq_freq(self):
-        table1 = q2.Artifact.import_data("FeatureTable[Frequency]", self.table1)
-        table2 = q2.Artifact.import_data("FeatureTable[Frequency]", self.table2)
+        table1 = q2.Artifact.import_data(
+            "FeatureTable[Frequency]", self.table1
+        )
+        table2 = q2.Artifact.import_data(
+            "FeatureTable[Frequency]", self.table2
+        )
         (obs,) = self.multiply(table1, table2)
         self.assertEqual(obs.type, FeatureTable[Frequency])
 
@@ -118,7 +131,9 @@ class MultiplyTablesTests(TestPluginBase):
         table1 = q2.Artifact.import_data(
             "FeatureTable[PresenceAbsence]", self.table1_pa
         )
-        table2 = q2.Artifact.import_data("FeatureTable[Frequency]", self.table2)
+        table2 = q2.Artifact.import_data(
+            "FeatureTable[Frequency]", self.table2
+        )
         (obs,) = self.multiply(table1, table2)
         self.assertEqual(obs.type, FeatureTable[PresenceAbsence])
 
@@ -143,7 +158,9 @@ class MultiplyTablesTests(TestPluginBase):
         self.assertEqual(obs.type, FeatureTable[PresenceAbsence])
 
     def test_multiply_tables_pipeline_freq_rel(self):
-        table1 = q2.Artifact.import_data("FeatureTable[Frequency]", self.table1)
+        table1 = q2.Artifact.import_data(
+            "FeatureTable[Frequency]", self.table1
+        )
         table2 = q2.Artifact.import_data(
             "FeatureTable[RelativeFrequency]", self.table2_rel
         )
@@ -167,7 +184,9 @@ class MultiplyTablesTests(TestPluginBase):
         )
         table1_no_overlap = self._df_to_biom(table1_no_overlap)
 
-        with self.assertRaisesRegex(ValueError, "No overlapping features found"):
+        with self.assertRaisesRegex(
+                ValueError, "No overlapping features found"
+        ):
             _multiply_tables(table1_no_overlap, self.table2)
 
     def test_multiply_tables_empty_table1(self):
@@ -175,7 +194,9 @@ class MultiplyTablesTests(TestPluginBase):
             np.array([]).reshape(0, 0), observation_ids=[], sample_ids=[]
         )
 
-        with self.assertRaisesRegex(ValueError, "No overlapping features found"):
+        with self.assertRaisesRegex(
+                ValueError, "No overlapping features found"
+        ):
             _multiply_tables(table1_empty, self.table2)
 
     def test_multiply_tables_empty_table2(self):
@@ -184,15 +205,21 @@ class MultiplyTablesTests(TestPluginBase):
             np.array([]).reshape(0, 0), observation_ids=[], sample_ids=[]
         )
 
-        with self.assertRaisesRegex(ValueError, "No overlapping features found"):
+        with self.assertRaisesRegex(
+                ValueError, "No overlapping features found"
+        ):
             _multiply_tables(self.table1, table2_empty)
 
     def test_multiply_tables_single_sample(self):
-        table1_single = pd.DataFrame({"m1": [1], "m2": [2], "m3": [3]}, index=["s1"])
+        table1_single = pd.DataFrame(
+            {"m1": [1], "m2": [2], "m3": [3]}, index=["s1"]
+        )
         table1_single = self._df_to_biom(table1_single)
 
         obs = _multiply_tables(table1_single, self.table2)
-        exp = pd.DataFrame({"a1": [58], "a2": [64]}, dtype="float", index=["s1"])
+        exp = pd.DataFrame(
+            {"a1": [58], "a2": [64]}, dtype="float", index=["s1"]
+        )
         pd.testing.assert_frame_equal(obs.to_dataframe(dense=True).T, exp)
 
     def test_multiply_tables_single_observation_table1(self):
@@ -266,13 +293,16 @@ class MultiplyTablesTests(TestPluginBase):
 
         obs = _multiply_tables(self.table1, table2_extra)
         exp = pd.DataFrame(
-            {"a1": [58, 139], "a2": [64, 154]}, dtype="float", index=["s1", "s2"]
+            {"a1": [58, 139], "a2": [64, 154]},
+            dtype="float", index=["s1", "s2"]
         )
         pd.testing.assert_frame_equal(obs.to_dataframe(dense=True).T, exp)
 
     def test_multiply_tables_table2_fewer_samples(self):
         # Test when table2 has fewer samples than table1 observations
-        table2_fewer = pd.DataFrame({"a1": [7, 9], "a2": [8, 10]}, index=["m1", "m2"])
+        table2_fewer = pd.DataFrame(
+            {"a1": [7, 9], "a2": [8, 10]}, index=["m1", "m2"]
+        )
         table2_fewer = self._df_to_biom(table2_fewer)
 
         with self.assertWarnsRegex(UserWarning, r"Removed 1 feature\(s\)"):
@@ -284,7 +314,8 @@ class MultiplyTablesTests(TestPluginBase):
         pd.testing.assert_frame_equal(obs.to_dataframe(dense=True).T, exp)
 
     def test_multiply_tables_pa_preserves_zeros(self):
-        # Ensure PA conversion keeps zeros as zeros, not just converts non-zeros to 1
+        # Ensure PA conversion keeps zeros as zeros,
+        # not just converts non-zeros to 1
         table1_mixed = pd.DataFrame(
             {"m1": [1, 0], "m2": [0, 5], "m3": [3, 0]}, index=["s1", "s2"]
         )
@@ -304,7 +335,8 @@ class MultiplyTablesTests(TestPluginBase):
         # s2*a1: 0*7 + 5*0 + 0*0 = 0 -> 0 (CRITICAL: zero stays zero)
         # s2*a2: 0*0 + 5*10 + 0*0 = 50 -> 1
         exp = pd.DataFrame(
-            {"a1": [1.0, 0.0], "a2": [0.0, 1.0]}, dtype="float", index=["s1", "s2"]
+            {"a1": [1.0, 0.0], "a2": [0.0, 1.0]},
+            dtype="float", index=["s1", "s2"]
         )
         pd.testing.assert_frame_equal(obs.to_dataframe(dense=True).T, exp)
 

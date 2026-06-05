@@ -791,7 +791,10 @@ multiply_output_descriptions = {
 
 plugin.methods.register_function(
     function=q2_feature_table._multiply_tables,
-    inputs={"table1": FeatureTable[Frequency], "table2": FeatureTable[Frequency]},
+    inputs={
+        "table1": FeatureTable[Frequency],
+        "table2": FeatureTable[Frequency]
+    },
     parameters={},
     outputs=[
         ("result_table", FeatureTable[Frequency]),
@@ -801,9 +804,10 @@ plugin.methods.register_function(
     output_descriptions=multiply_output_descriptions,
     name="Multiply two feature tables.",
     description=(
-        "Calculates the dot product of two feature tables with matching dimensions. "
-        "If table 1 has shape (M x N) and table 2 has shape (N x P), the resulting "
-        "table will have shape (M x P). Note that the tables must be identical "
+        "Calculates the dot product of two feature tables with "
+        "matching dimensions. If table 1 has shape (M x N) and "
+        "table 2 has shape (N x P), the resulting table will have "
+        "shape (M x P). Note that the tables must be identical "
         "in the N dimension."
     ),
     citations=[],
@@ -811,21 +815,16 @@ plugin.methods.register_function(
 
 I_multiply_pa_table1, I_multiply_pa_table2, O_multiply_pa = TypeMap(
     {
-        (FeatureTable[PresenceAbsence], FeatureTable[Frequency]): FeatureTable[
-            PresenceAbsence
-        ],
-        (FeatureTable[PresenceAbsence], FeatureTable[RelativeFrequency]): FeatureTable[
-            PresenceAbsence
-        ],
-        (FeatureTable[PresenceAbsence], FeatureTable[PresenceAbsence]): FeatureTable[
-            PresenceAbsence
-        ],
-        (FeatureTable[Frequency], FeatureTable[PresenceAbsence]): FeatureTable[
-            PresenceAbsence
-        ],
-        (FeatureTable[RelativeFrequency], FeatureTable[PresenceAbsence]): FeatureTable[
-            PresenceAbsence
-        ],
+        (FeatureTable[PresenceAbsence], FeatureTable[Frequency]):
+            FeatureTable[PresenceAbsence],
+        (FeatureTable[PresenceAbsence], FeatureTable[RelativeFrequency]):
+            FeatureTable[PresenceAbsence],
+        (FeatureTable[PresenceAbsence], FeatureTable[PresenceAbsence]):
+            FeatureTable[PresenceAbsence],
+        (FeatureTable[Frequency], FeatureTable[PresenceAbsence]):
+            FeatureTable[PresenceAbsence],
+        (FeatureTable[RelativeFrequency], FeatureTable[PresenceAbsence]):
+            FeatureTable[PresenceAbsence],
     }
 )
 
@@ -841,9 +840,10 @@ plugin.methods.register_function(
     output_descriptions=multiply_output_descriptions,
     name="Multiply two feature tables.",
     description=(
-        "Calculates the dot product of two feature tables with matching dimensions. "
-        "If table 1 has shape (M x N) and table 2 has shape (N x P), the resulting "
-        "table will have shape (M x P). Note that the tables must be identical "
+        "Calculates the dot product of two feature tables with "
+        "matching dimensions. If table 1 has shape (M x N) and "
+        "table 2 has shape (N x P), the resulting table will have "
+        "shape (M x P). Note that the tables must be identical "
         "in the N dimension."
     ),
     citations=[],
@@ -851,12 +851,10 @@ plugin.methods.register_function(
 
 I_multiply_rel_table1, I_multiply_rel_table2, O_multiply_rel = TypeMap(
     {
-        (FeatureTable[RelativeFrequency], FeatureTable[Frequency]): FeatureTable[
-            PresenceAbsence
-        ],
-        (FeatureTable[Frequency], FeatureTable[RelativeFrequency]): FeatureTable[
-            RelativeFrequency
-        ],
+        (FeatureTable[RelativeFrequency], FeatureTable[Frequency]):
+            FeatureTable[PresenceAbsence],
+        (FeatureTable[Frequency], FeatureTable[RelativeFrequency]):
+            FeatureTable[RelativeFrequency],
         (
             FeatureTable[RelativeFrequency],
             FeatureTable[RelativeFrequency],
@@ -866,7 +864,9 @@ I_multiply_rel_table1, I_multiply_rel_table2, O_multiply_rel = TypeMap(
 
 plugin.methods.register_function(
     function=q2_feature_table._multiply_tables_relative,
-    inputs={"table1": I_multiply_rel_table1, "table2": I_multiply_rel_table2},
+    inputs={
+        "table1": I_multiply_rel_table1, "table2": I_multiply_rel_table2
+    },
     parameters={},
     outputs=[
         ("result_table", O_multiply_rel),
@@ -876,9 +876,10 @@ plugin.methods.register_function(
     output_descriptions=multiply_output_descriptions,
     name="Multiply two feature tables.",
     description=(
-        "Calculates the dot product of two feature tables with matching dimensions. "
-        "If table 1 has shape (M x N) and table 2 has shape (N x P), the resulting "
-        "table will have shape (M x P). Note that the tables must be identical "
+        "Calculates the dot product of two feature tables with "
+        "matching dimensions. If table 1 has shape (M x N) and "
+        "table 2 has shape (N x P), the resulting table will have "
+        "shape (M x P). Note that the tables must be identical "
         "in the N dimension."
     ),
     citations=[],
@@ -886,28 +887,22 @@ plugin.methods.register_function(
 
 I_multiply_table1, I_multiply_table2, O_multiply = TypeMap(
     {
-        (FeatureTable[Frequency], FeatureTable[Frequency]): FeatureTable[Frequency],
-        (FeatureTable[PresenceAbsence], FeatureTable[Frequency]): FeatureTable[
-            PresenceAbsence
-        ],
-        (FeatureTable[PresenceAbsence], FeatureTable[RelativeFrequency]): FeatureTable[
-            PresenceAbsence
-        ],
-        (FeatureTable[PresenceAbsence], FeatureTable[PresenceAbsence]): FeatureTable[
-            PresenceAbsence
-        ],
-        (FeatureTable[Frequency], FeatureTable[PresenceAbsence]): FeatureTable[
-            PresenceAbsence
-        ],
-        (FeatureTable[RelativeFrequency], FeatureTable[PresenceAbsence]): FeatureTable[
-            PresenceAbsence
-        ],
-        (FeatureTable[Frequency], FeatureTable[RelativeFrequency]): FeatureTable[
-            RelativeFrequency
-        ],
-        (FeatureTable[RelativeFrequency], FeatureTable[Frequency]): FeatureTable[
-            RelativeFrequency
-        ],
+        (FeatureTable[Frequency], FeatureTable[Frequency]):
+            FeatureTable[Frequency],
+        (FeatureTable[PresenceAbsence], FeatureTable[Frequency]):
+            FeatureTable[PresenceAbsence],
+        (FeatureTable[PresenceAbsence], FeatureTable[RelativeFrequency]):
+            FeatureTable[PresenceAbsence],
+        (FeatureTable[PresenceAbsence], FeatureTable[PresenceAbsence]):
+            FeatureTable[PresenceAbsence],
+        (FeatureTable[Frequency], FeatureTable[PresenceAbsence]):
+            FeatureTable[PresenceAbsence],
+        (FeatureTable[RelativeFrequency], FeatureTable[PresenceAbsence]):
+            FeatureTable[PresenceAbsence],
+        (FeatureTable[Frequency], FeatureTable[RelativeFrequency]):
+            FeatureTable[RelativeFrequency],
+        (FeatureTable[RelativeFrequency], FeatureTable[Frequency]):
+            FeatureTable[RelativeFrequency],
         (
             FeatureTable[RelativeFrequency],
             FeatureTable[RelativeFrequency],
@@ -937,10 +932,13 @@ plugin.pipelines.register_function(
     },
     name="Multiply two feature tables.",
     description=(
-        "Calculates the dot product of two feature tables with "
+        "This method is used primarily in metagenomic workflows. "
+        "It calculates the dot product of two feature tables with "
         "matching dimensions. If table 1 has shape (M x N) and table "
         "2 has shape (N x P), the resulting table will have shape "
-        "(M x P). Note that the tables must be identical in the N dimension."
+        "(M x P). Note that the tables must be identical in the N dimension. "
+        "Only use this method if you know what tables you are multiplying "
+        "and what result you expect."
     ),
     citations=[],
 )
