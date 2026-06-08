@@ -12,7 +12,6 @@ import tempfile
 import re
 import json
 import csv
-import pytest
 
 import skbio
 import biom
