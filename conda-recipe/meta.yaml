@@ -35,7 +35,10 @@ test:
   - q2templates >={{ q2templates }}
   - q2-types >={{ q2_types }}
   - pytest
-  - selenium=4.44.0
+  # pinning at 4.43.0 temporarily because a bug was introduced in 4.44.0
+  # that was causing test failures in summarize
+  # issue XREF: https://github.com/SeleniumHQ/selenium/issues/17448
+  - selenium=4.43.0
   imports:
   - q2_feature_table
   - qiime2.plugins.feature_table

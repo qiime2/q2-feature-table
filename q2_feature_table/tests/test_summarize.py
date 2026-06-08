@@ -36,18 +36,6 @@ from q2_feature_table._summarize._visualizer import _compute_descriptive_stats
 from q2_feature_table._summarize._visualizer import _frequencies
 from q2_feature_table._summarize._vega_spec import vega_spec
 
-# This is a temporary 'fix' to failing selenium tests when they are run
-# within a container on the GHA linux runner.
-# The failures aren't interesting and the hope is that this will either be
-# fixed such that:
-# A. None of the tests are run within a container, or
-# B. The chrome & firefox tests on mac will fill in enough gaps
-# that we can see if something goes wrong that is interesting.
-# skip_selenium = pytest.mark.skipif(
-#     os.getenv('SKIP_SELENIUM', '') == '1',
-#     reason='skipping Selenium tests within linux container'
-#     )
-
 
 class TabulateSeqsTests(TestCase):
 
@@ -623,7 +611,6 @@ class _SummarizeTests(TestCase):
 
         self.assertEqual(spec['data'][0]['values'], exp)
 
-    # @skip_selenium
     def test_summarize_viz_chrome(self):
         chrome_options = ChromeOptions()
         chrome_options.add_argument("-headless")
@@ -631,7 +618,6 @@ class _SummarizeTests(TestCase):
         with webdriver.Chrome(options=chrome_options) as driver:
             self._selenium_test(driver)
 
-    # @skip_selenium
     def test_summarize_viz_firefox(self):
         firefox_options = FirefoxOptions()
         firefox_options.add_argument("-headless")
@@ -666,7 +652,7 @@ class _SummarizeTests(TestCase):
 
             # None should have danger to begin
             for element in element_list:
-                self.assertNotIn('danger', element.get_dom_attribute('class'))
+                self.assertNotIn('danger', element.get_attribute('class'))
 
             # This is not setting the value in the box, it is sending these key
             # presses to the box. There is already a 0 in the box, so we are
