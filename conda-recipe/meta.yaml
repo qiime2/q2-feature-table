@@ -35,7 +35,7 @@ test:
   - q2templates >={{ q2templates }}
   - q2-types >={{ q2_types }}
   - pytest
-  - selenium
+  - selenium=4.44.0
   imports:
   - q2_feature_table
   - qiime2.plugins.feature_table
