@@ -666,7 +666,7 @@ class _SummarizeTests(TestCase):
 
             # None should have danger to begin
             for element in element_list:
-                self.assertNotIn('danger', element.get_attribute('class'))
+                self.assertNotIn('danger', element.get_dom_attribute('class'))
 
             # This is not setting the value in the box, it is sending these key
             # presses to the box. There is already a 0 in the box, so we are
