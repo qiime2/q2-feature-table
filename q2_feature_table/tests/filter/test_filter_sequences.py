@@ -7,14 +7,18 @@
 # ----------------------------------------------------------------------------
 
 import unittest
-
-import qiime2
+import tempfile
 import pandas as pd
 import numpy as np
+import pandas.testing as pdt
 from pandas.testing import assert_series_equal
 from biom.table import Table
+from pathlib import Path
 
+import qiime2
 from q2_feature_table import filter_seqs
+from qiime2.sdk import PluginManager
+from qiime2 import Artifact
 
 
 class FilterSeqsTests(unittest.TestCase):
@@ -183,6 +187,38 @@ class FilterSeqsTests(unittest.TestCase):
     def test_no_filter(self):
         with self.assertRaisesRegex(ValueError, 'either table or metadata.'):
             filter_seqs(self.seqs)
+
+    def test_filter_linked_sequence(self):
+        pm = PluginManager()
+        filter_seqs = pm.plugins['feature-table'].actions['filter_seqs']
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            with open(Path(tempdir) / 'linked-dna-sequences.fasta', 'w') as f:
+                f.write('>seq1\nACC CCA\n')
+                f.write('>seq2\nTTG CAC\n')
+                f.write('>seq3\nACG GCC\n')
+
+            linked_seqs = Artifact.import_data(
+                type='FeatureData[LinkedSequence]',
+                view=Path(tempdir) / 'linked-dna-sequences.fasta'
+            )
+
+            table = Table(
+                np.array([[0, 4], [1, 3]]),
+                ['seq1', 'seq2'],
+                ['01', '02']
+            )
+
+            table = Artifact.import_data(
+                type='FeatureTable[Frequency]',
+                view=table
+            )
+
+            obs, = filter_seqs(linked_seqs, table=table, exclude_ids=True)
+            obs = obs.view(pd.Series).apply(str)
+
+            exp = pd.Series({'seq3': 'ACG GCC'})
+            pdt.assert_series_equal(obs, exp)
 
 
 if __name__ == "__main__":

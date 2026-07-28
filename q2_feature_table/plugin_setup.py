@@ -14,7 +14,9 @@ from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
 from q2_types.feature_table import (
     FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
 from q2_types.feature_data import (
-    FeatureData, Sequence, Taxonomy, AlignedSequence, SequenceCharacteristics)
+    FeatureData, Sequence, Taxonomy, AlignedSequence, SequenceCharacteristics,
+    LinkedSequence
+)
 from q2_types.metadata import ImmutableMetadata
 
 import q2_feature_table
@@ -31,6 +33,7 @@ plugin = Plugin(
                  'transforming tables.')
 )
 T1 = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
+T2 = TypeMatch([Sequence, AlignedSequence, LinkedSequence])
 
 plugin.methods.register_function(
     function=q2_feature_table.rarefy,
@@ -491,10 +494,6 @@ plugin.methods.register_function(
      ex.feature_table_filter_features_sequences
     }
 )
-
-
-T2 = TypeMatch([Sequence, AlignedSequence])
-
 
 plugin.methods.register_function(
     function=q2_feature_table.filter_seqs,
