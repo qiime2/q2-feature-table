@@ -34,6 +34,7 @@ plugin = Plugin(
 )
 T1 = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
 T2 = TypeMatch([Sequence, AlignedSequence, LinkedSequence])
+T3 = TypeMatch([Sequence, LinkedSequence])
 
 plugin.methods.register_function(
     function=q2_feature_table.rarefy,
@@ -231,10 +232,10 @@ plugin.methods.register_function(
 
 plugin.methods.register_function(
     function=q2_feature_table.merge_seqs,
-    inputs={'data': List[FeatureData[Sequence]]},
+    inputs={'data': List[FeatureData[T3]]},
     parameters={},
     outputs=[
-        ('merged_data', FeatureData[Sequence])],
+        ('merged_data', FeatureData[T3])],
     input_descriptions={
         'data': 'The collection of feature sequences to be merged.',
     },

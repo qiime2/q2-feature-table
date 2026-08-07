@@ -331,6 +331,20 @@ class MergeFeatureSequenceTests(unittest.TestCase):
                         index=['f1', 'f2', 'f3'])
         pdt.assert_series_equal(obs, exp)
 
+    def test_merge_linked_seqs(self):
+        d1 = pd.Series([skbio.Sequence('ACT TCG', metadata={'id': 'abc'}),
+                        skbio.Sequence('GCT AAC', metadata={'id': 'xyz'})],
+                       index=['f1', 'f2'])
+        d2 = pd.Series([skbio.Sequence('ACT TCG', metadata={'id': 'abc'}),
+                        skbio.Sequence('GCT GGC', metadata={'id': 'def'})],
+                       index=['f1', 'f3'])
+        obs = merge_seqs([d1, d2])
+        exp = pd.Series([skbio.Sequence('ACT TCG', metadata={'id': 'abc'}),
+                         skbio.Sequence('GCT AAC', metadata={'id': 'xyz'}),
+                         skbio.Sequence('GCT GGC', metadata={'id': 'def'})],
+                        index=['f1', 'f2', 'f3'])
+        pdt.assert_series_equal(obs, exp)
+
 
 class MergeFeatureTaxonomyTests(unittest.TestCase):
     # More extensive testing is performed in MergeFeatureDataTests, which
