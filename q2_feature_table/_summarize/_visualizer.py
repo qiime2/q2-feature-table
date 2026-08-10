@@ -42,12 +42,20 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
         for sequence in data:
             skbio.io.write(sequence, format='fasta', into=fh)
             str_seq = str(sequence)
-            seq_len = len(str_seq)
-            display_sequences.add(sequence.metadata['id'])
-            sequences[sequence.metadata['id']]\
-                = {'len': seq_len,
-                   'url': _blast_url_template % str_seq,
-                   'seq': str_seq}
+            seqs = str_seq.split(' ')
+            urls = [_blast_url_template % seq for seq in seqs]
+            seq_id = sequence.metadata['id']
+            display_sequences.add(seq_id)
+
+            sequences[seq_id] = {
+                'len': len(str_seq)
+            }
+            if len(seqs) == 2:
+                sequences[seq_id]['url_and_seq'] = zip(
+                    urls, seqs, ['forward', 'reverse']
+                )
+            else:
+                sequences[seq_id]['url_and_seq'] = zip(urls, seqs)
 
     if metadata is not None:
         metadata_df = metadata.to_dataframe()

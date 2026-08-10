@@ -133,7 +133,25 @@
             {% endif %}
             {% if sequence in data %}
             <td>{{ data[sequence].len }}</td>
-            <td><samp><a target="_blank" href="{{ data[sequence].url }}" rel="noopener noreferrer">{{ data[sequence].seq }}</a></samp></td>
+            <td><samp>
+                {% for item in data[sequence].url_and_seq %}
+                  {% if item|length == 3 %}
+                    {% set link, seq, direction = item %}
+                    {% if direction == 'reverse' %}
+                        <br>
+                    {% endif %}
+                    {{ direction }}:
+                    <a target="_blank" href="{{ link }}" rel="noopener noreferrer">
+                      {{ seq }}
+                    </a>
+                  {% else %}
+                    {% set link, seq = item %}
+                    <a target="_blank" href="{{ link }}" rel="noopener noreferrer">
+                      {{ seq }}
+                    </a>
+                  {% endif %}
+                {% endfor %}
+            </samp></td>
             {% else %}
             <td>-</td>
             <td>-</td>

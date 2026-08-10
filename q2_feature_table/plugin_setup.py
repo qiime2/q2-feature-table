@@ -546,7 +546,7 @@ plugin.visualizers.register_function(
 
 plugin.visualizers.register_function(
     function=q2_feature_table.tabulate_seqs,
-    inputs={'data': FeatureData[Sequence | AlignedSequence],
+    inputs={'data': FeatureData[T2],
             'taxonomy': Collection[FeatureData[Taxonomy]]},
     parameters={'metadata': Metadata,
                 'merge_method': Str % Choices(
