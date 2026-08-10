@@ -50,7 +50,6 @@ class TabulateSeqsTests(TestCase):
             self.assertTrue(os.path.exists(expected_fp))
             with open(expected_fp) as fh:
                 file_text = fh.read()
-                print(file_text)
                 self.assertTrue('ACGT' in file_text)
                 self.assertTrue('<td>4</td>' in file_text)
                 self.assertTrue('<td>seq2</td>' in file_text)
