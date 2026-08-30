@@ -551,14 +551,16 @@ plugin.visualizers.register_function(
             'taxonomy': Collection[FeatureData[Taxonomy]]},
     parameters={'metadata': Metadata,
                 'merge_method': Str % Choices(
-                    ['strict', 'union', 'intersect'])},
+                    ['strict', 'union', 'intersect']),
+                'page_size': Int},
     input_descriptions={
         'data': 'The feature sequences to be tabulated.',
         'taxonomy': 'The taxonomic classifications of the tabulated features.'
         },
     parameter_descriptions={
      'metadata': 'Any additional metadata for the tabulated features.',
-     'merge_method': 'Method that joins data sets'
+     'merge_method': 'Method that joins data sets.',
+     'page_size': 'Number or records to render per page.'
     },
     name='View sequence associated with each feature',
     description="Generate tabular view of feature identifier to sequence "

@@ -31,10 +31,15 @@ _blast_url_template = ("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?"
 TEMPLATES = importlib.resources.files('q2_feature_table') / '_summarize'
 
 
-def tabulate_seqs(output_dir: str, data: DNAIterator,
-                  taxonomy: pd.DataFrame = None,
-                  metadata: qiime2.Metadata = None,
-                  merge_method: str = 'strict') -> None:
+def tabulate_seqs(
+    output_dir: str, data: DNAIterator,
+    taxonomy: pd.DataFrame = None,
+    metadata: qiime2.Metadata = None,
+    merge_method: str = 'strict',
+    page_size: int = 100
+) -> None:
+    if page_size < 1:
+        raise ValueError('Cannot render less than one record per page.')
 
     display_sequences = set()
     sequences = {}
@@ -93,25 +98,45 @@ def tabulate_seqs(output_dir: str, data: DNAIterator,
     seq_lengths = [
         v['len'] for k, v in sequences.items() if k in display_sequences
     ]
+    seq_df = pd.DataFrame.from_dict(sequences, orient='index')
+    if taxonomy is not None:
+        if isinstance(taxonomy, pd.DataFrame):
+            seq_df = pd.concat([seq_df, taxonomy], axis=1)
+        else:
+            taxonomy = next(iter(taxonomy.values()))
+            seq_df = pd.concat([seq_df, taxonomy], axis=1)
+    if metadata is not None:
+        seq_df = pd.concat([seq_df, metadata_df], axis=1)
+    seq_df.index.name = 'Feature ID'
+    seq_md = Metadata(seq_df)
+    columns = pd.MultiIndex.from_tuples(
+        [(n, t.type) for n, t in seq_md.columns.items()],
+        names=['column header', 'type']
+    )
+    seq_df.columns = columns
+    seq_df = seq_df.rename(
+        columns={'len': 'Length', 'seq': 'Sequence', 'url': 'Blast url'}
+    )
+    seq_df.reset_index(inplace=True)
 
     seq_len_stats = _compute_descriptive_stats(seq_lengths)
     _write_tsvs_of_descriptive_stats(seq_len_stats, output_dir)
 
+    table = seq_df.to_json(orient='split')
     index = os.path.join(TEMPLATES, 'tabulate_seqs_assets', 'index.html')
-    context = {'data': sequences, 'stats': seq_len_stats}
-    if taxonomy is not None:
-        context['taxonomy'] = taxonomy
-    if metadata is not None:
-        context['metadata'] = metadata_df
-        context['is_numeric'] = is_numeric(metadata)
+    q2templates.render(
+        index, output_dir, context={
+            'table': table, 'page_size': page_size, 'stats': seq_len_stats
+        }
+    )
 
-    context['display_sequences'] = display_sequences
-    q2templates.render(index, output_dir, context=context)
-
-    js = os.path.join(
-        TEMPLATES, 'tabulate_seqs_assets', 'js', 'tsorter.min.js')
+    js = os.path.join(TEMPLATES, 'tabulate_seqs_assets', 'datatables.min.js')
     os.mkdir(os.path.join(output_dir, 'js'))
-    shutil.copy(js, os.path.join(output_dir, 'js', 'tsorter.min.js'))
+    shutil.copy(js, os.path.join(output_dir, 'js', 'datatables.min.js'))
+
+    css = os.path.join(TEMPLATES, 'tabulate_seqs_assets', 'datatables.min.css')
+    os.mkdir(os.path.join(output_dir, 'css'))
+    shutil.copy(css, os.path.join(output_dir, 'css', 'datatables.min.css'))
 
 
 def is_numeric(metadata: qiime2.metadata):
