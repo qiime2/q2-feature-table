@@ -39,6 +39,24 @@ T3 = TypeMatch([Sequence, LinkedSequence])
 T4 = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition,
                 Unconstrained])
 
+_filter_parameter_descriptions = {
+    'ids': ('IDs to retain or, with `exclude_ids`, discard. This parameter '
+            'is mutually exclusive with `metadata` and `where`.'),
+    'metadata': ('Metadata used with the `where` parameter when selecting '
+                 'IDs to retain, or with `exclude_ids` when selecting IDs '
+                 'to discard.'),
+    'where': ('SQLite WHERE clause specifying metadata criteria that must be '
+              'met for IDs to be included in the filtered feature table. If '
+              'not provided, all IDs in `metadata` that are also in the '
+              'feature table will be retained.'),
+    'exclude_ids': ('If true, the IDs selected by `ids`, `metadata`, or '
+                    '`where` will be excluded from the filtered table '
+                    'instead of being retained.'),
+    'allow_empty_table': ('If true, the filtered table may be empty. Default '
+                          'behavior is to raise an error if the filtered '
+                          'table is empty.')
+}
+
 plugin.methods.register_function(
     function=q2_feature_table.rarefy,
     inputs={'table': FeatureTable[Frequency]},
@@ -349,25 +367,9 @@ plugin.methods.register_function(
                          'have to be retained. If no value is provided '
                          'this will default to infinity (i.e., no maximum '
                          'feature filter will be applied).'),
-        'ids': 'Sample IDs to retain or, with `exclude_ids`, discard. This '
-               'parameter is mutually exclusive with `metadata` and '
-               '`where`.',
-        'metadata': 'Sample metadata used with `where` parameter when '
-                    'selecting samples to retain, or with `exclude_ids` '
-                    'when selecting samples to discard.',
-        'where': 'SQLite WHERE clause specifying sample metadata criteria '
-                 'that must be met to be included in the filtered feature '
-                 'table. If not provided, all samples in `metadata` that are '
-                 'also in the feature table will be retained.',
-        'exclude_ids': 'If true, the samples selected by `ids`, `metadata`, '
-                       'or `where` parameters will be excluded from the '
-                       'filtered '
-                       'table instead of being retained.',
+        **_filter_parameter_descriptions,
         'filter_empty_features': 'If true, features which are not present in '
                                  'any retained samples are dropped.',
-        'allow_empty_table': 'If true, the filtered table may be empty. '
-                             'Default behavior is to raise an error if the '
-                             'filtered table is empty.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by sample.'
@@ -474,25 +476,9 @@ plugin.methods.register_function(
                         'be observed in to be retained. If no value is '
                         'provided this will default to infinity (i.e., no '
                         'maximum sample filter will be applied).'),
-        'ids': 'Feature IDs to retain or, with `exclude_ids`, discard. This '
-               'parameter is mutually exclusive with `metadata` and '
-               '`where`.',
-        'metadata': 'Feature metadata used with `where` parameter when '
-                    'selecting features to retain, or with `exclude_ids` '
-                    'when selecting features to discard.',
-        'where': 'SQLite WHERE clause specifying feature metadata criteria '
-                 'that must be met to be included in the filtered feature '
-                 'table. If not provided, all features in `metadata` that are '
-                 'also in the feature table will be retained.',
-        'exclude_ids': 'If true, the features selected by `ids`, `metadata`, '
-                       'or `where` parameters will be excluded from the '
-                       'filtered '
-                       'table instead of being retained.',
+        **_filter_parameter_descriptions,
         'filter_empty_samples': 'If true, drop any samples where none of the '
                                 'retained features are present.',
-        'allow_empty_table': 'If true, the filtered table may be empty. '
-                                'Default behavior is to raise an error if the '
-                                'filtered table is empty.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'
@@ -995,28 +981,7 @@ plugin.methods.register_function(
             "The axis to filter. Select 'sample' to filter sample IDs or "
             "'feature' to filter feature IDs."
         ),
-        "ids": (
-            "IDs to retain or exclude. This parameter is mutually exclusive "
-            "with `metadata` and `where`."
-        ),
-        "metadata": (
-            "Metadata used with `where` to select IDs to retain or exclude. "
-            "If `where` is not provided, all metadata IDs are selected."
-        ),
-        "where": (
-            "SQLite WHERE clause specifying metadata criteria that must be "
-            "met for IDs on the selected axis to be included in the filtered "
-            "feature table. If not provided, all IDs in `metadata` that are "
-            "also in the feature table will be retained."
-        ),
-        "exclude_ids": (
-            "If true, the IDs selected by `ids`, `metadata`, or `where` "
-            "will be excluded from the filtered table instead of retained."
-        ),
-        "allow_empty_table": (
-            "If true, the filtered table may be empty. Default behavior is "
-            "to raise an error if the filtered table is empty."
-        )
+        **_filter_parameter_descriptions,
     },
     output_descriptions={
         "filtered_table": (
