@@ -312,7 +312,8 @@ class FilterFeaturesTests(unittest.TestCase):
 
         self.assertEqual(set(actual.ids(axis='sample')),
                          set(['S1', 'S2', 'S3', 'S4']))
-        self.assertEqual(set(actual.ids(axis='observation')), set(['O1', 'O3']))
+        self.assertEqual(set(actual.ids(axis='observation')),
+                         set(['O1', 'O3']))
         np.testing.assert_allclose(
             actual.sum(axis='sample'), np.array([1., 1., 1., 0.])
         )
