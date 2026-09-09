@@ -40,8 +40,8 @@ T4 = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition,
                 Unconstrained])
 
 _filter_parameter_descriptions = {
-    'ids': ('IDs to retain or, with `exclude_ids`, discard. This parameter '
-            'is mutually exclusive with `metadata` and `where`.'),
+    'ids': ('IDs to retain or, with `exclude_ids`, discard. When supplied '
+            'with `metadata`, IDs from both sources are selected.'),
     'metadata': ('Metadata used with the `where` parameter when selecting '
                  'IDs to retain, or with `exclude_ids` when selecting IDs '
                  'to discard.'),

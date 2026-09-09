@@ -58,47 +58,6 @@ class FilterFeaturesTests(unittest.TestCase):
                                  allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
-    def test_feature_ids(self):
-        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
-                      ['O1', 'O2'], ['S1', 'S2', 'S3'])
-        actual = filter_features(table, ids=['O1'])
-        expected = Table(np.array([[1, 3]]), ['O1'], ['S2', 'S3'])
-        self.assertEqual(actual, expected)
-
-        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
-                      ['O1', 'O2'], ['S1', 'S2', 'S3'])
-        actual = filter_features(table, ids=['O1'], exclude_ids=True)
-        expected = Table(np.array([[1, 1, 2]]), ['O2'], ['S1', 'S2', 'S3'])
-        self.assertEqual(actual, expected)
-
-        metadata = qiime2.Metadata(pd.DataFrame(
-            {'keep': ['yes']}, index=pd.Index(['O1'], name='id')))
-        with self.assertRaisesRegex(ValueError, 'mutually exclusive'):
-            filter_features(table, ids=['O1'], metadata=metadata)
-
-        with self.assertRaisesRegex(ValueError, 'mutually exclusive'):
-            filter_features(table, ids=['O1'], where="keep='yes'")
-
-        with self.assertRaisesRegex(ValueError, 'not in the table'):
-            filter_features(table, ids=['not-in-table'])
-
-    def test_feature_ids_with_sample_filter(self):
-        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
-                      ['O1', 'O2'], ['S1', 'S2', 'S3'])
-        actual = filter_features(table, ids=['O1', 'O2'], min_samples=3)
-        expected = Table(np.array([[1, 1, 2]]), ['O2'], ['S1', 'S2', 'S3'])
-
-        self.assertEqual(actual, expected)
-
-    def test_feature_ids_without_empty_sample_filtering(self):
-        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
-                      ['O1', 'O2'], ['S1', 'S2', 'S3'])
-        actual = filter_features(table, ids=['O1'],
-                                 filter_empty_samples=False)
-        expected = Table(np.array([[0, 1, 3]]), ['O1'], ['S1', 'S2', 'S3'])
-
-        self.assertEqual(actual, expected)
-
     def test_filter_empty_samples(self):
         # no filtering
         table = Table(np.array([[0, 1, 1], [1, 1, 2]]),
@@ -322,6 +281,54 @@ class FilterFeaturesTests(unittest.TestCase):
                                                     [5/7, 4/9, 1/4, 0.]])
         )
 
+    def test_feature_ids(self):
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'], ['S1', 'S2', 'S3'])
+        actual = filter_features(table, ids=['O1'])
+        expected = Table(np.array([[1, 3]]), ['O1'], ['S2', 'S3'])
+        self.assertEqual(actual, expected)
+
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'], ['S1', 'S2', 'S3'])
+        actual = filter_features(table, ids=['O1'], exclude_ids=True)
+        expected = Table(np.array([[1, 1, 2]]), ['O2'], ['S1', 'S2', 'S3'])
+        self.assertEqual(actual, expected)
+
+    def test_feature_ids_and_metadata_are_combined(self):
+        table = Table(np.array([[0, 1, 3], [1, 1, 2], [4, 0, 0]]),
+                      ['O1', 'O2', 'O3'], ['S1', 'S2', 'S3'])
+        metadata = qiime2.Metadata(pd.DataFrame(
+            {'keep': ['yes', 'no']},
+            index=pd.Index(['O2', 'O3'], name='id')))
+        actual = filter_features(table, ids=['O1'], metadata=metadata,
+                                 where="keep='yes'")
+        expected = Table(np.array([[0, 1, 3], [1, 1, 2]]), ['O1', 'O2'],
+                         ['S1', 'S2', 'S3'])
+        self.assertEqual(actual, expected)
+
+        table = Table(np.array([[0, 1, 3], [1, 1, 2], [4, 0, 0]]),
+                      ['O1', 'O2', 'O3'], ['S1', 'S2', 'S3'])
+        actual = filter_features(table, ids=['O1'], metadata=metadata,
+                                 where="keep='yes'", exclude_ids=True)
+        expected = Table(np.array([[4]]), ['O3'], ['S1'])
+        self.assertEqual(actual, expected)
+
+    def test_feature_ids_with_sample_filter(self):
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'], ['S1', 'S2', 'S3'])
+        actual = filter_features(table, ids=['O1', 'O2'], min_samples=3)
+        expected = Table(np.array([[1, 1, 2]]), ['O2'], ['S1', 'S2', 'S3'])
+
+        self.assertEqual(actual, expected)
+
+    def test_feature_ids_without_empty_sample_filtering(self):
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'], ['S1', 'S2', 'S3'])
+        actual = filter_features(table, ids=['O1'],
+                                 filter_empty_samples=False)
+        expected = Table(np.array([[0, 1, 3]]), ['O1'], ['S1', 'S2', 'S3'])
+
+        self.assertEqual(actual, expected)
 
 if __name__ == "__main__":
     unittest.main()

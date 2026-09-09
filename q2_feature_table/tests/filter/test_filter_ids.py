@@ -24,6 +24,9 @@ class FilterIDsTests(TestPluginBase):
         super().setUp()
         self.table = Table(np.array([[1, 0, 0], [0, 2, 0]]),
                            ["O1", "O2"], ["S1", "S2", "S3"])
+        self.signed_table = Table(
+            np.array([[2, -2, 0], [0, 0, -3], [0, 0, 0]]),
+            ["O1", "O2", "O3"], ["S1", "S2", "S3"])
 
     def test_filter_samples_by_where(self):
         metadata = qiime2.Metadata(pd.DataFrame(
@@ -79,16 +82,13 @@ class FilterIDsTests(TestPluginBase):
         self.assertEqual(actual, expected)
 
     def test_filter_ids_retains_signed_vectors(self):
-        table = Table(np.array([[2, -2, 0], [0, 0, -3], [0, 0, 0]]),
-                      ["O1", "O2", "O3"], ["S1", "S2", "S3"])
-
-        actual = filter_ids(table, axis="sample", ids=["S2"])
+        actual = filter_ids(self.signed_table, axis="sample", ids=["S2"])
         expected = Table(np.array([[-2], [0], [0]]),
                          ["O1", "O2", "O3"], ["S2"])
 
         self.assertEqual(actual, expected)
 
-    def test_empty_result(self):
+    def test_empty_result_raises_by_default(self):
         metadata = qiime2.Metadata(pd.DataFrame(
             {"Group": ["keep"]},
             index=pd.Index(["not-in-table"], name="id")))
@@ -96,6 +96,11 @@ class FilterIDsTests(TestPluginBase):
         with self.assertRaisesRegex(ValueError, "table is empty"):
             filter_ids(self.table.copy(), axis="sample", metadata=metadata,
                        where="\"Group\"='keep'")
+
+    def test_empty_result_is_allowed_when_requested(self):
+        metadata = qiime2.Metadata(pd.DataFrame(
+            {"Group": ["keep"]},
+            index=pd.Index(["not-in-table"], name="id")))
 
         actual = filter_ids(self.table.copy(), axis="sample",
                             metadata=metadata, where="\"Group\"='keep'",
@@ -115,13 +120,27 @@ class FilterIDsTests(TestPluginBase):
 
         self.assertEqual(actual, expected)
 
-    def test_ids_and_metadata_are_mutually_exclusive(self):
+    def test_ids_and_metadata_are_combined(self):
         metadata = qiime2.Metadata(pd.DataFrame(
-            {"Group": ["keep"]}, index=pd.Index(["S1"], name="id")))
+            {"Group": ["keep", "drop"]},
+            index=pd.Index(["S2", "S3"], name="id")))
 
-        with self.assertRaisesRegex(ValueError, "mutually exclusive"):
-            filter_ids(self.table.copy(), axis="sample", ids=["S1"],
-                       metadata=metadata)
+        actual = filter_ids(self.table.copy(), axis="sample", ids=["S1"],
+                            metadata=metadata, where="\"Group\"='keep'")
+        expected = Table(np.array([[1, 0], [0, 2]]), ["O1", "O2"],
+                         ["S1", "S2"])
+        self.assertEqual(actual, expected)
+
+    def test_exclude_combined_ids_and_metadata(self):
+        metadata = qiime2.Metadata(pd.DataFrame(
+            {"Group": ["keep", "drop"]},
+            index=pd.Index(["S2", "S3"], name="id")))
+
+        actual = filter_ids(self.table.copy(), axis="sample", ids=["S1"],
+                            metadata=metadata, where="\"Group\"='keep'",
+                            exclude_ids=True)
+        expected = Table(np.array([[0], [0]]), ["O1", "O2"], ["S3"])
+        self.assertEqual(actual, expected)
 
     def test_ids_must_be_in_table(self):
         with self.assertRaisesRegex(ValueError, "not in the table"):

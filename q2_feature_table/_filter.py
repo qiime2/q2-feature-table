@@ -53,9 +53,6 @@ def _filter_table(table, min_frequency, max_frequency, min_nonzero,
                   max_nonzero, metadata, where, axis, exclude_ids=False,
                   filter_opposite_axis=True,
                   allow_empty_table=False, ids=None):
-    if ids is not None and (metadata is not None or where is not None):
-        raise ValueError("'ids' is mutually exclusive with 'metadata' and "
-                         "'where'.")
     if (min_frequency in (None, 0) and max_frequency is None and
             min_nonzero in (None, 0) and max_nonzero is None and ids is None
             and metadata is None and where is None and exclude_ids is False):
@@ -71,11 +68,12 @@ def _filter_table(table, min_frequency, max_frequency, min_nonzero,
         if missing_ids:
             raise ValueError("The following IDs are not in the table: %s" %
                              ", ".join(sorted(missing_ids)))
-        ids_to_keep = ids
-    elif metadata is not None:
-        ids_to_keep = metadata.get_ids(where=where)
+    if ids is None and metadata is None:
+        ids_to_keep = set(table.ids(axis=axis))
     else:
-        ids_to_keep = table.ids(axis=axis)
+        ids_to_keep = set(ids or [])
+        if metadata is not None:
+            ids_to_keep.update(metadata.get_ids(where=where))
     if exclude_ids is True:
         ids_to_keep = set(table.ids(axis=axis)) - set(ids_to_keep)
 
@@ -209,11 +207,11 @@ def filter_ids(
     """
     Filter sample or feature IDs from a table.
 
-    IDs may be supplied directly with ``ids`` or selected from ``metadata``
-    using a SQLite ``where`` clause. Direct IDs must all occur on the
-    requested axis. ``where`` may be used only with ``metadata``; without a
-    WHERE clause, all metadata IDs are selected. ``metadata`` cannot be used
-    with ``ids``. IDs on the opposite axis are retained.
+    IDs may be supplied directly with ``ids`` and/or selected from
+    ``metadata`` using a SQLite ``where`` clause. When both are supplied,
+    their IDs are combined. Direct IDs must all occur on the requested axis.
+    ``where`` may be used only with ``metadata``; without a WHERE clause, all
+    metadata IDs are selected. IDs on the opposite axis are retained.
     """
     axis_map = {"sample": "sample", "feature": "observation"}
     biom_axis = axis_map[axis]
