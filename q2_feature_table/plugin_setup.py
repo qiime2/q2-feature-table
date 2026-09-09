@@ -326,6 +326,7 @@ plugin.methods.register_function(
                 'max_frequency': Int,
                 'min_features': Int,
                 'max_features': Int,
+                'ids': List[Str],
                 'metadata': Metadata,
                 'where': Str,
                 'exclude_ids': Bool,
@@ -348,6 +349,9 @@ plugin.methods.register_function(
                          'have to be retained. If no value is provided '
                          'this will default to infinity (i.e., no maximum '
                          'feature filter will be applied).'),
+        'ids': 'Sample IDs to retain or, with `exclude_ids`, discard. This '
+               'parameter is mutually exclusive with `metadata` and '
+               '`where`.',
         'metadata': 'Sample metadata used with `where` parameter when '
                     'selecting samples to retain, or with `exclude_ids` '
                     'when selecting samples to discard.',
@@ -355,8 +359,9 @@ plugin.methods.register_function(
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all samples in `metadata` that are '
                  'also in the feature table will be retained.',
-        'exclude_ids': 'If true, the samples selected by `metadata` or '
-                       '`where` parameters will be excluded from the filtered '
+        'exclude_ids': 'If true, the samples selected by `ids`, `metadata`, '
+                       'or `where` parameters will be excluded from the '
+                       'filtered '
                        'table instead of being retained.',
         'filter_empty_features': 'If true, features which are not present in '
                                  'any retained samples are dropped.',
@@ -368,7 +373,7 @@ plugin.methods.register_function(
         'filtered_table': 'The resulting feature table filtered by sample.'
     },
     name="Filter samples from table",
-    description="Filter samples from table based on frequency and/or "
+    description="Filter samples from table based on frequency, IDs, and/or "
                 "metadata. Any features with a frequency of zero after sample "
                 "filtering will also be removed.",
     examples={
@@ -443,6 +448,7 @@ plugin.methods.register_function(
                 'max_frequency': p_filter_features_max_frequency,
                 'min_samples': Int,
                 'max_samples': Int,
+                'ids': List[Str],
                 'metadata': Metadata,
                 'where': Str,
                 'exclude_ids': Bool,
@@ -468,6 +474,9 @@ plugin.methods.register_function(
                         'be observed in to be retained. If no value is '
                         'provided this will default to infinity (i.e., no '
                         'maximum sample filter will be applied).'),
+        'ids': 'Feature IDs to retain or, with `exclude_ids`, discard. This '
+               'parameter is mutually exclusive with `metadata` and '
+               '`where`.',
         'metadata': 'Feature metadata used with `where` parameter when '
                     'selecting features to retain, or with `exclude_ids` '
                     'when selecting features to discard.',
@@ -475,8 +484,9 @@ plugin.methods.register_function(
                  'that must be met to be included in the filtered feature '
                  'table. If not provided, all features in `metadata` that are '
                  'also in the feature table will be retained.',
-        'exclude_ids': 'If true, the features selected by `metadata` or '
-                       '`where` parameters will be excluded from the filtered '
+        'exclude_ids': 'If true, the features selected by `ids`, `metadata`, '
+                       'or `where` parameters will be excluded from the '
+                       'filtered '
                        'table instead of being retained.',
         'filter_empty_samples': 'If true, drop any samples where none of the '
                                 'retained features are present.',
@@ -488,7 +498,7 @@ plugin.methods.register_function(
         'filtered_table': 'The resulting feature table filtered by feature.'
     },
     name="Filter features from table",
-    description="Filter features from table based on frequency and/or "
+    description="Filter features from table based on frequency, IDs, and/or "
                 "metadata. Any samples with a frequency of zero after feature "
                 "filtering will also be removed.",
     examples={
@@ -973,7 +983,6 @@ plugin.methods.register_function(
                 "metadata": Metadata,
                 "where": Str,
                 "exclude_ids": Bool,
-                "filter_empty": Bool,
                 "allow_empty_table": Bool},
     outputs=[("filtered_table", FeatureTable[T4])],
     input_descriptions={
@@ -1003,10 +1012,6 @@ plugin.methods.register_function(
         "exclude_ids": (
             "If true, the IDs selected by `ids`, `metadata`, or `where` "
             "will be excluded from the filtered table instead of retained."
-        ),
-        "filter_empty": (
-            "If true, drop any IDs on the axis opposite `axis` where none "
-            "of the retained IDs are present."
         ),
         "allow_empty_table": (
             "If true, the filtered table may be empty. Default behavior is "

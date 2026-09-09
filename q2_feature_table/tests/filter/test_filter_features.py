@@ -58,6 +58,47 @@ class FilterFeaturesTests(unittest.TestCase):
                                  allow_empty_table=True)
         self.assertTrue(actual.is_empty())
 
+    def test_feature_ids(self):
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'], ['S1', 'S2', 'S3'])
+        actual = filter_features(table, ids=['O1'])
+        expected = Table(np.array([[1, 3]]), ['O1'], ['S2', 'S3'])
+        self.assertEqual(actual, expected)
+
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'], ['S1', 'S2', 'S3'])
+        actual = filter_features(table, ids=['O1'], exclude_ids=True)
+        expected = Table(np.array([[1, 1, 2]]), ['O2'], ['S1', 'S2', 'S3'])
+        self.assertEqual(actual, expected)
+
+        metadata = qiime2.Metadata(pd.DataFrame(
+            {'keep': ['yes']}, index=pd.Index(['O1'], name='id')))
+        with self.assertRaisesRegex(ValueError, 'mutually exclusive'):
+            filter_features(table, ids=['O1'], metadata=metadata)
+
+        with self.assertRaisesRegex(ValueError, 'mutually exclusive'):
+            filter_features(table, ids=['O1'], where="keep='yes'")
+
+        with self.assertRaisesRegex(ValueError, 'not in the table'):
+            filter_features(table, ids=['not-in-table'])
+
+    def test_feature_ids_with_sample_filter(self):
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'], ['S1', 'S2', 'S3'])
+        actual = filter_features(table, ids=['O1', 'O2'], min_samples=3)
+        expected = Table(np.array([[1, 1, 2]]), ['O2'], ['S1', 'S2', 'S3'])
+
+        self.assertEqual(actual, expected)
+
+    def test_feature_ids_without_empty_sample_filtering(self):
+        table = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                      ['O1', 'O2'], ['S1', 'S2', 'S3'])
+        actual = filter_features(table, ids=['O1'],
+                                 filter_empty_samples=False)
+        expected = Table(np.array([[0, 1, 3]]), ['O1'], ['S1', 'S2', 'S3'])
+
+        self.assertEqual(actual, expected)
+
     def test_filter_empty_samples(self):
         # no filtering
         table = Table(np.array([[0, 1, 1], [1, 1, 2]]),
@@ -253,6 +294,25 @@ class FilterFeaturesTests(unittest.TestCase):
                          set(['S1', 'S2', 'S3', 'S4']))
         self.assertEqual(set(actual.ids(axis='observation')),
                          set(['O1', 'O3']))
+        np.testing.assert_allclose(
+            actual.sum(axis='sample'), np.array([1., 1., 1., 0.])
+        )
+        np.testing.assert_allclose(
+            actual.matrix_data.toarray(), np.array([[2/7, 5/9, 3/4, 0.],
+                                                    [5/7, 4/9, 1/4, 0.]])
+        )
+
+    def test_relative_frequency_ids(self):
+        table = Table(np.array([[0.2, 0.5, 0.3, 0.0],
+                                [0.3, 0.1, 0.6, 0.0],
+                                [0.5, 0.4, 0.1, 0.0]]),
+                      ['O1', 'O2', 'O3'], ['S1', 'S2', 'S3', 'S4'])
+        actual = filter_features(table, ids=['O1', 'O3'],
+                                 filter_empty_samples=False)
+
+        self.assertEqual(set(actual.ids(axis='sample')),
+                         set(['S1', 'S2', 'S3', 'S4']))
+        self.assertEqual(set(actual.ids(axis='observation')), set(['O1', 'O3']))
         np.testing.assert_allclose(
             actual.sum(axis='sample'), np.array([1., 1., 1., 0.])
         )

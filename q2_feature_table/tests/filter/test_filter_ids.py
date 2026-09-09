@@ -78,17 +78,13 @@ class FilterIDsTests(TestPluginBase):
 
         self.assertEqual(actual, expected)
 
-    def test_filter_empty(self):
-        actual = filter_ids(self.table.copy(), axis="sample", ids=["S1"],
-                            filter_empty=True)
-        expected = Table(np.array([[1]]), ["O1"], ["S1"])
+    def test_filter_ids_retains_signed_vectors(self):
+        table = Table(np.array([[2, -2, 0], [0, 0, -3], [0, 0, 0]]),
+                      ["O1", "O2", "O3"], ["S1", "S2", "S3"])
 
-        self.assertEqual(actual, expected)
-
-    def test_filter_empty_features(self):
-        actual = filter_ids(self.table.copy(), axis="feature", ids=["O1"],
-                            filter_empty=True)
-        expected = Table(np.array([[1]]), ["O1"], ["S1"])
+        actual = filter_ids(table, axis="sample", ids=["S2"])
+        expected = Table(np.array([[-2], [0], [0]]),
+                         ["O1", "O2", "O3"], ["S2"])
 
         self.assertEqual(actual, expected)
 

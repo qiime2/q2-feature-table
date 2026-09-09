@@ -30,8 +30,12 @@ def check_relative_frequency(table: biom.Table) -> bool:
 def _get_biom_filter_function(ids_to_keep, min_frequency, max_frequency,
                               min_nonzero, max_nonzero):
     ids_to_keep = set(ids_to_keep)
+    if min_frequency is None:
+        min_frequency = -np.inf
     if max_frequency is None:
         max_frequency = np.inf
+    if min_nonzero is None:
+        min_nonzero = 0
     if max_nonzero is None:
         max_nonzero = np.inf
 
@@ -48,18 +52,27 @@ _other_axis_map = {'sample': 'observation', 'observation': 'sample'}
 def _filter_table(table, min_frequency, max_frequency, min_nonzero,
                   max_nonzero, metadata, where, axis, exclude_ids=False,
                   filter_opposite_axis=True,
-                  allow_empty_table=False):
-    if min_frequency == 0 and max_frequency is None and min_nonzero == 0 and\
-       max_nonzero is None and metadata is None and where is None and\
-       exclude_ids is False:
+                  allow_empty_table=False, ids=None):
+    if ids is not None and (metadata is not None or where is not None):
+        raise ValueError("'ids' is mutually exclusive with 'metadata' and "
+                         "'where'.")
+    if (min_frequency in (None, 0) and max_frequency is None and
+            min_nonzero in (None, 0) and max_nonzero is None and ids is None
+            and metadata is None and where is None and exclude_ids is False):
         raise ValueError("No filtering was requested.")
     if metadata is None and where is not None:
         raise ValueError("Metadata must be provided if 'where' is "
                          "specified.")
-    if metadata is None and exclude_ids is True:
-        raise ValueError("Metadata must be provided if 'exclude_ids' "
-                         "is True.")
-    if metadata is not None:
+    if ids is None and metadata is None and exclude_ids is True:
+        raise ValueError("Either 'ids' or metadata must be provided if "
+                         "'exclude_ids' is True.")
+    if ids is not None:
+        missing_ids = set(ids) - set(table.ids(axis=axis))
+        if missing_ids:
+            raise ValueError("The following IDs are not in the table: %s" %
+                             ", ".join(sorted(missing_ids)))
+        ids_to_keep = ids
+    elif metadata is not None:
         ids_to_keep = metadata.get_ids(where=where)
     else:
         ids_to_keep = table.ids(axis=axis)
@@ -82,7 +95,9 @@ def _filter_table(table, min_frequency, max_frequency, min_nonzero,
 def filter_samples(table: biom.Table, min_frequency: int = 0,
                    max_frequency: int = None, min_features: int = 0,
                    max_features: int = None,
-                   metadata: qiime2.Metadata = None, where: str = None,
+                   ids: list[str] = None,
+                   metadata: qiime2.Metadata = None,
+                   where: str = None,
                    exclude_ids: bool = False,
                    filter_empty_features: bool = True,
                    allow_empty_table: bool = False)\
@@ -92,7 +107,7 @@ def filter_samples(table: biom.Table, min_frequency: int = 0,
                   max_nonzero=max_features, metadata=metadata,
                   where=where, axis='sample', exclude_ids=exclude_ids,
                   filter_opposite_axis=filter_empty_features,
-                  allow_empty_table=allow_empty_table
+                  allow_empty_table=allow_empty_table, ids=ids
                   )
     return table
 
@@ -100,7 +115,9 @@ def filter_samples(table: biom.Table, min_frequency: int = 0,
 def filter_features(table: biom.Table, min_frequency: int = 0,
                     max_frequency: int | str = 'None', min_samples: int = 0,
                     max_samples: int = None,
-                    metadata: qiime2.Metadata = None, where: str = None,
+                    ids: list[str] = None,
+                    metadata: qiime2.Metadata = None,
+                    where: str = None,
                     exclude_ids: bool = False,
                     filter_empty_samples: bool = True,
                     allow_empty_table: bool = False)\
@@ -115,7 +132,7 @@ def filter_features(table: biom.Table, min_frequency: int = 0,
                   max_nonzero=max_samples, metadata=metadata,
                   where=where, axis='observation', exclude_ids=exclude_ids,
                   filter_opposite_axis=filter_empty_samples,
-                  allow_empty_table=allow_empty_table)
+                  allow_empty_table=allow_empty_table, ids=ids)
 
     if is_relative_frequency and not table.is_empty():
         relative_frequency(table)
@@ -187,7 +204,6 @@ def filter_ids(
         metadata: qiime2.Metadata = None,
         where: str = None,
         exclude_ids: bool = False,
-        filter_empty: bool = False,
         allow_empty_table: bool = False
 ) -> biom.Table:
     """
@@ -197,40 +213,16 @@ def filter_ids(
     using a SQLite ``where`` clause. Direct IDs must all occur on the
     requested axis. ``where`` may be used only with ``metadata``; without a
     WHERE clause, all metadata IDs are selected. ``metadata`` cannot be used
-    with ``ids``. By default, zero-frequency IDs on the opposite axis are
-    retained; set ``filter_empty`` to remove them.
+    with ``ids``. IDs on the opposite axis are retained.
     """
     axis_map = {"sample": "sample", "feature": "observation"}
     biom_axis = axis_map[axis]
 
-    if metadata is None and where is not None:
-        raise ValueError("Metadata must be provided if 'where' is specified.")
-    if ids is None and metadata is None:
-        raise ValueError("No filtering was requested.")
-    if ids is not None and metadata is not None:
-        raise ValueError("'ids' and 'metadata' are mutually exclusive.")
-
-    if metadata is not None:
-        ids_to_keep = metadata.get_ids(where=where)
-        # BIOM's ID-list filter raises if supplied IDs are absent from the
-        # table, while metadata commonly contains IDs outside this table.
-        ids_to_keep = set(table.ids(axis=biom_axis)) & set(ids_to_keep)
-    else:
-        ids_to_keep = ids
-        missing_ids = set(ids_to_keep) - set(table.ids(axis=biom_axis))
-        if missing_ids:
-            raise ValueError("The following IDs are not in the table: %s" %
-                             ", ".join(sorted(missing_ids)))
-
-    if exclude_ids:
-        ids_to_keep = set(table.ids(axis=biom_axis)) - set(ids_to_keep)
-
-    table.filter(ids_to_keep, axis=biom_axis, inplace=True)
-
-    if filter_empty:
-        table.remove_empty(axis=_other_axis_map[biom_axis], inplace=True)
-
-    if not allow_empty_table:
-        _validate_nonempty_table(table)
+    _filter_table(
+        table=table, min_frequency=None, max_frequency=None,
+        min_nonzero=None, max_nonzero=None, metadata=metadata, where=where,
+        axis=biom_axis, exclude_ids=exclude_ids,
+        filter_opposite_axis=False,
+        allow_empty_table=allow_empty_table, ids=ids)
 
     return table
