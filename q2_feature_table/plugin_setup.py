@@ -12,7 +12,8 @@ from qiime2.plugin import (Plugin, Int, Float, Range, Metadata, Str, Bool,
                            Visualization)
 
 from q2_types.feature_table import (
-    FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition)
+    FeatureTable, Frequency, RelativeFrequency, PresenceAbsence, Composition,
+    Unconstrained)
 from q2_types.feature_data import (
     FeatureData, Sequence, Taxonomy, AlignedSequence, SequenceCharacteristics,
     LinkedSequence
@@ -35,6 +36,26 @@ plugin = Plugin(
 T1 = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition])
 T2 = TypeMatch([Sequence, AlignedSequence, LinkedSequence])
 T3 = TypeMatch([Sequence, LinkedSequence])
+T4 = TypeMatch([Frequency, RelativeFrequency, PresenceAbsence, Composition,
+                Unconstrained])
+
+_filter_parameter_descriptions = {
+    'ids': ('IDs to retain or, with `exclude_ids`, discard. When supplied '
+            'with `metadata`, IDs from both sources are selected.'),
+    'metadata': ('Metadata used with the `where` parameter when selecting '
+                 'IDs to retain, or with `exclude_ids` when selecting IDs '
+                 'to discard.'),
+    'where': ('SQLite WHERE clause specifying metadata criteria that must be '
+              'met for IDs to be included in the filtered feature table. If '
+              'not provided, all IDs in `metadata` that are also in the '
+              'feature table will be retained.'),
+    'exclude_ids': ('If true, the IDs selected by `ids`, `metadata`, or '
+                    '`where` will be excluded from the filtered table '
+                    'instead of being retained.'),
+    'allow_empty_table': ('If true, the filtered table may be empty. Default '
+                          'behavior is to raise an error if the filtered '
+                          'table is empty.')
+}
 
 plugin.methods.register_function(
     function=q2_feature_table.rarefy,
@@ -136,10 +157,10 @@ plugin.methods.register_function(
 
 plugin.methods.register_function(
     function=q2_feature_table.transpose,
-    inputs={'table': FeatureTable[T1]},
+    inputs={'table': FeatureTable[T4]},
     parameters={},
     outputs=[('transposed_feature_table',
-             FeatureTable[T1])],
+             FeatureTable[T4])],
     input_descriptions={
         'table': 'The feature table to be transposed.'
     },
@@ -283,7 +304,7 @@ plugin.methods.register_function(
 plugin.methods.register_function(
     function=q2_feature_table.rename_ids,
     inputs={
-        'table': FeatureTable[T1],
+        'table': FeatureTable[T4],
     },
     parameters={
         'metadata': MetadataColumn[Categorical],
@@ -291,7 +312,7 @@ plugin.methods.register_function(
         'axis': Str % Choices({'sample', 'feature'})
         },
     outputs=[
-        ('renamed_table', FeatureTable[T1])
+        ('renamed_table', FeatureTable[T4])
         ],
     input_descriptions={
         'table': 'The table to be renamed',
@@ -323,6 +344,7 @@ plugin.methods.register_function(
                 'max_frequency': Int,
                 'min_features': Int,
                 'max_features': Int,
+                'ids': List[Str],
                 'metadata': Metadata,
                 'where': Str,
                 'exclude_ids': Bool,
@@ -345,27 +367,15 @@ plugin.methods.register_function(
                          'have to be retained. If no value is provided '
                          'this will default to infinity (i.e., no maximum '
                          'feature filter will be applied).'),
-        'metadata': 'Sample metadata used with `where` parameter when '
-                    'selecting samples to retain, or with `exclude_ids` '
-                    'when selecting samples to discard.',
-        'where': 'SQLite WHERE clause specifying sample metadata criteria '
-                 'that must be met to be included in the filtered feature '
-                 'table. If not provided, all samples in `metadata` that are '
-                 'also in the feature table will be retained.',
-        'exclude_ids': 'If true, the samples selected by `metadata` or '
-                       '`where` parameters will be excluded from the filtered '
-                       'table instead of being retained.',
+        **_filter_parameter_descriptions,
         'filter_empty_features': 'If true, features which are not present in '
                                  'any retained samples are dropped.',
-        'allow_empty_table': 'If true, the filtered table may be empty. '
-                             'Default behavior is to raise an error if the '
-                             'filtered table is empty.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by sample.'
     },
     name="Filter samples from table",
-    description="Filter samples from table based on frequency and/or "
+    description="Filter samples from table based on frequency, IDs, and/or "
                 "metadata. Any features with a frequency of zero after sample "
                 "filtering will also be removed.",
     examples={
@@ -440,6 +450,7 @@ plugin.methods.register_function(
                 'max_frequency': p_filter_features_max_frequency,
                 'min_samples': Int,
                 'max_samples': Int,
+                'ids': List[Str],
                 'metadata': Metadata,
                 'where': Str,
                 'exclude_ids': Bool,
@@ -465,27 +476,15 @@ plugin.methods.register_function(
                         'be observed in to be retained. If no value is '
                         'provided this will default to infinity (i.e., no '
                         'maximum sample filter will be applied).'),
-        'metadata': 'Feature metadata used with `where` parameter when '
-                    'selecting features to retain, or with `exclude_ids` '
-                    'when selecting features to discard.',
-        'where': 'SQLite WHERE clause specifying feature metadata criteria '
-                 'that must be met to be included in the filtered feature '
-                 'table. If not provided, all features in `metadata` that are '
-                 'also in the feature table will be retained.',
-        'exclude_ids': 'If true, the features selected by `metadata` or '
-                       '`where` parameters will be excluded from the filtered '
-                       'table instead of being retained.',
+        **_filter_parameter_descriptions,
         'filter_empty_samples': 'If true, drop any samples where none of the '
                                 'retained features are present.',
-        'allow_empty_table': 'If true, the filtered table may be empty. '
-                                'Default behavior is to raise an error if the '
-                                'filtered table is empty.'
     },
     output_descriptions={
         'filtered_table': 'The resulting feature table filtered by feature.'
     },
     name="Filter features from table",
-    description="Filter features from table based on frequency and/or "
+    description="Filter features from table based on frequency, IDs, and/or "
                 "metadata. Any samples with a frequency of zero after feature "
                 "filtering will also be removed.",
     examples={
@@ -662,13 +661,13 @@ plugin.visualizers.register_function(
 
 plugin.methods.register_function(
     function=q2_feature_table.split,
-    inputs={'table': FeatureTable[T1]},
+    inputs={'table': FeatureTable[T4]},
     parameters={
         'metadata': MetadataColumn[Categorical],
         'filter_empty_features': Bool
     },
     outputs=[
-        ('tables', Collection[FeatureTable[T1]])
+        ('tables', Collection[FeatureTable[T4]])
     ],
     input_descriptions={
         'table': 'The table to split.'
@@ -960,4 +959,43 @@ plugin.pipelines.register_function(
         "and what result you expect."
     ),
     citations=[],
+)
+
+plugin.methods.register_function(
+    function=q2_feature_table.filter_ids,
+    inputs={"table": FeatureTable[T4]},
+    parameters={"axis": Str % Choices(["sample", "feature"]),
+                "ids": List[Str],
+                "metadata": Metadata,
+                "where": Str,
+                "exclude_ids": Bool,
+                "allow_empty_table": Bool},
+    outputs=[("filtered_table", FeatureTable[T4])],
+    input_descriptions={
+        "table": (
+            "The feature table from which IDs should be filtered."
+        )
+    },
+    parameter_descriptions={
+        "axis": (
+            "The axis to filter. Select 'sample' to filter sample IDs or "
+            "'feature' to filter feature IDs."
+        ),
+        **_filter_parameter_descriptions,
+    },
+    output_descriptions={
+        "filtered_table": (
+            "The feature table filtered by selected sample or feature IDs."
+        )
+    },
+    name="Filter IDs from table",
+    description=(
+        "Filter samples or features from a table using an ID list or "
+        "metadata selected with a SQLite WHERE clause."
+    ),
+    examples={
+        "filter_samples_by_metadata_and_where":
+        ex.feature_table_filter_ids_samples_by_metadata_and_where,
+        "filter_features_by_ids": ex.feature_table_filter_ids_features_by_ids,
+    },
 )
