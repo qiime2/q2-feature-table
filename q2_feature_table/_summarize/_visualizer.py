@@ -108,6 +108,9 @@ def tabulate_seqs(
     if metadata is not None:
         seq_df = pd.concat([seq_df, metadata_df], axis=1)
     seq_df.index.name = 'Feature ID'
+    seq_df = seq_df[
+        [col for col in seq_df.columns if col != 'seq'] + ['seq']
+    ]
     seq_md = Metadata(seq_df)
     columns = pd.MultiIndex.from_tuples(
         [(n, t.type) for n, t in seq_md.columns.items()],
