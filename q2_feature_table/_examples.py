@@ -461,3 +461,41 @@ def feature_table_summarize(use):
     feature_freqs.assert_output_type('ImmutableMetadata')
     sample_freqs.assert_output_type('ImmutableMetadata')
     viz.assert_output_type('Visualization')
+
+
+def feature_table_filter_ids_samples_by_metadata_and_where(use):
+    feature_table = use.init_artifact_from_url(
+        "feature_table", moving_pics_ft_url
+    )
+    sample_metadata = use.init_metadata_from_url(
+        "sample_metadata", moving_pics_md_url
+    )
+
+    filtered_table, = use.action(
+        use.UsageAction(plugin_id="feature_table", action_id="filter_ids"),
+        use.UsageInputs(
+            table=feature_table,
+            axis="sample",
+            metadata=sample_metadata,
+            where="[subject]='subject-1'",
+        ),
+        use.UsageOutputNames(filtered_table="filtered_table"),
+    )
+
+    filtered_table.assert_output_type("FeatureTable[Frequency]")
+
+
+def feature_table_filter_ids_features_by_ids(use):
+    feature_table = use.init_artifact("feature_table", ft4_factory)
+
+    filtered_table, = use.action(
+        use.UsageAction(plugin_id="feature_table", action_id="filter_ids"),
+        use.UsageInputs(
+            table=feature_table,
+            axis="feature",
+            ids=["F1", "F3"],
+        ),
+        use.UsageOutputNames(filtered_table="filtered_table"),
+    )
+
+    filtered_table.assert_output_type("FeatureTable[Frequency]")
