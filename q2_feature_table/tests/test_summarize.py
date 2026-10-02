@@ -535,6 +535,18 @@ class TabulateSeqsTests(TestCase):
         self.assertIn('Confidence', columns)
         self.assertEqual(rows['seq1']['Taxon'], 'a;b;c')
 
+    def test_single_taxonomy_unlabelled_result_collection(self):
+        # the action receives a ResultCollection, whose iteration differs
+        # from a dict's
+        seqs, tax1, _ = self._seqs_and_taxonomies()
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate_seqs(output_dir, seqs,
+                          taxonomy=qiime2.ResultCollection({'0': tax1}))
+            columns, rows = self._rendered_table(output_dir)
+        self.assertIn('Taxon', columns)
+        self.assertNotIn('Taxon: 0', columns)
+        self.assertEqual(rows['seq1']['Taxon'], 'a;b;c')
+
     def test_rows_intersect(self):
         seqs, tax1, tax2 = self._seqs_and_taxonomies()
         metadata = qiime2.Metadata(pd.DataFrame(
