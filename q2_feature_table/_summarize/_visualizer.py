@@ -106,10 +106,16 @@ def tabulate_seqs(
         # unlabelled collections are keyed '0', '1', ... by the framework
         labelled = keys != [str(i) for i in range(len(keys))]
         for key, member in taxonomy.items():
+            # 'Taxon: gtdb'; unlabelled: plain for one, 'Taxon: 1', ... for
+            # several
             if labelled:
-                member = member.add_prefix(f'{key} ')
+                label = key
             elif len(keys) > 1:
-                member = member.add_prefix(f'Taxonomy {int(key) + 1} ')
+                label = str(int(key) + 1)
+            else:
+                label = None
+            if label is not None:
+                member = member.rename(columns=lambda c: f'{c}: {label}')
             seq_df = pd.concat([seq_df, member], axis=1)
     if metadata is not None:
         seq_df = pd.concat([seq_df, metadata_df], axis=1)

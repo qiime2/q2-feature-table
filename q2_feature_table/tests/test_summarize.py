@@ -500,31 +500,31 @@ class TabulateSeqsTests(TestCase):
             tabulate_seqs(output_dir, seqs,
                           taxonomy={'gtdb': tax1, 'silva': tax2})
             columns, rows = self._rendered_table(output_dir)
-        for col in ('gtdb Taxon', 'gtdb Confidence',
-                    'silva Taxon', 'silva Confidence'):
+        for col in ('Taxon: gtdb', 'Confidence: gtdb',
+                    'Taxon: silva', 'Confidence: silva'):
             self.assertIn(col, columns)
         self.assertNotIn('Taxon', columns)
-        self.assertEqual(rows['seq2']['gtdb Taxon'], 'a;b;d')
-        self.assertEqual(rows['seq2']['silva Taxon'], 'x;y;w')
+        self.assertEqual(rows['seq2']['Taxon: gtdb'], 'a;b;d')
+        self.assertEqual(rows['seq2']['Taxon: silva'], 'x;y;w')
 
     def test_multiple_taxonomies_unlabelled(self):
         seqs, tax1, tax2 = self._seqs_and_taxonomies()
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs, taxonomy={'0': tax1, '1': tax2})
             columns, rows = self._rendered_table(output_dir)
-        self.assertIn('Taxonomy 1 Taxon', columns)
-        self.assertIn('Taxonomy 2 Taxon', columns)
-        self.assertEqual(rows['seq3']['Taxonomy 1 Taxon'], 'a;e')
-        self.assertEqual(rows['seq3']['Taxonomy 2 Taxon'], 'x')
+        self.assertIn('Taxon: 1', columns)
+        self.assertIn('Taxon: 2', columns)
+        self.assertEqual(rows['seq3']['Taxon: 1'], 'a;e')
+        self.assertEqual(rows['seq3']['Taxon: 2'], 'x')
 
     def test_single_taxonomy_labelled(self):
         seqs, tax1, _ = self._seqs_and_taxonomies()
         with tempfile.TemporaryDirectory() as output_dir:
             tabulate_seqs(output_dir, seqs, taxonomy={'gtdb': tax1})
             columns, rows = self._rendered_table(output_dir)
-        self.assertIn('gtdb Taxon', columns)
+        self.assertIn('Taxon: gtdb', columns)
         self.assertNotIn('Taxon', columns)
-        self.assertEqual(rows['seq1']['gtdb Taxon'], 'a;b;c')
+        self.assertEqual(rows['seq1']['Taxon: gtdb'], 'a;b;c')
 
     def test_single_taxonomy_unlabelled(self):
         seqs, tax1, _ = self._seqs_and_taxonomies()
