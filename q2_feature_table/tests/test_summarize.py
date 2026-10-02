@@ -468,6 +468,97 @@ class TabulateSeqsTests(TestCase):
                               taxonomy=taxonomy)
                 # Did not error out, this is a problem
 
+    def _rendered_table(self, output_dir):
+        with open(os.path.join(output_dir, 'index.html')) as fh:
+            html = fh.read()
+        data = re.search(
+            r'<script id="data" type="application/json">(.*?)</script>',
+            html, re.S).group(1)
+        table = json.loads(data)
+        columns = [c[0] for c in table['columns']]
+        rows = {r[columns.index('Feature ID')]: dict(zip(columns, r))
+                for r in table['data']}
+        return columns, rows
+
+    def _seqs_and_taxonomies(self):
+        seqs = DNAIterator(skbio.DNA(a, metadata=b) for a, b in (
+            ('ACGT', {'id': 'seq1'}),
+            ('AAAA', {'id': 'seq2'}),
+            ('CCCC', {'id': 'seq3'})))
+        index = ['seq1', 'seq2', 'seq3']
+        tax1 = pd.DataFrame([('a;b;c', '0.9'), ('a;b;d', '0.8'),
+                             ('a;e', '0.7')],
+                            index=index, columns=['Taxon', 'Confidence'])
+        tax2 = pd.DataFrame([('x;y;z', '1.0'), ('x;y;w', '0.6'),
+                             ('x', '0.5')],
+                            index=index, columns=['Taxon', 'Confidence'])
+        return seqs, tax1, tax2
+
+    def test_multiple_taxonomies_labelled(self):
+        seqs, tax1, tax2 = self._seqs_and_taxonomies()
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate_seqs(output_dir, seqs,
+                          taxonomy={'gtdb': tax1, 'silva': tax2})
+            columns, rows = self._rendered_table(output_dir)
+        for col in ('gtdb Taxon', 'gtdb Confidence',
+                    'silva Taxon', 'silva Confidence'):
+            self.assertIn(col, columns)
+        self.assertNotIn('Taxon', columns)
+        self.assertEqual(rows['seq2']['gtdb Taxon'], 'a;b;d')
+        self.assertEqual(rows['seq2']['silva Taxon'], 'x;y;w')
+
+    def test_multiple_taxonomies_unlabelled(self):
+        seqs, tax1, tax2 = self._seqs_and_taxonomies()
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate_seqs(output_dir, seqs, taxonomy={'0': tax1, '1': tax2})
+            columns, rows = self._rendered_table(output_dir)
+        self.assertIn('Taxonomy 1 Taxon', columns)
+        self.assertIn('Taxonomy 2 Taxon', columns)
+        self.assertEqual(rows['seq3']['Taxonomy 1 Taxon'], 'a;e')
+        self.assertEqual(rows['seq3']['Taxonomy 2 Taxon'], 'x')
+
+    def test_single_taxonomy_labelled(self):
+        seqs, tax1, _ = self._seqs_and_taxonomies()
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate_seqs(output_dir, seqs, taxonomy={'gtdb': tax1})
+            columns, rows = self._rendered_table(output_dir)
+        self.assertIn('gtdb Taxon', columns)
+        self.assertNotIn('Taxon', columns)
+        self.assertEqual(rows['seq1']['gtdb Taxon'], 'a;b;c')
+
+    def test_single_taxonomy_unlabelled(self):
+        seqs, tax1, _ = self._seqs_and_taxonomies()
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate_seqs(output_dir, seqs, taxonomy={'0': tax1})
+            columns, rows = self._rendered_table(output_dir)
+        self.assertIn('Taxon', columns)
+        self.assertIn('Confidence', columns)
+        self.assertEqual(rows['seq1']['Taxon'], 'a;b;c')
+
+    def test_rows_intersect(self):
+        seqs, tax1, tax2 = self._seqs_and_taxonomies()
+        metadata = qiime2.Metadata(pd.DataFrame(
+            {'frequency': [10.0, 20.0]},
+            index=pd.Index(['seq1', 'seq3'], name='feature id')))
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate_seqs(output_dir, seqs, metadata=metadata,
+                          taxonomy={'gtdb': tax1, 'silva': tax2},
+                          merge_method='intersect')
+            _, rows = self._rendered_table(output_dir)
+        self.assertEqual(set(rows), {'seq1', 'seq3'})
+        self.assertEqual(rows['seq3']['frequency'], 20.0)
+
+    def test_rows_union(self):
+        seqs, tax1, _ = self._seqs_and_taxonomies()
+        metadata = qiime2.Metadata(pd.DataFrame(
+            {'frequency': [10.0, 30.0]},
+            index=pd.Index(['seq1', 'seq4'], name='feature id')))
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate_seqs(output_dir, seqs, metadata=metadata,
+                          taxonomy={'gtdb': tax1}, merge_method='union')
+            _, rows = self._rendered_table(output_dir)
+        self.assertEqual(set(rows), {'seq1', 'seq2', 'seq3', 'seq4'})
+
 
 class _SummarizeTests(TestCase):
     def test_basic(self):
