@@ -101,12 +101,28 @@ def tabulate_seqs(
     seq_df = pd.DataFrame.from_dict(sequences, orient='index')
     if taxonomy is not None:
         if isinstance(taxonomy, pd.DataFrame):
-            seq_df = pd.concat([seq_df, taxonomy], axis=1)
-        else:
-            taxonomy = next(iter(taxonomy.values()))
-            seq_df = pd.concat([seq_df, taxonomy], axis=1)
+            taxonomy = {'0': taxonomy}
+        # not list(taxonomy): iterating a ResultCollection does not yield
+        # its keys
+        keys = list(taxonomy.keys())
+        # unlabelled collections are keyed '0', '1', ... by the framework
+        labelled = keys != [str(i) for i in range(len(keys))]
+        for key, member in taxonomy.items():
+            # 'Taxon: gtdb'; unlabelled: plain for one, 'Taxon: 1', ... for
+            # several
+            if labelled:
+                label = key
+            elif len(keys) > 1:
+                label = str(int(key) + 1)
+            else:
+                label = None
+            if label is not None:
+                member = member.rename(columns=lambda c: f'{c}: {label}')
+            seq_df = pd.concat([seq_df, member], axis=1)
     if metadata is not None:
         seq_df = pd.concat([seq_df, metadata_df], axis=1)
+    # show only the features selected by merge_method
+    seq_df = seq_df.loc[[i for i in seq_df.index if i in display_sequences]]
     seq_df.index.name = 'Feature ID'
     seq_df = seq_df[
         [col for col in seq_df.columns if col != 'seq'] + ['seq']
