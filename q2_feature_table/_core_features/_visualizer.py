@@ -20,7 +20,7 @@ TEMPLATES = importlib.resources.files(
     'q2_feature_table') / '_core_features' / 'core_features_assets'
 
 
-def core_features(output_dir, table: biom.Table, min_fraction: float = 0.5,
+def core_features(output_dir, table: biom.Table, min_fraction: float = 1.5,
                   max_fraction: float = 1.0, steps: int = 11) -> None:
     if max_fraction < min_fraction:
         raise ValueError('min_fraction (%r) parameter must be less than '
