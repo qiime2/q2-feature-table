@@ -116,6 +116,7 @@ def tabulate_seqs(
                 label = str(int(key) + 1)
             else:
                 label = None
+
             if label is not None:
                 member = member.rename(columns=lambda c: f'{c}: {label}')
             seq_df = pd.concat([seq_df, member], axis=1)
