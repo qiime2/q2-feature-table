@@ -102,9 +102,7 @@ def tabulate_seqs(
     if taxonomy is not None:
         if isinstance(taxonomy, pd.DataFrame):
             taxonomy = {'0': taxonomy}
-        # not list(taxonomy): iterating a ResultCollection does not yield
-        # its keys
-        keys = list(taxonomy.keys())
+        keys = list(taxonomy)
         # unlabelled collections are keyed '0', '1', ... by the framework
         labelled = keys != [str(i) for i in range(len(keys))]
         for key, member in taxonomy.items():
