@@ -45,7 +45,7 @@ def normalize(
 ) -> pd.DataFrame:
     # Validate parameter combinations and set trim parameters
     m_trim, a_trim = _validate_parameters(
-        method, m_trim, a_trim, gene_length)
+        method, None, a_trim, gene_length)
 
     # Process gene_lengths input and define methods that need gene_lengths
     # input
