@@ -19,9 +19,10 @@ rep_seqs_1_url = ('https://data.qiime2.org/usage-examples/'
                   'metadata/rep-seqs.qza')
 rep_seqs_2_url = ('https://data.qiime2.org/usage-examples/'
                   'phylogeny/rep-seqs.qza')
-taxonomy_1_url = ('https://docs.qiime2.org/jupyterbooks/cancer-microbiome-'
-                  'intervention-tutorial/data/030-tutorial-downstream/020-'
-                  'taxonomy/taxonomy.qza')
+# TODO: switch to https://data.qiime2.org/usage-examples/other/taxonomy.qza
+# once data.qiime2.org (qiime2/data302) can deploy the redirect again.
+taxonomy_1_url = ('https://qiime2-data.s3.us-west-2.amazonaws.com/'
+                  'usage-examples/other/taxonomy.qza')
 moving_pics_ft_url = ('https://data.qiime2.org/usage-examples/'
                       'filtering/table.qza')
 moving_pics_md_url = ('https://data.qiime2.org/usage-examples/'
